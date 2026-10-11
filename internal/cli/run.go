@@ -30,8 +30,9 @@ eolscan policy validate --config policy.yaml
 eolscan providers list
 eolscan version
 
-CycloneDX JSON 1.4–1.7 / SPDX 2.3; config 2 / report 2.0.
-Online scans send public package identities to endoflife.date and deps.dev.
+CycloneDX JSON 1.4–1.7 / SPDX 2.3; config 2 / report 2.1.
+Online scans send public package identities to configured registries,
+endoflife.date, and deps.dev.
 --offline makes no HTTP requests. Disk cache is disabled by default.
 Default CI fails on EOL/HIGH; UNKNOWN and incomplete remain visible.
 The default catalog is empty: generic EOL dates alone do not confirm EOL.`)

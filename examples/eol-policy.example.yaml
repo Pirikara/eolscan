@@ -11,6 +11,15 @@ input:
   max_components: 100000
   max_json_depth: 128
 sources:
+  npm:
+    enabled: true
+    base_url: "https://registry.npmjs.org"
+  pypi:
+    enabled: true
+    base_url: "https://pypi.org"
+  rubygems:
+    enabled: true
+    base_url: "https://rubygems.org"
   official_catalog:
     enabled: false
     path: null
@@ -24,10 +33,14 @@ sources:
 version_verification:
   mode: "required"
   sources:
-    - "deps_dev"
     - "official_catalog"
+    - "registries"
+    - "deps_dev"
 signals:
   deprecated: true
+  yanked: false
+  archived: false
+  quarantined: false
   stale_release_days: 730
 notices:
   eol_soon_days: 90
@@ -38,9 +51,16 @@ network:
   allowed_hosts:
     - "endoflife.date"
     - "api.deps.dev"
+    - "registry.npmjs.org"
+    - "pypi.org"
+    - "rubygems.org"
   timeout_seconds: 8
   retries: 2
   max_concurrency: 6
+  requests_per_second: 2
+  burst: 1
+  max_wait_seconds: 30
+  host_limits: {}
 cache:
   enabled: false
   positive_ttl_hours: 24

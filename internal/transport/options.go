@@ -15,6 +15,21 @@ func WithWait(wait func(context.Context, time.Duration) error) TransportOption {
 	return func(t *Transport) { t.wait = wait }
 }
 
+// WithClock injects the scheduling clock; evidence still uses the run timestamp.
+func WithClock(clock func() time.Time) TransportOption {
+	return func(t *Transport) { t.clock = clock }
+}
+
+// WithJitter injects retry jitter for deterministic tests.
+func WithJitter(jitter func(time.Duration) time.Duration) TransportOption {
+	return func(t *Transport) { t.jitter = jitter }
+}
+
+// WithCacheDir selects an isolated cache directory, for example in tests.
+func WithCacheDir(path string) TransportOption {
+	return func(t *Transport) { t.cacheDir = path }
+}
+
 // Policy returns the effective policy used by this transport.
 func (t *Transport) Policy() model.Policy { return t.p }
 

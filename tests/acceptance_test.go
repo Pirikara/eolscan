@@ -8,7 +8,6 @@ import (
 	"os"
 	"path/filepath"
 	"testing"
-	"time"
 
 	"github.com/Pirikara/eolscan/internal/cli"
 	"github.com/Pirikara/eolscan/internal/config"
@@ -58,6 +57,9 @@ func offlinePolicy() model.Policy {
 	p := config.Default()
 	p.Sources.EndoflifeDate.Enabled = false
 	p.Sources.DepsDev.Enabled = false
+	p.Sources.NPM.Enabled = false
+	p.Sources.PyPI.Enabled = false
+	p.Sources.RubyGems.Enabled = false
 	return p
 }
 
@@ -67,7 +69,8 @@ func componentSBOM(purl string) model.SBOM {
 
 func runScan(t *testing.T, p model.Policy, c *model.Catalog, asOf string, stub *testutil.StubAPI, sbom model.SBOM, offline bool) model.Report {
 	t.Helper()
-	tr := transport.New(stub.Client(), p, testutil.FixedNow, offline, transport.WithWait(func(context.Context, time.Duration) error { return nil }))
+	clock := testutil.NewClock(testutil.FixedNow)
+	tr := transport.New(stub.Client(), p, testutil.FixedNow, offline, transport.WithClock(clock.Now), transport.WithWait(clock.Wait))
 	s := scanner.NewWithTransport(testBundle(t, p, c), tr, asOf)
 	r, err := s.Scan(context.Background(), sbom)
 	if err != nil {

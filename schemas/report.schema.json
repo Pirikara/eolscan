@@ -4,7 +4,7 @@
   "type": "object",
   "properties": {
     "schema_version": {
-      "const": "2.0"
+      "const": "2.1"
     },
     "tool_version": {
       "type": "string",

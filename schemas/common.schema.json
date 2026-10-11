@@ -235,7 +235,8 @@
             "RETRACTED",
             "QUARANTINED",
             "STALE_RELEASE",
-            "STALE_REPOSITORY"
+            "STALE_REPOSITORY",
+            "YANKED"
           ]
         },
         "status": {
@@ -352,7 +353,8 @@
             "RETRACTED",
             "QUARANTINED",
             "STALE_RELEASE",
-            "STALE_REPOSITORY"
+            "STALE_REPOSITORY",
+            "YANKED"
           ]
         },
         "provider_id": {

@@ -7,12 +7,12 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"math/rand/v2"
 	"net"
 	"net/http"
 	"net/url"
 	"os"
 	"path/filepath"
-	"strconv"
 	"strings"
 	"sync"
 	"sync/atomic"
@@ -86,31 +86,37 @@ type Transport struct {
 	mu        sync.Mutex
 	memo      map[string]*requestMemo
 	wait      func(context.Context, time.Duration) error
+	clock     func() time.Time
+	jitter    func(time.Duration) time.Duration
+	hosts     map[string]*hostBudget
 	cacheHits atomic.Int64
 }
 
 func New(client *http.Client, p model.Policy, now time.Time, offline bool, options ...TransportOption) *Transport {
 	c := *client
 	c.Timeout = time.Duration(p.Network.TimeoutSeconds * float64(time.Second))
+	t := &Transport{client: &c, p: p, now: now, offline: offline, sem: make(chan struct{}, p.Network.MaxConcurrency),
+		memo: map[string]*requestMemo{}, wait: waitContext, clock: time.Now, hosts: map[string]*hostBudget{},
+		jitter: func(base time.Duration) time.Duration { return base + time.Duration(rand.Float64()*float64(base)) }}
+	for _, option := range options {
+		option(t)
+	}
 	previous := c.CheckRedirect
 	c.CheckRedirect = func(req *http.Request, via []*http.Request) error {
 		if len(via) >= 5 {
-			return fmt.Errorf("redirect limit")
+			return &LookupError{Code: "UNSAFE_PROVIDER_URL"}
 		}
 		first := via[0].URL
 		if !AllowedURL(req.URL, p) || req.URL.Host != first.Host || req.URL.Scheme != first.Scheme ||
 			!strings.HasPrefix(req.URL.Path, redirectPrefix(first.Path)) {
-			return fmt.Errorf("provider redirect rejected")
+			return &LookupError{Code: "UNSAFE_PROVIDER_URL"}
 		}
 		if previous != nil {
-			return previous(req, via)
+			if err := previous(req, via); err != nil {
+				return err
+			}
 		}
-		return nil
-	}
-	t := &Transport{client: &c, p: p, now: now, offline: offline, sem: make(chan struct{}, p.Network.MaxConcurrency),
-		memo: map[string]*requestMemo{}, wait: waitContext}
-	for _, option := range options {
-		option(t)
+		return t.acquireHost(req.Context(), req.URL.Hostname())
 	}
 	return t
 }
@@ -144,12 +150,22 @@ func waitContext(ctx context.Context, d time.Duration) error {
 }
 
 func (t *Transport) Get(ctx context.Context, raw string) (HTTPData, error) {
+	return t.GetWithAccept(ctx, raw, "application/json")
+}
+
+// GetWithAccept isolates cached representations and only accepts the JSON
+// media types used by supported providers.
+func (t *Transport) GetWithAccept(ctx context.Context, raw, accept string) (HTTPData, error) {
+	if accept != "application/json" && accept != "application/vnd.pypi.simple.v1+json" {
+		return HTTPData{}, &LookupError{Code: "UNSUPPORTED_MEDIA_TYPE"}
+	}
 	u, err := url.Parse(raw)
 	if err != nil || !AllowedURL(u, t.p) {
 		return HTTPData{}, &LookupError{Code: "UNSAFE_PROVIDER_URL"}
 	}
+	key := representationKey(raw, accept)
 	t.mu.Lock()
-	if m, exists := t.memo[raw]; exists {
+	if m, exists := t.memo[key]; exists {
 		t.mu.Unlock()
 		select {
 		case <-m.done:
@@ -159,7 +175,7 @@ func (t *Transport) Get(ctx context.Context, raw string) (HTTPData, error) {
 		}
 	}
 	m := &requestMemo{done: make(chan struct{})}
-	t.memo[raw] = m
+	t.memo[key] = m
 	t.mu.Unlock()
 	defer close(m.done)
 	defer func() {
@@ -168,8 +184,15 @@ func (t *Transport) Get(ctx context.Context, raw string) (HTTPData, error) {
 			panic(failure)
 		}
 	}()
-	m.data, m.err = t.fetch(ctx, raw)
+	m.data, m.err = t.fetch(ctx, raw, key, accept)
 	return m.data, m.err
+}
+
+func representationKey(raw, accept string) string {
+	if accept == "application/json" {
+		return raw
+	}
+	return raw + "\x00" + accept
 }
 
 func (t *Transport) diskPath(raw string) (string, error) {
@@ -259,19 +282,23 @@ func (t *Transport) save(raw string, data HTTPData) error {
 }
 
 func (t *Transport) Invalidate(raw string) {
+	t.InvalidateWithAccept(raw, "application/json")
+}
+
+func (t *Transport) InvalidateWithAccept(raw, accept string) {
 	if !t.p.Cache.Enabled {
 		return
 	}
 	t.mu.Lock()
-	path, err := t.diskPath(raw)
+	path, err := t.diskPath(representationKey(raw, accept))
 	t.mu.Unlock()
 	if err == nil {
 		_ = os.Remove(path)
 	}
 }
 
-func (t *Transport) fetch(ctx context.Context, raw string) (HTTPData, error) {
-	cached, exists, fresh := t.cached(raw)
+func (t *Transport) fetch(ctx context.Context, raw, key, accept string) (HTTPData, error) {
+	cached, exists, fresh := t.cached(key)
 	if fresh {
 		t.cacheHits.Add(1)
 		return cached, nil
@@ -290,12 +317,13 @@ func (t *Transport) fetch(ctx context.Context, raw string) (HTTPData, error) {
 	}
 	var data HTTPData
 	var last error
+	u, _ := url.Parse(raw)
 	for attempt := 0; attempt <= t.p.Network.Retries; attempt++ {
 		req, err := http.NewRequestWithContext(ctx, http.MethodGet, raw, nil)
 		if err != nil {
 			return data, &LookupError{Code: "INVALID_PROVIDER_REQUEST"}
 		}
-		req.Header.Set("Accept", "application/json")
+		req.Header.Set("Accept", accept)
 		req.Header.Set("User-Agent", "eolscan/"+version.Current)
 		if exists && cached.ETag != "" {
 			req.Header.Set("If-None-Match", cached.ETag)
@@ -305,15 +333,29 @@ func (t *Transport) fetch(ctx context.Context, raw string) (HTTPData, error) {
 		case <-ctx.Done():
 			return data, &LookupError{Code: "SOURCE_ERROR"}
 		}
+		if err := t.acquireHost(ctx, u.Hostname()); err != nil {
+			<-t.sem
+			return data, err
+		}
 		resp, err := t.client.Do(req)
 		retry := false
-		delay := time.Duration(200*(1<<attempt)) * time.Millisecond
+		delay := t.jitter(time.Duration(200*(1<<attempt)) * time.Millisecond)
 		if err != nil {
 			<-t.sem
+			var lookup *LookupError
+			if errors.As(err, &lookup) {
+				return data, lookup
+			}
 			var n net.Error
 			retry = errors.As(err, &n)
 			last = &LookupError{Code: "SOURCE_ERROR", Retryable: retry}
 		} else {
+			if after, valid := retryAfter(resp.Header.Get("Retry-After"), t.clock()); valid {
+				delay = max(delay, after)
+			}
+			if resp.StatusCode == 429 || resp.StatusCode == 503 {
+				t.coolDown(u.Hostname(), delay, resp.StatusCode)
+			}
 			data = HTTPData{Status: resp.StatusCode, ObservedAt: model.Timestamp(t.now), ETag: resp.Header.Get("ETag"), Diagnostics: []model.Diagnostic{}}
 			data.Body, err = io.ReadAll(io.LimitReader(resp.Body, maxResponseBytes+1))
 			resp.Body.Close()
@@ -329,27 +371,20 @@ func (t *Transport) fetch(ctx context.Context, raw string) (HTTPData, error) {
 				}
 				data = cached
 				data.ObservedAt = model.Timestamp(t.now)
-				if err := t.save(raw, data); err != nil {
+				if err := t.save(key, data); err != nil {
 					data.Diagnostics = append(data.Diagnostics, model.NewDiagnostic("CACHE_WRITE_ERROR", "", "Disk cache write failed"))
 				}
 				return data, nil
 			} else if resp.StatusCode == 200 || resp.StatusCode == 404 {
-				if err := t.save(raw, data); err != nil {
+				if err := t.save(key, data); err != nil {
 					data.Diagnostics = append(data.Diagnostics, model.NewDiagnostic("CACHE_WRITE_ERROR", "", "Disk cache write failed"))
 				}
 				return data, nil
 			} else {
 				retry = resp.StatusCode == 429 || resp.StatusCode >= 500
 				last = &LookupError{Code: "SOURCE_ERROR", Status: resp.StatusCode, Retryable: retry}
-				if after := resp.Header.Get("Retry-After"); after != "" {
-					if seconds, err := strconv.ParseInt(after, 10, 32); err == nil && seconds >= 0 {
-						delay = time.Duration(seconds) * time.Second
-					} else if when, err := http.ParseTime(after); err == nil {
-						delay = when.Sub(t.now)
-						if delay < 0 {
-							delay = 0
-						}
-					}
+				if resp.StatusCode == 429 {
+					last = &LookupError{Code: "RATE_LIMITED", Status: resp.StatusCode, Retryable: true}
 				}
 			}
 		}
@@ -358,7 +393,7 @@ func (t *Transport) fetch(ctx context.Context, raw string) (HTTPData, error) {
 		}
 		// A long Retry-After is respected by returning an incomplete lookup,
 		// instead of sending an early retry or blocking a CI job indefinitely.
-		if delay > 30*time.Second {
+		if delay > time.Duration(t.p.Network.MaxWaitSeconds*float64(time.Second)) {
 			return data, last
 		}
 		if err := t.wait(ctx, delay); err != nil {

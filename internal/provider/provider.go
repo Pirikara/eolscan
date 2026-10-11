@@ -1,4 +1,4 @@
-// Package provider adapts local catalogs, deps.dev, and endoflife.date data.
+// Package provider adapts support catalogs, registries, deps.dev, and endoflife.date.
 package provider
 
 import (
@@ -58,6 +58,9 @@ func PublicationDiagnostic(provider string, v model.VersionVerification) []model
 func DescribeProviders() string {
 	return fmt.Sprintln("official_catalog: reviewed upstream support, exact local versions, general EOL reviews") +
 		fmt.Sprintln("endoflife_date: exact PURL index and general EOL dates") +
+		fmt.Sprintln("npm: exact versions and publication; DEPRECATED and STALE_RELEASE") +
+		fmt.Sprintln("pypi: Index API publication; DEPRECATED, ARCHIVED, QUARANTINED, YANKED, and STALE_RELEASE") +
+		fmt.Sprintln("rubygems: exact versions and publication; YANKED where explicit, and STALE_RELEASE") +
 		fmt.Sprintln("deps_dev: gem/npm/pypi/maven/golang/cargo/nuget version publication; DEPRECATED and STALE_RELEASE where metadata is sufficient")
 }
 

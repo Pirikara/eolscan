@@ -8,7 +8,20 @@ type InputPolicy struct {
 	MaxJSONDepth             int      `json:"max_json_depth"`
 }
 
+type RegistryPolicy struct {
+	Enabled bool   `json:"enabled"`
+	BaseURL string `json:"base_url"`
+}
+
+type RateLimit struct {
+	RequestsPerSecond float64 `json:"requests_per_second"`
+	Burst             int     `json:"burst"`
+}
+
 type SourcePolicy struct {
+	NPM             RegistryPolicy `json:"npm"`
+	PyPI            RegistryPolicy `json:"pypi"`
+	RubyGems        RegistryPolicy `json:"rubygems"`
 	OfficialCatalog struct {
 		Enabled bool    `json:"enabled"`
 		Path    *string `json:"path"`
@@ -34,6 +47,9 @@ type Policy struct {
 	} `json:"version_verification"`
 	Signals struct {
 		Deprecated       bool `json:"deprecated"`
+		Yanked           bool `json:"yanked"`
+		Archived         bool `json:"archived"`
+		Quarantined      bool `json:"quarantined"`
 		StaleReleaseDays *int `json:"stale_release_days"`
 	} `json:"signals"`
 	Notices struct {
@@ -44,10 +60,14 @@ type Policy struct {
 		MaxEvidenceAgeDays int    `json:"max_evidence_age_days"`
 	} `json:"decision"`
 	Network struct {
-		AllowedHosts   []string `json:"allowed_hosts"`
-		TimeoutSeconds float64  `json:"timeout_seconds"`
-		Retries        int      `json:"retries"`
-		MaxConcurrency int      `json:"max_concurrency"`
+		AllowedHosts      []string             `json:"allowed_hosts"`
+		TimeoutSeconds    float64              `json:"timeout_seconds"`
+		Retries           int                  `json:"retries"`
+		MaxConcurrency    int                  `json:"max_concurrency"`
+		RequestsPerSecond float64              `json:"requests_per_second"`
+		Burst             int                  `json:"burst"`
+		MaxWaitSeconds    float64              `json:"max_wait_seconds"`
+		HostLimits        map[string]RateLimit `json:"host_limits"`
 	} `json:"network"`
 	Cache struct {
 		Enabled          bool    `json:"enabled"`

@@ -1,16 +1,20 @@
 package acceptance
 
 import (
+	"bytes"
 	"context"
 	"encoding/json"
 	"io"
 	"net/http"
 	"net/http/httptest"
 	"net/url"
+	"os"
+	"path/filepath"
 	"strings"
 	"sync/atomic"
 	"testing"
 
+	"github.com/Pirikara/eolscan/internal/cli"
 	"github.com/Pirikara/eolscan/internal/config"
 	"github.com/Pirikara/eolscan/internal/identity"
 	"github.com/Pirikara/eolscan/internal/model"
@@ -19,6 +23,65 @@ import (
 	"github.com/Pirikara/eolscan/internal/testutil"
 	"github.com/Pirikara/eolscan/internal/transport"
 )
+
+func TestRegistryAdaptersThroughCLIAndHTTPS(t *testing.T) {
+	var requests atomic.Int32
+	server := httptest.NewTLSServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		requests.Add(1)
+		w.Header().Set("Content-Type", "application/json")
+		switch r.URL.Path {
+		case "/npm/@scope/example":
+			if !strings.Contains(r.RequestURI, "%2F") {
+				t.Error("native npm scope slash was not encoded")
+			}
+			io.WriteString(w, `{"name":"@scope/example","versions":{"1.0.0":{"name":"@scope/example","version":"1.0.0"}},"time":{"1.0.0":"2024-04-12T09:00:00Z"}}`)
+		case "/pypi/simple/example-name/":
+			if r.Header.Get("Accept") != "application/vnd.pypi.simple.v1+json" {
+				t.Error("PyPI request did not negotiate the JSON Index API")
+			}
+			w.Header().Set("Content-Type", "application/vnd.pypi.simple.v1+json")
+			io.WriteString(w, `{"meta":{"api-version":"1.4"},"name":"Example_Name","project-status":{"status":"active"},"files":[{"filename":"example_name-1.0.0-py3-none-any.whl","upload-time":"2024-04-12T09:00:00Z","yanked":false,"url":"https://files.example.invalid/artifact.whl"}]}`)
+		case "/gems/api/v1/versions/example.json":
+			io.WriteString(w, `[{"number":"1.0.0","platform":"ruby","created_at":"2024-04-12T09:00:00Z"}]`)
+		default:
+			t.Errorf("unexpected registry or artifact request: %s", r.URL.Path)
+			http.NotFound(w, r)
+		}
+	}))
+	defer server.Close()
+	u, _ := url.Parse(server.URL)
+	p := offlinePolicy()
+	p.Sources.NPM.Enabled, p.Sources.PyPI.Enabled, p.Sources.RubyGems.Enabled = true, true, true
+	p.Sources.NPM.BaseURL, p.Sources.PyPI.BaseURL, p.Sources.RubyGems.BaseURL = server.URL+"/npm", server.URL+"/pypi", server.URL+"/gems"
+	p.Network.AllowedHosts = []string{u.Hostname()}
+	p.Network.RequestsPerSecond = 100
+	policy, _ := json.Marshal(p)
+	policyPath := filepath.Join(t.TempDir(), "policy.yaml")
+	if err := os.WriteFile(policyPath, policy, 0600); err != nil {
+		t.Fatal(err)
+	}
+	input := `{"bomFormat":"CycloneDX","specVersion":"1.6","components":[
+		{"type":"library","name":"@scope/example","purl":"pkg:npm/%40scope/example@1.0.0"},
+		{"type":"library","name":"Example_Name","purl":"pkg:pypi/Example_Name@1.0.0"},
+		{"type":"library","name":"example","purl":"pkg:gem/example@1.0.0"}]}`
+	var out, stderr bytes.Buffer
+	code := cli.Run(context.Background(), []string{"scan", "-i", "-", "-c", policyPath, "-f", "json"}, strings.NewReader(input), &out, &stderr, server.Client(), testutil.FixedNow)
+	if code != 0 || requests.Load() != 3 {
+		t.Fatalf("native CLI: code=%d requests=%d stderr=%s", code, requests.Load(), stderr.String())
+	}
+	var report model.Report
+	if err := json.Unmarshal(out.Bytes(), &report); err != nil {
+		t.Fatal(err)
+	}
+	if report.SchemaVersion != "2.1" || report.CIGate.Incomplete {
+		t.Fatalf("report contract: %+v", report)
+	}
+	for _, row := range report.Results {
+		if row.VersionVerification.Status != "VERIFIED" || model.Text(row.VersionVerification.ProviderID) == "deps_dev" || row.Lifecycle != "UNKNOWN" {
+			t.Fatalf("native source selection: %+v", row)
+		}
+	}
+}
 
 func TestOfflineWithoutCacheOrCatalog(t *testing.T) {
 	t.Run("UT28_offline_no_network", func(t *testing.T) {
@@ -63,6 +126,9 @@ func TestRealHTTPSAdaptersAndRedirectBoundary(t *testing.T) {
 	base = server.URL
 	host, _ := url.Parse(base)
 	p := config.Default()
+	p.Sources.NPM.Enabled = false
+	p.Sources.PyPI.Enabled = false
+	p.Sources.RubyGems.Enabled = false
 	p.Network.AllowedHosts = []string{host.Hostname()}
 	p.Network.Retries = 0
 	p.Sources.EndoflifeDate.BaseURL = base + "/api/v1"

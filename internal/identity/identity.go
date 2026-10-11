@@ -18,6 +18,7 @@ type Identity struct {
 	System   string
 	Name     string
 	Version  string
+	Platform string
 }
 
 var systems = map[string]string{"gem": "RUBYGEMS", "npm": "NPM", "pypi": "PYPI", "maven": "MAVEN", "golang": "GO", "cargo": "CARGO", "nuget": "NUGET"}
@@ -150,6 +151,13 @@ func Resolve(c model.Component) (Identity, string) {
 		return id, "INVALID_PURL"
 	}
 	id.Type = p.Type
+	if p.Type == "gem" {
+		for _, q := range p.Qualifiers {
+			if q.Key == "platform" {
+				id.Platform = q.Value
+			}
+		}
+	}
 	id.System = systems[p.Type]
 	id.Version = p.Version
 	id.Name = p.Name

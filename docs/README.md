@@ -1,10 +1,11 @@
 # eolscan implementation contract
 
-The [v0.3 design specification](design.md) incorporates the v0.2 review and four accepted design decisions. The Go CLI implements this specification.
+The [v0.4 design specification](design.md) incorporates the accepted lifecycle decisions and native registry/rate-control additions. Go CLI 0.2.0 implements this specification.
 
-The configuration contract is version `2`, and the report contract is version `2.0`. These versions describe the initial implementation contract and are independent of the document version.
+The configuration contract is version `2`, and the report contract is version `2.1`. These versions are independent of the document version. Report 2.1 adds `YANKED`; effective policies include native sources and network rate settings. Partial version 2 policies inherit the new defaults.
 
 - [Architecture](architecture.md): Package responsibilities, dependency direction, embedded assets, and testing.
+- [Registry sources](registries.md): Native APIs, metadata priority, signal semantics, host pacing, and CI cache behavior.
 - [Schemas](../schemas/): Partial policy input, effective policy, support catalog, exceptions, common types, and reports.
 - [Examples](../examples/): Complete policies, local version assertions, generic EOL reviews, and complete reports.
 - [Fixture manifest](../testdata/fixtures/manifest.json): Conflicts, unreviewed evidence, unknown CI-required signals, evaluations before publication, and other fixed cases.

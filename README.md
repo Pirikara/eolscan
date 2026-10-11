@@ -1,6 +1,6 @@
 # eolscan
 
-eolscan is a Go CLI that reads an SBOM and checks whether upstream security support has ended for its dependencies. It implements the [v0.3 design specification](docs/design.md).
+eolscan is a Go CLI that reads an SBOM and checks whether upstream security support has ended for its dependencies. Release 0.2.0 implements the [v0.4 design specification](docs/design.md).
 
 No database is required. Repeated API queries share an in-memory result during each run, and disk caching is disabled by default. Build with Go 1.24 or later; the CLI runs as a single binary.
 
@@ -18,7 +18,9 @@ cat sbom.cdx.json | ./bin/eolscan scan -i - -f json
 
 Supported inputs are CycloneDX JSON 1.4–1.7 and SPDX 2.3 JSON. Packages are identified by PURL, with support for the gem, npm, pypi, maven, golang, cargo, and nuget ecosystems. Components without a version remain in the report as `UNKNOWN`. CycloneDX `metadata.component` is excluded by default.
 
-Configuration uses schema version `2`, and JSON reports use version `2.0`. Native Syft JSON, CPE matching, OS name matching, and direct registry queries are outside this MVP. When using Syft, provide CycloneDX or SPDX JSON.
+Configuration uses schema version `2`, and JSON reports use version `2.1`. Native Syft JSON, CPE matching, and OS name matching are outside the current scope. When using Syft, provide CycloneDX or SPDX JSON.
+
+When upgrading from 0.1.0, allow the three new registry hosts if your policy overrides `network.allowed_hosts`, or disable those sources explicitly. Partial version 2 policies inherit the new defaults; report consumers must accept schema 2.1 and the `YANKED` signal.
 
 ## Understanding results
 
@@ -28,7 +30,7 @@ Configuration uses schema version `2`, and JSON reports use version `2.0`. Nativ
 | `SUPPORTED` | An explicit official security support window includes the evaluation date. |
 | `UNKNOWN` | Package version existence, publication time, or applicable support evidence could not be sufficiently verified. |
 
-Lifecycle results and maintenance signals are evaluated separately. Deprecation or release inactivity alone cannot establish EOL. Signals use three states: `PRESENT / ABSENT / UNKNOWN`. `EOL_SOON` is a notice derived from the scheduled end of a `SUPPORTED` window.
+Lifecycle results and maintenance signals are evaluated separately. Deprecation, yanking, archival, quarantine, or release inactivity alone cannot establish EOL. Signals use three states: `PRESENT / ABSENT / UNKNOWN`. `EOL_SOON` is a notice derived from the scheduled end of a `SUPPORTED` window.
 
 **The default support catalog and general EOL reviews are empty.** A generic EOL date from endoflife.date alone cannot establish `EOL` or `SUPPORTED`. Many results will be `UNKNOWN` in an online scan without a reviewed catalog.
 
@@ -36,13 +38,22 @@ Lifecycle results and maintenance signals are evaluated separately. Deprecation 
 | --- | --- |
 | Local support catalog | Reviewed official support windows and end dates, exact version publication times, and reviews of what generic EOL dates mean. |
 | [endoflife.date API v1](https://endoflife.date/docs/api/v1/) | Fetches the PURL index once, then fetches generic EOL dates for matched products. |
-| [deps.dev API v3](https://docs.deps.dev/api/v3/) | Verifies exact package versions and publication times, and supplies available deprecation information and version lists. |
+| [npm registry](https://github.com/npm/registry/blob/main/docs/REGISTRY-API.md) | Full package metadata: versions, publication times, and per-version deprecation. |
+| [PyPI Index API](https://docs.pypi.org/api/index-api/) | JSON file metadata: publication times, yank status, and project status. |
+| [RubyGems API](https://guides.rubygems.org/rubygems-org-api/) | Available versions and publication times; explicit yank status where supplied. |
+| [deps.dev API v3](https://docs.deps.dev/api/v3/) | Fallback version/publication verification and available maintenance metadata; primary remote provider for the other four ecosystems. |
 
-A version absent from the deps.dev index is `UNKNOWN` unless a valid local version assertion verifies it. A missing publication time also produces `UNKNOWN` and an incomplete scan unless a valid local assertion provides it. Registry-derived information, including RubyGems data, is accessed through deps.dev; direct registry queries are not implemented.
+Version verification prefers a valid local assertion, then the native registry for npm/PyPI/RubyGems, then deps.dev. Native package metadata is fetched and parsed once per package, shared across its SBOM versions. A successful native result avoids a duplicate deps.dev version request. Failed lookups remain diagnostics even when a fallback completes the check.
 
-`DEPRECATED` uses an explicit `true` as positive evidence. A confirmed negative result requires an explicit `false` for npm. For other ecosystems, `false` or a missing field produces `UNKNOWN`. PyPI project status, Go retract, and GitHub archived status are planned capabilities. Requiring them in CI currently produces `UNKNOWN` and an incomplete scan.
+A version absent from every available source remains `UNKNOWN`; a 404 cannot prove global nonexistence. Missing publication time also produces `UNKNOWN` and an incomplete scan unless another source supplies valid proof. A version published after `--as-of` cannot receive a definitive lifecycle result.
 
-`STALE_RELEASE` uses a version list with complete publication dates to find the latest release on or before the evaluation date. Missing dates or a future evaluation date produce `UNKNOWN`. Because deps.dev documents collection limits for Go and PyPI, eolscan cannot treat their version lists as complete and leaves this signal `UNKNOWN`.
+`DEPRECATED` comes from npm version metadata or PyPI's explicit project status. A valid full npm version record without a deprecation message is a confirmed negative; missing or malformed metadata is not. deps.dev can provide a positive result in any supported ecosystem, but an explicit negative is trusted only for npm.
+
+`YANKED`, `ARCHIVED`, and `QUARANTINED` are opt-in report signals, or mandatory when listed in `ci.fail_on_signals`. PyPI supplies all three. `YANKED` means all available artifacts for the target version are explicitly yanked; one explicit non-yanked artifact makes it `ABSENT`. RubyGems can supply explicit yank status for available releases, but its public APIs do not prove the status of a removed release.
+
+`STALE_RELEASE` uses the available version list with complete publication dates. The earliest artifact publication for each version is its release date; uploading a new wheel for an old release does not reset it. Missing dates, unrecognized PyPI artifacts, or a future evaluation date produce `UNKNOWN`. Native PyPI data can evaluate this signal; deps.dev's limited Go/PyPI collections cannot establish absence of new releases. Current registry data cannot reconstruct deleted releases or historical status changes.
+
+See [registry sources and request behavior](docs/registries.md) for endpoints, capabilities, and limitations. Native Go and NuGet adapters and GitHub archived status remain future work; CI-required signals without a usable provider make the scan incomplete.
 
 ## Using a support catalog
 
@@ -59,7 +70,7 @@ sources:
 The catalog contains three arrays. See the [example](examples/support-catalog.example.yaml) and [schema](schemas/support-catalog.schema.json) for the full definitions.
 
 - `entries`: Official security support windows or end dates. Each entry requires an applicable release series, source URL, review date, and expiry date.
-- `verified_versions`: Exact versioned PURLs and publication times. These enable offline version verification and provide a fallback for versions absent from deps.dev.
+- `verified_versions`: Exact versioned PURLs and publication times. These are preferred for version verification and enable offline checks or proof of versions absent from remote indexes.
 - `general_eol_reviews`: Reviews of generic EOL dates, matched exactly by product slug, unversioned PURL, release series, and support scope.
 
 Official evidence has `HIGH` confidence; reviewed generic EOL evidence has `MEDIUM` confidence. Unreviewed or expired generic EOL evidence remains in the report but is excluded from lifecycle decisions. A future generic EOL date cannot establish `SUPPORTED`. Conflicting end dates within the highest applicable tier produce `UNKNOWN / CONFLICT`, including conflicts involving future dates. Evidence is excluded from conflict detection only when a formal replacement or withdrawal has been verified.
@@ -120,6 +131,24 @@ Configure [expiring exceptions](examples/eol-exceptions.example.yaml) using `exc
 - `--as-of YYYY-MM-DD` evaluates a UTC calendar date. Future evaluations are marked `projection: true`. Versions published after the evaluation date are `UNKNOWN`.
 - JSON output retains all components, evidence, diagnostics, and CI results. File output is replaced atomically. `output.include_unknown` and `output.include_evidence` affect table display only.
 
+Requests are paced per host at **2 requests/second, burst 1** by default, including retries and redirects. HTTP 429 and 503 establish a shared host cooldown. Retries use exponential backoff with jitter and honor `Retry-After`. A wait longer than `max_wait_seconds` (default 30, per wait) returns an unavailable lookup; CI completeness follows the configured required checks.
+
+```yaml
+schema_version: 2
+network:
+  requests_per_second: 2
+  burst: 1
+  max_wait_seconds: 30
+  host_limits:
+    rubygems.org:
+      requests_per_second: 1
+      burst: 1
+cache:
+  enabled: true
+```
+
+These limits apply to one process. Parallel CI jobs do not share budgets; keep concurrency and persistent cache settings appropriate for your runner.
+
 Online scans send package names and versions to the configured public APIs. Requests are restricted to HTTPS on explicitly allowed hosts. Arbitrary URLs from the SBOM or evidence are not fetched, and configuration URLs containing credentials or query strings are rejected.
 
 ## Project layout
@@ -132,8 +161,8 @@ internal/
   sbom/            CycloneDX and SPDX parsing
   identity/        PURL normalization and release series matching
   lifecycle/       Support decisions and signal aggregation
-  provider/        Catalog, deps.dev, and endoflife.date adapters
-  transport/       HTTPS, retries, memoization, and disk cache
+  provider/        Catalog, registry, deps.dev, and endoflife.date adapters
+  transport/       HTTPS, host rate limits, retries, memoization, and disk cache
   config/          Policy, catalog, and exception loading
   contract/        Schema validation and canonical serialization
   model/           Shared input, policy, evidence, and report types
@@ -159,7 +188,7 @@ go vet ./...
 go build -o bin/eolscan ./cmd/eolscan
 ```
 
-Go tests cover design acceptance cases UT-01 through UT-45. Ten report fixtures run through the actual CLI and verify decisions, exit codes, input hashes, and policy hashes. External APIs are replaced with fixed responses and local HTTPS servers, so tests require no public API access.
+Go tests cover design acceptance cases UT-01 through UT-45, native registry selection, fallback, signal completeness, offline caching, and host rate control. Ten report fixtures run through the actual CLI and verify decisions, exit codes, input hashes, and policy hashes. External APIs are replaced with fixed responses and local HTTPS servers, so tests require no public API access.
 
 JSON schemas are embedded in the binary to validate configuration and reports. Additional documentation and example validation uses Python, which is not a CLI runtime dependency.
 

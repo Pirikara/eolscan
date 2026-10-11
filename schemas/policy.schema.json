@@ -108,12 +108,69 @@
             "base_url"
           ],
           "additionalProperties": false
+        },
+        "npm": {
+          "type": "object",
+          "properties": {
+            "enabled": {
+              "type": "boolean"
+            },
+            "base_url": {
+              "type": "string",
+              "format": "uri",
+              "pattern": "^https://[^/?#@]+(?:[/?#]|$)"
+            }
+          },
+          "required": [
+            "enabled",
+            "base_url"
+          ],
+          "additionalProperties": false
+        },
+        "pypi": {
+          "type": "object",
+          "properties": {
+            "enabled": {
+              "type": "boolean"
+            },
+            "base_url": {
+              "type": "string",
+              "format": "uri",
+              "pattern": "^https://[^/?#@]+(?:[/?#]|$)"
+            }
+          },
+          "required": [
+            "enabled",
+            "base_url"
+          ],
+          "additionalProperties": false
+        },
+        "rubygems": {
+          "type": "object",
+          "properties": {
+            "enabled": {
+              "type": "boolean"
+            },
+            "base_url": {
+              "type": "string",
+              "format": "uri",
+              "pattern": "^https://[^/?#@]+(?:[/?#]|$)"
+            }
+          },
+          "required": [
+            "enabled",
+            "base_url"
+          ],
+          "additionalProperties": false
         }
       },
       "required": [
         "official_catalog",
         "endoflife_date",
-        "deps_dev"
+        "deps_dev",
+        "npm",
+        "pypi",
+        "rubygems"
       ],
       "additionalProperties": false
     },
@@ -129,7 +186,8 @@
             "type": "string",
             "enum": [
               "deps_dev",
-              "official_catalog"
+              "official_catalog",
+              "registries"
             ]
           },
           "minItems": 1,
@@ -158,11 +216,23 @@
               "type": "null"
             }
           ]
+        },
+        "yanked": {
+          "type": "boolean"
+        },
+        "archived": {
+          "type": "boolean"
+        },
+        "quarantined": {
+          "type": "boolean"
         }
       },
       "required": [
         "deprecated",
-        "stale_release_days"
+        "stale_release_days",
+        "yanked",
+        "archived",
+        "quarantined"
       ],
       "additionalProperties": false
     },
@@ -219,13 +289,59 @@
         "max_concurrency": {
           "type": "integer",
           "minimum": 1
+        },
+        "requests_per_second": {
+          "type": "number",
+          "minimum": 0.01,
+          "maximum": 1000
+        },
+        "burst": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 256
+        },
+        "max_wait_seconds": {
+          "type": "number",
+          "exclusiveMinimum": 0,
+          "maximum": 3600
+        },
+        "host_limits": {
+          "type": "object",
+          "propertyNames": {
+            "type": "string",
+            "pattern": "^[a-z0-9](?:[a-z0-9.-]*[a-z0-9])?$"
+          },
+          "additionalProperties": {
+            "type": "object",
+            "properties": {
+              "requests_per_second": {
+                "type": "number",
+                "minimum": 0.01,
+                "maximum": 1000
+              },
+              "burst": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 256
+              }
+            },
+            "required": [
+              "requests_per_second",
+              "burst"
+            ],
+            "additionalProperties": false
+          }
         }
       },
       "required": [
         "allowed_hosts",
         "timeout_seconds",
         "retries",
-        "max_concurrency"
+        "max_concurrency",
+        "requests_per_second",
+        "burst",
+        "max_wait_seconds",
+        "host_limits"
       ],
       "additionalProperties": false
     },
@@ -282,7 +398,8 @@
               "RETRACTED",
               "QUARANTINED",
               "STALE_RELEASE",
-              "STALE_REPOSITORY"
+              "STALE_REPOSITORY",
+              "YANKED"
             ]
           },
           "uniqueItems": true

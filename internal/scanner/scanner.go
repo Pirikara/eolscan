@@ -23,6 +23,7 @@ type Scanner struct {
 	bundle    model.PolicyBundle
 	transport *transport.Transport
 	eol       *provider.EOLProvider
+	metadata  *provider.MetadataResolver
 	now       time.Time
 	asOf      string
 }
@@ -37,6 +38,7 @@ func New(bundle model.PolicyBundle, client *http.Client, now time.Time, asOf str
 func NewWithTransport(bundle model.PolicyBundle, t *transport.Transport, asOf string) *Scanner {
 	s := &Scanner{bundle: bundle, transport: t, now: t.Now(), asOf: asOf}
 	s.eol = provider.NewEOL(t, bundle)
+	s.metadata = provider.NewMetadataResolver(t)
 	return s
 }
 
@@ -63,53 +65,23 @@ func (s *Scanner) component(ctx context.Context, c model.Component) model.Compon
 		r.Evidence = provider.CatalogEvidence(s.bundle, id, s.now)
 		local, localOK, ds := provider.LocalVersion(s.bundle, id, s.asOf, s.now)
 		r.Diagnostics = append(r.Diagnostics, ds...)
-		var remote provider.DepsVersion
-		var data transport.HTTPData
-		var remoteErr error
-		needsVersion := !localOK && model.Contains(p.VersionVerification.Sources, "deps_dev")
-		needsDeprecated := model.Contains(requested, "DEPRECATED")
-		remoteFetched := p.Sources.DepsDev.Enabled && (needsVersion || needsDeprecated)
-		if remoteFetched {
-			remote, data, remoteErr = provider.FetchVersion(ctx, s.transport, id)
-			r.Diagnostics = append(r.Diagnostics, provider.ProviderDiagnostics("deps_dev", data.Diagnostics)...)
-			if remoteErr != nil {
-				r.Diagnostics = append(r.Diagnostics, transport.ErrorDiagnostic("deps_dev", remoteErr))
-			}
-		}
+		var assertion *model.VersionVerification
 		if localOK {
-			r.VersionVerification = local
-		} else if remoteFetched && model.Contains(p.VersionVerification.Sources, "deps_dev") {
-			r.VersionVerification = provider.VerifyVersion(s.transport, id, remote, data, remoteErr, s.asOf)
-			r.Diagnostics = append(r.Diagnostics, provider.PublicationDiagnostic("deps_dev", r.VersionVerification)...)
-		} else {
-			r.VersionVerification = provider.NoVersionCapability()
+			assertion = &local
 		}
+		metadata := s.metadata.Resolve(ctx, id, s.asOf, assertion, requested)
+		r.VersionVerification = metadata.Version
+		r.SignalEvaluations = metadata.Evaluations
+		r.Signals = metadata.Signals
+		r.Diagnostics = append(r.Diagnostics, metadata.Diagnostics...)
 		if r.VersionVerification.Status == "UNVERIFIED" {
 			r.Incomplete = true
-			if remoteErr != nil || model.Contains([]string{"MISSING_PUBLICATION_DATE", "PUBLICATION_IN_FUTURE"}, model.Text(r.VersionVerification.ReasonCode)) {
+			if model.Text(r.VersionVerification.ReasonCode) != "NO_CAPABILITY" {
 				r.UnknownReasons = model.AddUnique(r.UnknownReasons, "SOURCE_ERROR")
 			}
 		}
-		for _, kind := range requested {
-			e := provider.UnknownSignal(kind, "NO_CAPABILITY")
-			var evidence *model.SignalEvidence
-			switch kind {
-			case "DEPRECATED":
-				if remoteFetched {
-					e, evidence = provider.Deprecation(s.transport, id, remote, data, remoteErr)
-				}
-			case "STALE_RELEASE":
-				if p.Sources.DepsDev.Enabled {
-					var ds []model.Diagnostic
-					e, evidence, ds = provider.StaleRelease(ctx, s.transport, id, s.asOf)
-					r.Diagnostics = append(r.Diagnostics, ds...)
-				}
-			}
-			r.SignalEvaluations = append(r.SignalEvaluations, e)
-			if evidence != nil {
-				r.Signals = append(r.Signals, *evidence)
-				r.RuleIDs = model.AddUnique(r.RuleIDs, "R-005")
-			}
+		if len(r.Signals) > 0 {
+			r.RuleIDs = model.AddUnique(r.RuleIDs, "R-005")
 		}
 		eolUnavailable := false
 		if p.Sources.EndoflifeDate.Enabled {
@@ -239,7 +211,7 @@ func (s *Scanner) applyCI(r *model.ComponentResult) {
 // Scan evaluates each component and returns a validated, deterministic report.
 func (s *Scanner) Scan(ctx context.Context, sbom model.SBOM) (model.Report, error) {
 	report := model.Report{
-		SchemaVersion: "2.0", ToolVersion: version.Current, AsOf: s.asOf, Projection: s.asOf > model.UTCDate(s.now),
+		SchemaVersion: version.ReportSchema, ToolVersion: version.Current, AsOf: s.asOf, Projection: s.asOf > model.UTCDate(s.now),
 		GeneratedAt: model.Timestamp(s.now), InputSHA256: sbom.SHA256, PolicyHash: s.bundle.Hash,
 		Summary: model.Summary{Excluded: sbom.Excluded}, CIGate: model.CIGate{ViolationCodes: []string{}},
 		Results: make([]model.ComponentResult, len(sbom.Components)),
@@ -307,7 +279,8 @@ func (s *Scanner) Scan(ctx context.Context, sbom model.SBOM) (model.Report, erro
 		for _, d := range r.Diagnostics {
 			if d.Code == "SOURCE_ERROR" || d.Code == "PROVIDER_SCHEMA_MISMATCH" || d.Code == "VERSION_CONFLICT" ||
 				d.Code == "MISSING_PUBLICATION_DATE" || d.Code == "PUBLICATION_IN_FUTURE" || d.Code == "PROVIDER_IDENTITY_MISMATCH" ||
-				d.Code == "PROVIDER_RESPONSE_TOO_LARGE" || d.Code == "UNSAFE_PROVIDER_URL" {
+				d.Code == "PROVIDER_RESPONSE_TOO_LARGE" || d.Code == "UNSAFE_PROVIDER_URL" ||
+				d.Code == "RATE_LIMITED" || d.Code == "RATE_LIMIT_WAIT_TIMEOUT" {
 				report.Summary.ProviderErrorCount++
 			}
 		}

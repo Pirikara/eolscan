@@ -1,11 +1,11 @@
 {
-  "schema_version": "2.0",
-  "tool_version": "0.1.0",
+  "schema_version": "2.1",
+  "tool_version": "0.2.0",
   "as_of": "2026-10-11",
   "projection": false,
   "generated_at": "2026-10-11T00:00:00Z",
   "input_sha256": "432833ae712c4cfe1914581f56635f6a9dda9a5c94f13608681390381fe44799",
-  "policy_hash": "8b88ebc9d09fdc5ac2ba1c72a5169742412ea86033144bde243dd3f8690e84af",
+  "policy_hash": "d30970993c997fd92f3bed43da9bc860cdd4777d8e3125d54481aee482c77077",
   "summary": {
     "in_scope": 1,
     "excluded": 0,

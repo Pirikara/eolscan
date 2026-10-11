@@ -96,10 +96,20 @@ func Validate(p model.Policy) error {
 	if err := contract.Validate("policy", v); err != nil {
 		return fmt.Errorf("config: %w", err)
 	}
-	for _, raw := range []string{p.Sources.EndoflifeDate.BaseURL, p.Sources.DepsDev.BaseURL} {
+	for _, source := range []model.RegistryPolicy{
+		{Enabled: p.Sources.EndoflifeDate.Enabled, BaseURL: p.Sources.EndoflifeDate.BaseURL},
+		{Enabled: p.Sources.DepsDev.Enabled, BaseURL: p.Sources.DepsDev.BaseURL},
+		p.Sources.NPM, p.Sources.PyPI, p.Sources.RubyGems,
+	} {
+		raw := source.BaseURL
 		u, _ := url.Parse(raw)
-		if !safeHTTPS(raw) || !model.Contains(p.Network.AllowedHosts, u.Hostname()) {
+		if !safeHTTPS(raw) || source.Enabled && !model.Contains(p.Network.AllowedHosts, u.Hostname()) {
 			return fmt.Errorf("provider base URL must use an explicitly allowed HTTPS host without credentials, query or fragment")
+		}
+	}
+	for host := range p.Network.HostLimits {
+		if !model.Contains(p.Network.AllowedHosts, host) {
+			return fmt.Errorf("network.host_limits must use an explicitly allowed host")
 		}
 	}
 	if p.Sources.OfficialCatalog.Enabled && p.Sources.OfficialCatalog.Path == nil {
@@ -201,6 +211,16 @@ func RequestedSignals(p model.Policy) []string {
 	out := append([]string{}, p.CI.FailOnSignals...)
 	if p.Signals.Deprecated {
 		out = model.AddUnique(out, "DEPRECATED")
+	}
+	for _, signal := range []struct {
+		enabled bool
+		name    string
+	}{
+		{p.Signals.Yanked, "YANKED"}, {p.Signals.Archived, "ARCHIVED"}, {p.Signals.Quarantined, "QUARANTINED"},
+	} {
+		if signal.enabled {
+			out = model.AddUnique(out, signal.name)
+		}
 	}
 	if p.Signals.StaleReleaseDays != nil {
 		out = model.AddUnique(out, "STALE_RELEASE")

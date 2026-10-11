@@ -125,7 +125,8 @@ func TestTransportRetryAndConcurrency(t *testing.T) {
 		return &http.Response{StatusCode: 503, Body: io.NopCloser(strings.NewReader("")), Header: http.Header{"Retry-After": []string{"0"}}}, nil
 	})}
 	tr := New(client, p, testutil.FixedNow, false)
-	tr.wait = func(context.Context, time.Duration) error { return nil }
+	clock := testutil.NewClock(testutil.FixedNow)
+	tr.clock, tr.wait = clock.Now, clock.Wait
 	var wg sync.WaitGroup
 	for i := 0; i < 8; i++ {
 		wg.Add(1)

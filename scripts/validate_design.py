@@ -101,17 +101,25 @@ def policy_hash(policy, catalog, exceptions):
 
 def validate_policy(policy):
     validate_schema(policy, "policy")
-    for provider in ("endoflife_date", "deps_dev"):
+    for provider in ("endoflife_date", "deps_dev", "npm", "pypi", "rubygems"):
         url = urlsplit(policy["sources"][provider]["base_url"])
         ensure(
             url.scheme == "https"
-            and url.hostname in policy["network"]["allowed_hosts"]
+            and url.hostname
+            and (
+                not policy["sources"][provider]["enabled"]
+                or url.hostname in policy["network"]["allowed_hosts"]
+            )
             and not url.username
             and not url.password
             and not url.query
             and not url.fragment,
             f"{provider}: base URL must use an explicitly allowed HTTPS host",
         )
+    ensure(
+        set(policy["network"]["host_limits"]).issubset(policy["network"]["allowed_hosts"]),
+        "host_limits must use explicitly allowed hosts",
+    )
     ensure(
         "STALE_RELEASE" not in policy["ci"]["fail_on_signals"]
         or policy["signals"]["stale_release_days"] is not None,
@@ -322,6 +330,9 @@ def validate_report(report, policy, catalog, exceptions, input_path):
     requested = set(policy["ci"]["fail_on_signals"])
     if policy["signals"]["deprecated"]:
         requested.add("DEPRECATED")
+    for flag in ("yanked", "archived", "quarantined"):
+        if policy["signals"][flag]:
+            requested.add(flag.upper())
     if policy["signals"]["stale_release_days"] is not None:
         requested.add("STALE_RELEASE")
     counts = {"EOL": 0, "SUPPORTED": 0, "UNKNOWN": 0}
