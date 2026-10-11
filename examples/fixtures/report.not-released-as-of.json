@@ -1,0 +1,101 @@
+{
+  "schema_version": "2.0",
+  "tool_version": "0.1.0",
+  "as_of": "2024-01-01",
+  "projection": false,
+  "generated_at": "2026-10-11T00:00:00Z",
+  "input_sha256": "432833ae712c4cfe1914581f56635f6a9dda9a5c94f13608681390381fe44799",
+  "policy_hash": "2d80202c789c627c01c6e46a2f375efd3c67f7f92dbd6619a749b2c66b08a075",
+  "summary": {
+    "in_scope": 1,
+    "excluded": 0,
+    "eol": 0,
+    "supported": 0,
+    "unknown": 1,
+    "assessment_coverage": 0.0,
+    "provider_error_count": 0,
+    "ci_failure_count": 0
+  },
+  "ci_gate": {
+    "passed": true,
+    "violation_codes": [],
+    "incomplete": false
+  },
+  "results": [
+    {
+      "source_ref": "component-1",
+      "purl": "pkg:gem/example@2.4.7",
+      "name": "example",
+      "version": "2.4.7",
+      "version_verification": {
+        "status": "NOT_RELEASED_AS_OF",
+        "provider_id": "official_catalog",
+        "source_url": "https://example.org/releases/2.4.7",
+        "checked_at": "2026-10-11T00:00:00Z",
+        "published_at": "2024-04-12T09:00:00Z",
+        "reason_code": "NOT_RELEASED_AS_OF"
+      },
+      "lifecycle": "UNKNOWN",
+      "confidence": null,
+      "eol_effective_date": null,
+      "matched_cycle": null,
+      "signals": [],
+      "signal_evaluations": [
+        {
+          "type": "DEPRECATED",
+          "status": "UNKNOWN",
+          "provider_id": null,
+          "source_url": null,
+          "checked_at": null,
+          "reason_code": "NO_CAPABILITY"
+        },
+        {
+          "type": "STALE_RELEASE",
+          "status": "UNKNOWN",
+          "provider_id": null,
+          "source_url": null,
+          "checked_at": null,
+          "reason_code": "NO_CAPABILITY"
+        }
+      ],
+      "selected_evidence_ids": [],
+      "notices": [],
+      "unknown_reasons": [
+        "NOT_RELEASED_AS_OF"
+      ],
+      "rule_ids": [
+        "R-011"
+      ],
+      "evidence": [
+        {
+          "id": "example-security-2.4",
+          "provider_id": "official_catalog",
+          "source_class": "OFFICIAL",
+          "claim": "UPSTREAM_SECURITY_WINDOW",
+          "package_purl": "pkg:gem/example",
+          "product_slug": null,
+          "matched_cycle": "2.4",
+          "support_scope": "upstream_security",
+          "support_start_date": "2024-04-12",
+          "eol_effective_date": "2026-12-01",
+          "source_url": "https://example.org/support/2.4",
+          "source_field": "entries[].eol_effective_date",
+          "observed_at": "2026-10-11T00:00:00Z",
+          "source_updated_at": null,
+          "reviewed_at": "2026-10-01",
+          "valid_until": "2026-12-01",
+          "raw_payload_hash": "1efab3766afc4e5acf13cb9e944ce2449027c5d3b44d90fa3fb8c6c7ad9d5fdf",
+          "confidence": "HIGH",
+          "rule_id": "R-002",
+          "general_eol_review": null,
+          "superseded_by": null,
+          "supersession_source_url": null
+        }
+      ],
+      "diagnostics": [],
+      "incomplete": false,
+      "ci_failure": false,
+      "exception_applied": false
+    }
+  ]
+}

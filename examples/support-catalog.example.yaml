@@ -1,0 +1,46 @@
+# All products, dates, URLs and reviews here are fictional fixtures, not production support data.
+schema_version: 2
+entries:
+  - id: "example-security-2.4"
+    package_purl: "pkg:gem/example"
+    matched_cycle: "2.4"
+    match: "numeric_segment_prefix"
+    versions: []
+    claim: "UPSTREAM_SECURITY_WINDOW"
+    support_scope: "upstream_security"
+    support_start_date: "2024-04-12"
+    eol_effective_date: "2026-12-01"
+    evidence_url: "https://example.org/support/2.4"
+    support_authority: "example-upstream"
+    reviewed_at: "2026-10-01"
+    valid_until: "2026-12-01"
+    superseded_by: null
+    supersession_source_url: null
+verified_versions:
+  - package_purl: "pkg:gem/example@2.4.7"
+    published_at: "2024-04-12T09:00:00Z"
+    source_url: "https://example.org/releases/2.4.7"
+    reviewed_at: "2026-10-01"
+    valid_until: "2026-12-01"
+  - package_purl: "pkg:gem/legacy-example@1.0.2"
+    published_at: "2018-04-12T09:00:00Z"
+    source_url: "https://example.org/legacy/releases/1.0.2"
+    reviewed_at: "2026-10-01"
+    valid_until: "2026-12-01"
+general_eol_reviews:
+  - id: "example-general-eol-2.4"
+    product_slug: "example"
+    package_purl: "pkg:gem/example"
+    matched_cycle: "2.4"
+    support_scope: "upstream_security"
+    evidence_url: "https://example.org/support/2.4"
+    reviewed_at: "2026-10-01"
+    valid_until: "2026-12-01"
+  - id: "legacy-example-general-eol-1.0"
+    product_slug: "legacy-example"
+    package_purl: "pkg:gem/legacy-example"
+    matched_cycle: "1.0"
+    support_scope: "upstream_security"
+    evidence_url: "https://example.org/legacy/support/1.0"
+    reviewed_at: "2026-10-01"
+    valid_until: "2026-12-01"

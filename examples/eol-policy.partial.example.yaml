@@ -1,0 +1,9 @@
+# Partial configuration; merge into built-in defaults, then validate effective policy.
+schema_version: 2
+ci:
+  fail_on_statuses:
+    - "EOL"
+  min_confidence: "MEDIUM"
+  fail_on_signals: []
+  fail_on_incomplete_scan: true
+  max_unknown_ratio: 0.25

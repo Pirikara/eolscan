@@ -1,0 +1,52 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:eolscan:schema:2:exceptions",
+  "type": "object",
+  "properties": {
+    "schema_version": {
+      "const": 2
+    },
+    "exceptions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "package_purl": {
+            "type": "string",
+            "pattern": "^pkg:(gem|npm|pypi|maven|golang|cargo|nuget)/[^@?#\\s]+@[^@?#\\s]+(?:\\?[^#\\s]+)?(?:#[^\\s]+)?$"
+          },
+          "suppress": {
+            "const": [
+              "CI_FAILURE"
+            ]
+          },
+          "reason": {
+            "type": "string",
+            "minLength": 1
+          },
+          "owner": {
+            "type": "string",
+            "minLength": 1
+          },
+          "expires_on": {
+            "type": "string",
+            "format": "date"
+          }
+        },
+        "required": [
+          "package_purl",
+          "suppress",
+          "reason",
+          "owner",
+          "expires_on"
+        ],
+        "additionalProperties": false
+      }
+    }
+  },
+  "required": [
+    "schema_version",
+    "exceptions"
+  ],
+  "additionalProperties": false
+}

@@ -1,0 +1,110 @@
+{
+  "schema_version": "2.0",
+  "tool_version": "0.1.0",
+  "as_of": "2026-10-11",
+  "projection": false,
+  "generated_at": "2026-10-11T00:00:00Z",
+  "input_sha256": "466e996234a1c394fb2a964bb6482461aa3226cd81b66d3d2b3ca7ac16a32be6",
+  "policy_hash": "2d80202c789c627c01c6e46a2f375efd3c67f7f92dbd6619a749b2c66b08a075",
+  "summary": {
+    "in_scope": 1,
+    "excluded": 0,
+    "eol": 1,
+    "supported": 0,
+    "unknown": 0,
+    "assessment_coverage": 1.0,
+    "provider_error_count": 0,
+    "ci_failure_count": 0
+  },
+  "ci_gate": {
+    "passed": true,
+    "violation_codes": [],
+    "incomplete": false
+  },
+  "results": [
+    {
+      "source_ref": "component-1",
+      "purl": "pkg:gem/legacy-example@1.0.2",
+      "name": "legacy-example",
+      "version": "1.0.2",
+      "version_verification": {
+        "status": "VERIFIED",
+        "provider_id": "official_catalog",
+        "source_url": "https://example.org/legacy/releases/1.0.2",
+        "checked_at": "2026-10-11T00:00:00Z",
+        "published_at": "2018-04-12T09:00:00Z",
+        "reason_code": null
+      },
+      "lifecycle": "EOL",
+      "confidence": "MEDIUM",
+      "eol_effective_date": "2026-10-01",
+      "matched_cycle": "1.0",
+      "signals": [],
+      "signal_evaluations": [
+        {
+          "type": "DEPRECATED",
+          "status": "UNKNOWN",
+          "provider_id": null,
+          "source_url": null,
+          "checked_at": null,
+          "reason_code": "NO_CAPABILITY"
+        },
+        {
+          "type": "STALE_RELEASE",
+          "status": "UNKNOWN",
+          "provider_id": null,
+          "source_url": null,
+          "checked_at": null,
+          "reason_code": "NO_CAPABILITY"
+        }
+      ],
+      "selected_evidence_ids": [
+        "endoflife-date-legacy-example-1.0"
+      ],
+      "notices": [],
+      "unknown_reasons": [],
+      "rule_ids": [
+        "R-003"
+      ],
+      "evidence": [
+        {
+          "id": "endoflife-date-legacy-example-1.0",
+          "provider_id": "endoflife_date",
+          "source_class": "CURATED_DATABASE",
+          "claim": "GENERAL_EOL_END",
+          "package_purl": "pkg:gem/legacy-example",
+          "product_slug": "legacy-example",
+          "matched_cycle": "1.0",
+          "support_scope": "general_eol",
+          "support_start_date": null,
+          "eol_effective_date": "2026-10-01",
+          "source_url": "https://endoflife.date/legacy-example",
+          "source_field": "result.releases[].eolFrom",
+          "observed_at": "2026-10-11T00:00:00Z",
+          "source_updated_at": null,
+          "reviewed_at": null,
+          "valid_until": null,
+          "raw_payload_hash": null,
+          "confidence": "MEDIUM",
+          "rule_id": "R-003",
+          "general_eol_review": {
+            "id": "legacy-example-general-eol-1.0",
+            "product_slug": "legacy-example",
+            "package_purl": "pkg:gem/legacy-example",
+            "matched_cycle": "1.0",
+            "support_scope": "upstream_security",
+            "evidence_url": "https://example.org/legacy/support/1.0",
+            "reviewed_at": "2026-10-01",
+            "valid_until": "2026-12-01"
+          },
+          "superseded_by": null,
+          "supersession_source_url": null
+        }
+      ],
+      "diagnostics": [],
+      "incomplete": false,
+      "ci_failure": false,
+      "exception_applied": false
+    }
+  ]
+}

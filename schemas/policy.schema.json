@@ -1,0 +1,402 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:eolscan:schema:2:policy",
+  "type": "object",
+  "properties": {
+    "schema_version": {
+      "const": 2
+    },
+    "input": {
+      "type": "object",
+      "properties": {
+        "include_component_types": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "uniqueItems": true
+        },
+        "include_metadata_component": {
+          "type": "boolean"
+        },
+        "max_input_bytes": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "max_components": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "max_json_depth": {
+          "type": "integer",
+          "minimum": 1
+        }
+      },
+      "required": [
+        "include_component_types",
+        "include_metadata_component",
+        "max_input_bytes",
+        "max_components",
+        "max_json_depth"
+      ],
+      "additionalProperties": false
+    },
+    "sources": {
+      "type": "object",
+      "properties": {
+        "official_catalog": {
+          "type": "object",
+          "properties": {
+            "enabled": {
+              "type": "boolean"
+            },
+            "path": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "minLength": 1
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            }
+          },
+          "required": [
+            "enabled",
+            "path"
+          ],
+          "additionalProperties": false
+        },
+        "endoflife_date": {
+          "type": "object",
+          "properties": {
+            "enabled": {
+              "type": "boolean"
+            },
+            "base_url": {
+              "type": "string",
+              "format": "uri",
+              "pattern": "^https://[^/?#@]+(?:[/?#]|$)"
+            },
+            "match_purl_exactly": {
+              "const": true
+            }
+          },
+          "required": [
+            "enabled",
+            "base_url",
+            "match_purl_exactly"
+          ],
+          "additionalProperties": false
+        },
+        "deps_dev": {
+          "type": "object",
+          "properties": {
+            "enabled": {
+              "type": "boolean"
+            },
+            "base_url": {
+              "type": "string",
+              "format": "uri",
+              "pattern": "^https://[^/?#@]+(?:[/?#]|$)"
+            }
+          },
+          "required": [
+            "enabled",
+            "base_url"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "official_catalog",
+        "endoflife_date",
+        "deps_dev"
+      ],
+      "additionalProperties": false
+    },
+    "version_verification": {
+      "type": "object",
+      "properties": {
+        "mode": {
+          "const": "required"
+        },
+        "sources": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": [
+              "deps_dev",
+              "official_catalog"
+            ]
+          },
+          "minItems": 1,
+          "uniqueItems": true
+        }
+      },
+      "required": [
+        "mode",
+        "sources"
+      ],
+      "additionalProperties": false
+    },
+    "signals": {
+      "type": "object",
+      "properties": {
+        "deprecated": {
+          "type": "boolean"
+        },
+        "stale_release_days": {
+          "anyOf": [
+            {
+              "type": "integer",
+              "minimum": 1
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "deprecated",
+        "stale_release_days"
+      ],
+      "additionalProperties": false
+    },
+    "notices": {
+      "type": "object",
+      "properties": {
+        "eol_soon_days": {
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "required": [
+        "eol_soon_days"
+      ],
+      "additionalProperties": false
+    },
+    "decision": {
+      "type": "object",
+      "properties": {
+        "support_scope": {
+          "const": "upstream_security"
+        },
+        "max_evidence_age_days": {
+          "type": "integer",
+          "minimum": 1
+        }
+      },
+      "required": [
+        "support_scope",
+        "max_evidence_age_days"
+      ],
+      "additionalProperties": false
+    },
+    "network": {
+      "type": "object",
+      "properties": {
+        "allowed_hosts": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^[a-z0-9](?:[a-z0-9.-]*[a-z0-9])?$"
+          },
+          "minItems": 1,
+          "uniqueItems": true
+        },
+        "timeout_seconds": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "retries": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "max_concurrency": {
+          "type": "integer",
+          "minimum": 1
+        }
+      },
+      "required": [
+        "allowed_hosts",
+        "timeout_seconds",
+        "retries",
+        "max_concurrency"
+      ],
+      "additionalProperties": false
+    },
+    "cache": {
+      "type": "object",
+      "properties": {
+        "enabled": {
+          "type": "boolean"
+        },
+        "positive_ttl_hours": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "negative_ttl_hours": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        }
+      },
+      "required": [
+        "enabled",
+        "positive_ttl_hours",
+        "negative_ttl_hours"
+      ],
+      "additionalProperties": false
+    },
+    "ci": {
+      "type": "object",
+      "properties": {
+        "fail_on_statuses": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": [
+              "EOL",
+              "UNKNOWN"
+            ]
+          },
+          "uniqueItems": true
+        },
+        "min_confidence": {
+          "type": "string",
+          "enum": [
+            "HIGH",
+            "MEDIUM"
+          ]
+        },
+        "fail_on_signals": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": [
+              "DEPRECATED",
+              "ARCHIVED",
+              "RETRACTED",
+              "QUARANTINED",
+              "STALE_RELEASE",
+              "STALE_REPOSITORY"
+            ]
+          },
+          "uniqueItems": true
+        },
+        "fail_on_incomplete_scan": {
+          "type": "boolean"
+        },
+        "max_unknown_ratio": {
+          "anyOf": [
+            {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "fail_on_statuses",
+        "min_confidence",
+        "fail_on_signals",
+        "fail_on_incomplete_scan",
+        "max_unknown_ratio"
+      ],
+      "additionalProperties": false
+    },
+    "exceptions": {
+      "type": "object",
+      "properties": {
+        "path": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "path"
+      ],
+      "additionalProperties": false
+    },
+    "output": {
+      "type": "object",
+      "properties": {
+        "include_unknown": {
+          "type": "boolean"
+        },
+        "include_evidence": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "include_unknown",
+        "include_evidence"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "required": [
+    "schema_version",
+    "input",
+    "sources",
+    "version_verification",
+    "signals",
+    "notices",
+    "decision",
+    "network",
+    "cache",
+    "ci",
+    "exceptions",
+    "output"
+  ],
+  "additionalProperties": false,
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "sources": {
+            "properties": {
+              "official_catalog": {
+                "properties": {
+                  "enabled": {
+                    "const": true
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "sources": {
+            "properties": {
+              "official_catalog": {
+                "properties": {
+                  "path": {
+                    "type": "string",
+                    "minLength": 1
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  ]
+}

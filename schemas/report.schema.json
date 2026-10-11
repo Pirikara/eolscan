@@ -1,0 +1,438 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:eolscan:schema:2:report",
+  "type": "object",
+  "properties": {
+    "schema_version": {
+      "const": "2.0"
+    },
+    "tool_version": {
+      "type": "string",
+      "minLength": 1
+    },
+    "as_of": {
+      "type": "string",
+      "format": "date"
+    },
+    "projection": {
+      "type": "boolean"
+    },
+    "generated_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "input_sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "policy_hash": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "summary": {
+      "type": "object",
+      "properties": {
+        "in_scope": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "excluded": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "eol": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "supported": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "unknown": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "assessment_coverage": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "provider_error_count": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "ci_failure_count": {
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "required": [
+        "in_scope",
+        "excluded",
+        "eol",
+        "supported",
+        "unknown",
+        "assessment_coverage",
+        "provider_error_count",
+        "ci_failure_count"
+      ],
+      "additionalProperties": false
+    },
+    "ci_gate": {
+      "type": "object",
+      "properties": {
+        "passed": {
+          "type": "boolean"
+        },
+        "violation_codes": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": [
+              "COMPONENT_POLICY_VIOLATION",
+              "MAX_UNKNOWN_RATIO_EXCEEDED",
+              "INCOMPLETE_SCAN"
+            ]
+          },
+          "uniqueItems": true
+        },
+        "incomplete": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "passed",
+        "violation_codes",
+        "incomplete"
+      ],
+      "additionalProperties": false,
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "passed": {
+                "const": false
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "violation_codes": {
+                "minItems": 1
+              }
+            }
+          },
+          "else": {
+            "properties": {
+              "violation_codes": {
+                "maxItems": 0
+              }
+            }
+          }
+        }
+      ]
+    },
+    "results": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "source_ref": {
+            "type": "string",
+            "minLength": 1
+          },
+          "purl": {
+            "anyOf": [
+              {
+                "type": "string",
+                "minLength": 1
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "name": {
+            "type": "string",
+            "minLength": 1
+          },
+          "version": {
+            "anyOf": [
+              {
+                "type": "string",
+                "minLength": 1
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "version_verification": {
+            "$ref": "urn:eolscan:schema:2:common#/$defs/version_verification"
+          },
+          "lifecycle": {
+            "type": "string",
+            "enum": [
+              "EOL",
+              "SUPPORTED",
+              "UNKNOWN"
+            ]
+          },
+          "confidence": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": [
+                  "HIGH",
+                  "MEDIUM"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "eol_effective_date": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "matched_cycle": {
+            "anyOf": [
+              {
+                "type": "string",
+                "minLength": 1
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "signals": {
+            "type": "array",
+            "items": {
+              "$ref": "urn:eolscan:schema:2:common#/$defs/signal_evidence"
+            }
+          },
+          "signal_evaluations": {
+            "type": "array",
+            "items": {
+              "$ref": "urn:eolscan:schema:2:common#/$defs/signal_evaluation"
+            }
+          },
+          "selected_evidence_ids": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            },
+            "uniqueItems": true
+          },
+          "notices": {
+            "type": "array",
+            "items": {
+              "$ref": "urn:eolscan:schema:2:common#/$defs/notice"
+            }
+          },
+          "unknown_reasons": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "enum": [
+                "MISSING_PURL",
+                "INVALID_PURL",
+                "VERSION_UNRESOLVED",
+                "VERSION_CONFLICT",
+                "VERSION_NOT_FOUND_IN_INDEX",
+                "VERSION_UNVERIFIED",
+                "NOT_RELEASED_AS_OF",
+                "PUBLICATION_IN_FUTURE",
+                "PRIVATE_SOURCE_UNSUPPORTED",
+                "UNSUPPORTED_ECOSYSTEM",
+                "AMBIGUOUS_IDENTITY",
+                "AMBIGUOUS_CYCLE",
+                "GENERAL_EOL_ONLY",
+                "GENERAL_EOL_UNREVIEWED",
+                "NO_LIFECYCLE_EVIDENCE",
+                "STALE_EVIDENCE",
+                "CONFLICT",
+                "SOURCE_ERROR"
+              ]
+            },
+            "uniqueItems": true
+          },
+          "rule_ids": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "pattern": "^R-[0-9]{3}$"
+            },
+            "uniqueItems": true
+          },
+          "evidence": {
+            "type": "array",
+            "items": {
+              "$ref": "urn:eolscan:schema:2:common#/$defs/lifecycle_evidence"
+            }
+          },
+          "diagnostics": {
+            "type": "array",
+            "items": {
+              "$ref": "urn:eolscan:schema:2:common#/$defs/diagnostic"
+            }
+          },
+          "incomplete": {
+            "type": "boolean"
+          },
+          "ci_failure": {
+            "type": "boolean"
+          },
+          "exception_applied": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "source_ref",
+          "purl",
+          "name",
+          "version",
+          "version_verification",
+          "lifecycle",
+          "confidence",
+          "eol_effective_date",
+          "matched_cycle",
+          "signals",
+          "signal_evaluations",
+          "selected_evidence_ids",
+          "notices",
+          "unknown_reasons",
+          "rule_ids",
+          "evidence",
+          "diagnostics",
+          "incomplete",
+          "ci_failure",
+          "exception_applied"
+        ],
+        "additionalProperties": false,
+        "allOf": [
+          {
+            "if": {
+              "properties": {
+                "lifecycle": {
+                  "const": "UNKNOWN"
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "confidence": {
+                  "type": "null"
+                },
+                "eol_effective_date": {
+                  "type": "null"
+                },
+                "matched_cycle": {
+                  "type": "null"
+                },
+                "unknown_reasons": {
+                  "minItems": 1
+                },
+                "selected_evidence_ids": {
+                  "maxItems": 0
+                },
+                "notices": {
+                  "maxItems": 0
+                }
+              }
+            },
+            "else": {
+              "properties": {
+                "purl": {
+                  "type": "string",
+                  "pattern": "^pkg:(gem|npm|pypi|maven|golang|cargo|nuget)/[^@?#\\s]+@[^@?#\\s]+(?:\\?[^#\\s]+)?(?:#[^\\s]+)?$"
+                },
+                "version": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "confidence": {
+                  "type": "string",
+                  "enum": [
+                    "HIGH",
+                    "MEDIUM"
+                  ]
+                },
+                "eol_effective_date": {
+                  "type": "string",
+                  "format": "date"
+                },
+                "matched_cycle": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "unknown_reasons": {
+                  "maxItems": 0
+                },
+                "selected_evidence_ids": {
+                  "minItems": 1
+                },
+                "evidence": {
+                  "minItems": 1
+                },
+                "version_verification": {
+                  "properties": {
+                    "status": {
+                      "const": "VERIFIED"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "lifecycle": {
+                  "const": "SUPPORTED"
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "confidence": {
+                  "const": "HIGH"
+                }
+              }
+            },
+            "else": {
+              "properties": {
+                "notices": {
+                  "maxItems": 0
+                }
+              }
+            }
+          }
+        ]
+      }
+    }
+  },
+  "required": [
+    "schema_version",
+    "tool_version",
+    "as_of",
+    "projection",
+    "generated_at",
+    "input_sha256",
+    "policy_hash",
+    "summary",
+    "ci_gate",
+    "results"
+  ],
+  "additionalProperties": false
+}

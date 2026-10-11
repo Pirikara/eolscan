@@ -1,0 +1,119 @@
+{
+  "schema_version": "2.0",
+  "tool_version": "0.1.0",
+  "as_of": "2026-10-11",
+  "projection": false,
+  "generated_at": "2026-10-11T00:00:00Z",
+  "input_sha256": "432833ae712c4cfe1914581f56635f6a9dda9a5c94f13608681390381fe44799",
+  "policy_hash": "6c8d8ffa03c17c6eb50dd399783864f018a2024a89966e874f2cd8c068aa91d4",
+  "summary": {
+    "in_scope": 1,
+    "excluded": 0,
+    "eol": 0,
+    "supported": 1,
+    "unknown": 0,
+    "assessment_coverage": 1.0,
+    "provider_error_count": 0,
+    "ci_failure_count": 0
+  },
+  "ci_gate": {
+    "passed": false,
+    "violation_codes": [
+      "INCOMPLETE_SCAN"
+    ],
+    "incomplete": true
+  },
+  "results": [
+    {
+      "source_ref": "component-1",
+      "purl": "pkg:gem/example@2.4.7",
+      "name": "example",
+      "version": "2.4.7",
+      "version_verification": {
+        "status": "VERIFIED",
+        "provider_id": "official_catalog",
+        "source_url": "https://example.org/releases/2.4.7",
+        "checked_at": "2026-10-11T00:00:00Z",
+        "published_at": "2024-04-12T09:00:00Z",
+        "reason_code": null
+      },
+      "lifecycle": "SUPPORTED",
+      "confidence": "HIGH",
+      "eol_effective_date": "2026-12-01",
+      "matched_cycle": "2.4",
+      "signals": [],
+      "signal_evaluations": [
+        {
+          "type": "DEPRECATED",
+          "status": "UNKNOWN",
+          "provider_id": null,
+          "source_url": null,
+          "checked_at": null,
+          "reason_code": "NO_CAPABILITY"
+        },
+        {
+          "type": "STALE_RELEASE",
+          "status": "UNKNOWN",
+          "provider_id": "deps_dev",
+          "source_url": "https://api.deps.dev/v3/systems/RUBYGEMS/packages/example",
+          "checked_at": "2026-10-11T00:00:00Z",
+          "reason_code": "PUBLISHED_AT_MISSING"
+        }
+      ],
+      "selected_evidence_ids": [
+        "example-security-2.4"
+      ],
+      "notices": [
+        {
+          "type": "EOL_SOON",
+          "days_remaining": 51,
+          "evidence_id": "example-security-2.4",
+          "rule_id": "R-009"
+        }
+      ],
+      "unknown_reasons": [],
+      "rule_ids": [
+        "R-002",
+        "R-009"
+      ],
+      "evidence": [
+        {
+          "id": "example-security-2.4",
+          "provider_id": "official_catalog",
+          "source_class": "OFFICIAL",
+          "claim": "UPSTREAM_SECURITY_WINDOW",
+          "package_purl": "pkg:gem/example",
+          "product_slug": null,
+          "matched_cycle": "2.4",
+          "support_scope": "upstream_security",
+          "support_start_date": "2024-04-12",
+          "eol_effective_date": "2026-12-01",
+          "source_url": "https://example.org/support/2.4",
+          "source_field": "entries[].eol_effective_date",
+          "observed_at": "2026-10-11T00:00:00Z",
+          "source_updated_at": null,
+          "reviewed_at": "2026-10-01",
+          "valid_until": "2026-12-01",
+          "raw_payload_hash": "1efab3766afc4e5acf13cb9e944ce2449027c5d3b44d90fa3fb8c6c7ad9d5fdf",
+          "confidence": "HIGH",
+          "rule_id": "R-002",
+          "general_eol_review": null,
+          "superseded_by": null,
+          "supersession_source_url": null
+        }
+      ],
+      "diagnostics": [
+        {
+          "code": "PUBLISHED_AT_MISSING",
+          "provider_id": "deps_dev",
+          "http_status": 200,
+          "retryable": false,
+          "message": "Complete release publication dates are unavailable; required STALE_RELEASE cannot be evaluated."
+        }
+      ],
+      "incomplete": true,
+      "ci_failure": false,
+      "exception_applied": false
+    }
+  ]
+}

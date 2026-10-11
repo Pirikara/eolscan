@@ -1,0 +1,142 @@
+{
+  "schema_version": "2.0",
+  "tool_version": "0.1.0",
+  "as_of": "2026-10-11",
+  "projection": false,
+  "generated_at": "2026-10-11T00:00:00Z",
+  "input_sha256": "432833ae712c4cfe1914581f56635f6a9dda9a5c94f13608681390381fe44799",
+  "policy_hash": "02b9151442194e9a8f75c423a20c14412872ff4bafb2da6a87cb3bb776b5a59b",
+  "summary": {
+    "in_scope": 1,
+    "excluded": 0,
+    "eol": 0,
+    "supported": 0,
+    "unknown": 1,
+    "assessment_coverage": 0.0,
+    "provider_error_count": 0,
+    "ci_failure_count": 0
+  },
+  "ci_gate": {
+    "passed": true,
+    "violation_codes": [],
+    "incomplete": false
+  },
+  "results": [
+    {
+      "source_ref": "component-1",
+      "purl": "pkg:gem/example@2.4.7",
+      "name": "example",
+      "version": "2.4.7",
+      "version_verification": {
+        "status": "VERIFIED",
+        "provider_id": "official_catalog",
+        "source_url": "https://example.org/releases/2.4.7",
+        "checked_at": "2026-10-11T00:00:00Z",
+        "published_at": "2024-04-12T09:00:00Z",
+        "reason_code": null
+      },
+      "lifecycle": "UNKNOWN",
+      "confidence": null,
+      "eol_effective_date": null,
+      "matched_cycle": null,
+      "signals": [],
+      "signal_evaluations": [
+        {
+          "type": "DEPRECATED",
+          "status": "UNKNOWN",
+          "provider_id": null,
+          "source_url": null,
+          "checked_at": null,
+          "reason_code": "NO_CAPABILITY"
+        },
+        {
+          "type": "STALE_RELEASE",
+          "status": "UNKNOWN",
+          "provider_id": null,
+          "source_url": null,
+          "checked_at": null,
+          "reason_code": "NO_CAPABILITY"
+        }
+      ],
+      "selected_evidence_ids": [],
+      "notices": [],
+      "unknown_reasons": [
+        "NO_LIFECYCLE_EVIDENCE"
+      ],
+      "rule_ids": [
+        "R-006"
+      ],
+      "evidence": [
+        {
+          "id": "example-end-new",
+          "provider_id": "official_catalog",
+          "source_class": "OFFICIAL",
+          "claim": "UPSTREAM_SECURITY_END",
+          "package_purl": "pkg:gem/example",
+          "product_slug": null,
+          "matched_cycle": "2.4",
+          "support_scope": "upstream_security",
+          "support_start_date": null,
+          "eol_effective_date": "2026-12-01",
+          "source_url": "https://example.org/support/2.4-new",
+          "source_field": "entries[].eol_effective_date",
+          "observed_at": "2026-10-11T00:00:00Z",
+          "source_updated_at": null,
+          "reviewed_at": "2026-10-01",
+          "valid_until": "2026-12-01",
+          "raw_payload_hash": "ea88fc0933d6ec92675a55f67379ba420206ba805589b2c3c91e946461c71f48",
+          "confidence": "HIGH",
+          "rule_id": "R-001",
+          "general_eol_review": null,
+          "superseded_by": null,
+          "supersession_source_url": null
+        },
+        {
+          "id": "endoflife-date-example-2.4",
+          "provider_id": "endoflife_date",
+          "source_class": "CURATED_DATABASE",
+          "claim": "GENERAL_EOL_END",
+          "package_purl": "pkg:gem/example",
+          "product_slug": "example",
+          "matched_cycle": "2.4",
+          "support_scope": "general_eol",
+          "support_start_date": null,
+          "eol_effective_date": "2026-10-01",
+          "source_url": "https://endoflife.date/example",
+          "source_field": "result.releases[].eolFrom",
+          "observed_at": "2026-10-11T00:00:00Z",
+          "source_updated_at": null,
+          "reviewed_at": null,
+          "valid_until": null,
+          "raw_payload_hash": null,
+          "confidence": "MEDIUM",
+          "rule_id": "R-003",
+          "general_eol_review": {
+            "id": "example-general-eol-2.4",
+            "product_slug": "example",
+            "package_purl": "pkg:gem/example",
+            "matched_cycle": "2.4",
+            "support_scope": "upstream_security",
+            "evidence_url": "https://example.org/support/2.4",
+            "reviewed_at": "2026-10-01",
+            "valid_until": "2026-12-01"
+          },
+          "superseded_by": null,
+          "supersession_source_url": null
+        }
+      ],
+      "diagnostics": [
+        {
+          "code": "SOURCE_DISAGREEMENT",
+          "provider_id": "endoflife_date",
+          "http_status": null,
+          "retryable": false,
+          "message": "Lower-tier end date is earlier than the official end; do not fall back to EOL."
+        }
+      ],
+      "incomplete": false,
+      "ci_failure": false,
+      "exception_applied": false
+    }
+  ]
+}

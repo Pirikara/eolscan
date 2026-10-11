@@ -1,0 +1,101 @@
+{
+  "schema_version": "2.0",
+  "tool_version": "0.1.0",
+  "as_of": "2026-10-11",
+  "projection": false,
+  "generated_at": "2026-10-11T00:00:00Z",
+  "input_sha256": "709a56984c6eca0a764cb05def8ed4d412d18ef5ee8872007fd36168438214c9",
+  "policy_hash": "255580fcdfaed8f4ed5ef7ff2086ba5d712f0dbe4cdba8b18f6386b55f99cbaf",
+  "summary": {
+    "in_scope": 1,
+    "excluded": 0,
+    "eol": 0,
+    "supported": 0,
+    "unknown": 1,
+    "assessment_coverage": 0.0,
+    "provider_error_count": 0,
+    "ci_failure_count": 0
+  },
+  "ci_gate": {
+    "passed": true,
+    "violation_codes": [],
+    "incomplete": false
+  },
+  "results": [
+    {
+      "source_ref": "component-1",
+      "purl": "pkg:gem/unreviewed-example@3.1.0",
+      "name": "unreviewed-example",
+      "version": "3.1.0",
+      "version_verification": {
+        "status": "VERIFIED",
+        "provider_id": "deps_dev",
+        "source_url": "https://api.deps.dev/v3/systems/RUBYGEMS/packages/unreviewed-example/versions/3.1.0",
+        "checked_at": "2026-10-11T00:00:00Z",
+        "published_at": "2024-04-12T09:00:00Z",
+        "reason_code": null
+      },
+      "lifecycle": "UNKNOWN",
+      "confidence": null,
+      "eol_effective_date": null,
+      "matched_cycle": null,
+      "signals": [],
+      "signal_evaluations": [
+        {
+          "type": "DEPRECATED",
+          "status": "UNKNOWN",
+          "provider_id": null,
+          "source_url": null,
+          "checked_at": null,
+          "reason_code": "NO_CAPABILITY"
+        },
+        {
+          "type": "STALE_RELEASE",
+          "status": "UNKNOWN",
+          "provider_id": null,
+          "source_url": null,
+          "checked_at": null,
+          "reason_code": "NO_CAPABILITY"
+        }
+      ],
+      "selected_evidence_ids": [],
+      "notices": [],
+      "unknown_reasons": [
+        "GENERAL_EOL_UNREVIEWED"
+      ],
+      "rule_ids": [
+        "R-006"
+      ],
+      "evidence": [
+        {
+          "id": "endoflife-date-unreviewed-example-3.1",
+          "provider_id": "endoflife_date",
+          "source_class": "CURATED_DATABASE",
+          "claim": "GENERAL_EOL_END",
+          "package_purl": "pkg:gem/unreviewed-example",
+          "product_slug": "unreviewed-example",
+          "matched_cycle": "3.1",
+          "support_scope": "general_eol",
+          "support_start_date": null,
+          "eol_effective_date": "2026-10-01",
+          "source_url": "https://endoflife.date/unreviewed-example",
+          "source_field": "result.releases[].eolFrom",
+          "observed_at": "2026-10-11T00:00:00Z",
+          "source_updated_at": null,
+          "reviewed_at": null,
+          "valid_until": null,
+          "raw_payload_hash": null,
+          "confidence": "MEDIUM",
+          "rule_id": "R-003",
+          "general_eol_review": null,
+          "superseded_by": null,
+          "supersession_source_url": null
+        }
+      ],
+      "diagnostics": [],
+      "incomplete": false,
+      "ci_failure": false,
+      "exception_applied": false
+    }
+  ]
+}

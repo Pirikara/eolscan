@@ -1,0 +1,59 @@
+# Contract example; catalogue data is fictional when enabled.
+schema_version: 2
+input:
+  include_component_types:
+    - "library"
+    - "framework"
+    - "application"
+    - "operating-system"
+  include_metadata_component: false
+  max_input_bytes: 52428800
+  max_components: 100000
+  max_json_depth: 128
+sources:
+  official_catalog:
+    enabled: true
+    path: "./support-catalog.example.yaml"
+  endoflife_date:
+    enabled: true
+    base_url: "https://endoflife.date/api/v1"
+    match_purl_exactly: true
+  deps_dev:
+    enabled: true
+    base_url: "https://api.deps.dev/v3"
+version_verification:
+  mode: "required"
+  sources:
+    - "deps_dev"
+    - "official_catalog"
+signals:
+  deprecated: true
+  stale_release_days: 730
+notices:
+  eol_soon_days: 90
+decision:
+  support_scope: "upstream_security"
+  max_evidence_age_days: 30
+network:
+  allowed_hosts:
+    - "endoflife.date"
+    - "api.deps.dev"
+  timeout_seconds: 8
+  retries: 2
+  max_concurrency: 6
+cache:
+  enabled: false
+  positive_ttl_hours: 24
+  negative_ttl_hours: 6
+ci:
+  fail_on_statuses:
+    - "EOL"
+  min_confidence: "HIGH"
+  fail_on_signals: []
+  fail_on_incomplete_scan: false
+  max_unknown_ratio: null
+exceptions:
+  path: null
+output:
+  include_unknown: true
+  include_evidence: true

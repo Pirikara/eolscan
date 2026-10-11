@@ -1,0 +1,14 @@
+{
+  "bomFormat": "CycloneDX",
+  "specVersion": "1.6",
+  "version": 1,
+  "components": [
+    {
+      "type": "library",
+      "bom-ref": "component-1",
+      "name": "legacy-example",
+      "version": "1.0.2",
+      "purl": "pkg:gem/legacy-example@1.0.2"
+    }
+  ]
+}

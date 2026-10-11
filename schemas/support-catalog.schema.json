@@ -1,0 +1,225 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:eolscan:schema:2:support-catalog",
+  "type": "object",
+  "properties": {
+    "schema_version": {
+      "const": 2
+    },
+    "entries": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "package_purl": {
+            "type": "string",
+            "pattern": "^pkg:(gem|npm|pypi|maven|golang|cargo|nuget)/[^@?#\\s]+$"
+          },
+          "matched_cycle": {
+            "type": "string",
+            "minLength": 1
+          },
+          "match": {
+            "type": "string",
+            "enum": [
+              "numeric_segment_prefix",
+              "exact_versions"
+            ]
+          },
+          "versions": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            },
+            "uniqueItems": true
+          },
+          "claim": {
+            "type": "string",
+            "enum": [
+              "UPSTREAM_SECURITY_WINDOW",
+              "UPSTREAM_SECURITY_END"
+            ]
+          },
+          "support_scope": {
+            "const": "upstream_security"
+          },
+          "support_start_date": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "eol_effective_date": {
+            "type": "string",
+            "format": "date"
+          },
+          "evidence_url": {
+            "type": "string",
+            "format": "uri",
+            "pattern": "^https://[^/?#@]+(?:[/?#]|$)"
+          },
+          "support_authority": {
+            "type": "string",
+            "minLength": 1
+          },
+          "reviewed_at": {
+            "type": "string",
+            "format": "date"
+          },
+          "valid_until": {
+            "type": "string",
+            "format": "date"
+          },
+          "superseded_by": {
+            "anyOf": [
+              {
+                "type": "string",
+                "minLength": 1
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "supersession_source_url": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uri",
+                "pattern": "^https://[^/?#@]+(?:[/?#]|$)"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "required": [
+          "id",
+          "package_purl",
+          "matched_cycle",
+          "match",
+          "versions",
+          "claim",
+          "support_scope",
+          "support_start_date",
+          "eol_effective_date",
+          "evidence_url",
+          "support_authority",
+          "reviewed_at",
+          "valid_until",
+          "superseded_by",
+          "supersession_source_url"
+        ],
+        "additionalProperties": false,
+        "allOf": [
+          {
+            "if": {
+              "properties": {
+                "claim": {
+                  "const": "UPSTREAM_SECURITY_WINDOW"
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "support_start_date": {
+                  "type": "string",
+                  "format": "date"
+                }
+              }
+            },
+            "else": {
+              "properties": {
+                "support_start_date": {
+                  "type": "null"
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "match": {
+                  "const": "numeric_segment_prefix"
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "matched_cycle": {
+                  "type": "string",
+                  "pattern": "^[0-9]+(?:\\.[0-9]+)*$"
+                },
+                "versions": {
+                  "maxItems": 0
+                }
+              }
+            },
+            "else": {
+              "properties": {
+                "versions": {
+                  "minItems": 1
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "superseded_by": {
+                  "type": "string"
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "supersession_source_url": {
+                  "type": "string",
+                  "format": "uri",
+                  "pattern": "^https://[^/?#@]+(?:[/?#]|$)"
+                }
+              }
+            },
+            "else": {
+              "properties": {
+                "supersession_source_url": {
+                  "type": "null"
+                }
+              }
+            }
+          }
+        ]
+      }
+    },
+    "verified_versions": {
+      "type": "array",
+      "items": {
+        "$ref": "urn:eolscan:schema:2:common#/$defs/version_assertion"
+      }
+    },
+    "general_eol_reviews": {
+      "type": "array",
+      "items": {
+        "$ref": "urn:eolscan:schema:2:common#/$defs/general_eol_review"
+      }
+    }
+  },
+  "required": [
+    "schema_version",
+    "entries",
+    "verified_versions",
+    "general_eol_reviews"
+  ],
+  "additionalProperties": false
+}

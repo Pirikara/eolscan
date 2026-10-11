@@ -1,0 +1,9 @@
+# Fictional exception; does not change lifecycle or incomplete status.
+schema_version: 2
+exceptions:
+  - package_purl: "pkg:gem/example@2.4.7"
+    suppress:
+      - "CI_FAILURE"
+    reason: "Fictional migration ticket SEC-123"
+    owner: "application-security"
+    expires_on: "2026-12-31"
