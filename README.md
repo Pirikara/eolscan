@@ -1,10 +1,10 @@
 # eolscan
 
-eolscanは、SBOMを入力に、上流のセキュリティ修正サポートの終了状況を調べるGo CLIです。[v0.3の設計](docs/EOL_Checker_Design_v0.3.md)に対応しています。
+eolscan is a Go CLI that reads an SBOM and checks whether upstream security support has ended for its dependencies. It implements the [v0.3 design specification](docs/EOL_Checker_Design_v0.3.md).
 
-データベースは不要です。同じAPI照会は実行中のメモリにまとめます。ディスクキャッシュは既定で無効です。Go 1.24以上でビルドし、実行時は単一バイナリを使用します。
+No database is required. Repeated API queries share an in-memory result during each run, and disk caching is disabled by default. Build with Go 1.24 or later; the CLI runs as a single binary.
 
-## ビルドと実行
+## Build and run
 
 ```sh
 go build -o bin/eolscan .
@@ -16,37 +16,37 @@ cat sbom.cdx.json | ./bin/eolscan scan -i - -f json
 ./bin/eolscan providers list
 ```
 
-入力はCycloneDX JSON 1.4–1.7とSPDX 2.3 JSONです。PURLで識別し、gem、npm、pypi、maven、golang、cargo、nugetを扱います。版が欠けたコンポーネントも捨てず、UNKNOWNとして報告します。CycloneDXのmetadata.componentは既定で除外されます。
+Supported inputs are CycloneDX JSON 1.4–1.7 and SPDX 2.3 JSON. Packages are identified by PURL, with support for the gem, npm, pypi, maven, golang, cargo, and nuget ecosystems. Components without a version remain in the report as `UNKNOWN`. CycloneDX `metadata.component` is excluded by default.
 
-初期試作のCLI・出力との互換性はありません。新しいコマンドは `scan -i ...`、設定の契約版は2、JSONレポートは2.0です。Syft独自JSON、CPE、OS名の照合とレジストリ直接照会はこのMVPの範囲外です。Syftを使用する場合はCycloneDXまたはSPDX JSONを入力してください。
+Configuration uses schema version `2`, and JSON reports use version `2.0`. The CLI and output are incompatible with the initial prototype. Native Syft JSON, CPE matching, OS name matching, and direct registry queries are outside this MVP. When using Syft, provide CycloneDX or SPDX JSON.
 
-## 判定の意味
+## Understanding results
 
-| Lifecycle | 意味 |
+| Lifecycle | Meaning |
 | --- | --- |
-| `EOL` | 上流のセキュリティ修正サポート終了を確認 |
-| `SUPPORTED` | 公式の明示的なセキュリティサポート期間が評価日を含む |
-| `UNKNOWN` | 版の実在・公開日時・適用できるサポート根拠を十分に確認できない |
+| `EOL` | The end of upstream security support has been confirmed. |
+| `SUPPORTED` | An explicit official security support window includes the evaluation date. |
+| `UNKNOWN` | Package version existence, publication time, or applicable support evidence could not be sufficiently verified. |
 
-Lifecycleとメンテナンスシグナルは独立しています。非推奨や更新停止からEOLを断定しません。シグナルは `PRESENT / ABSENT / UNKNOWN` の3値で報告します。`EOL_SOON` はSUPPORTEDの終了予定から導くNoticeです。
+Lifecycle results and maintenance signals are evaluated separately. Deprecation or release inactivity alone cannot establish EOL. Signals use three states: `PRESENT / ABSENT / UNKNOWN`. `EOL_SOON` is a notice derived from the scheduled end of a `SUPPORTED` window.
 
-**既定のカタログと一般EOLレビューは0件です。** endoflife.dateの一般EOL日だけではEOL／SUPPORTEDを確定しません。レビューを登録していない通常のオンライン実行では、多くがUNKNOWNになります。
+**The default support catalog and general EOL reviews are empty.** A generic EOL date from endoflife.date alone cannot establish `EOL` or `SUPPORTED`. Many results will be `UNKNOWN` in an online scan without a reviewed catalog.
 
-| データ源 | 役割 |
+| Data source | Role |
 | --- | --- |
-| ローカルのサポートカタログ | レビュー済みの公式サポート期間・終了日、正確な版の公開日時、一般EOLの意味レビュー |
-| [endoflife.date API v1](https://endoflife.date/docs/api/v1/) | PURL索引を1回取得し、一致した製品の一般EOL日だけ取得 |
-| [deps.dev API v3](https://docs.deps.dev/api/v3/) | 完全一致する版と公開日時、取得できる非推奨情報と公開版一覧 |
+| Local support catalog | Reviewed official support windows and end dates, exact version publication times, and reviews of what generic EOL dates mean. |
+| [endoflife.date API v1](https://endoflife.date/docs/api/v1/) | Fetches the PURL index once, then fetches generic EOL dates for matched products. |
+| [deps.dev API v3](https://docs.deps.dev/api/v3/) | Verifies exact package versions and publication times, and supplies available deprecation information and version lists. |
 
-版がdeps.devの索引に見つからない場合はUNKNOWNです。公開日時が欠落した場合も、別の有効なローカル版証明がなければUNKNOWN／不完全です。RubyGemsを含む公開レジストリへの直接問い合わせは実装せず、公開レジストリ由来の情報をdeps.dev経由で参照します。
+A version absent from the deps.dev index is `UNKNOWN` unless a valid local version assertion verifies it. A missing publication time also produces `UNKNOWN` and an incomplete scan unless a valid local assertion provides it. Registry-derived information, including RubyGems data, is accessed through deps.dev; direct registry queries are not implemented.
 
-`DEPRECATED` は明示的なtrueを肯定根拠として使います。正常な否定確認は、npmで明示的なfalseが返る場合に限ります。他のエコシステムのfalseやフィールド欠落はUNKNOWNです。PyPIのproject status、Go retract、GitHubのArchivedなどは将来対応であり、CIで要求すると現状はUNKNOWN／不完全になります。
+`DEPRECATED` uses an explicit `true` as positive evidence. A confirmed negative result requires an explicit `false` for npm. For other ecosystems, `false` or a missing field produces `UNKNOWN`. PyPI project status, Go retract, and GitHub archived status are planned capabilities. Requiring them in CI currently produces `UNKNOWN` and an incomplete scan.
 
-`STALE_RELEASE` は公開日の揃った版一覧から評価日までの最新公開日を求めます。欠損や未来の評価日はUNKNOWNです。deps.devはGo／PyPIに収集範囲の制限を明記しているため、この2種類では完全な版一覧を前提とするSTALE_RELEASEの判定を保留します。
+`STALE_RELEASE` uses a version list with complete publication dates to find the latest release on or before the evaluation date. Missing dates or a future evaluation date produce `UNKNOWN`. Because deps.dev documents collection limits for Go and PyPI, eolscan cannot treat their version lists as complete and leaves this signal `UNKNOWN`.
 
-## カタログを使う
+## Using a support catalog
 
-設定はビルトイン既定値へ再帰マージできます。相対パスは設定ファイルの場所を基準に解決します。
+Policy files are recursively merged into the built-in defaults. Relative paths are resolved from the policy file's directory.
 
 ```yaml
 schema_version: 2
@@ -56,15 +56,15 @@ sources:
     path: ./support-catalog.yaml
 ```
 
-カタログは次の3配列を持ちます。完全な型と記載例は[サンプル](examples/support-catalog.example.yaml)と[Schema](schemas/support-catalog.schema.json)を参照してください。
+The catalog contains three arrays. See the [example](examples/support-catalog.example.yaml) and [schema](schemas/support-catalog.schema.json) for the full definitions.
 
-- `entries`：公式のSecurity WindowまたはSecurity End。適用系列、出典URL、レビュー日、有効期限を必須にします。
-- `verified_versions`：正確なversion付きPURLと公開日時。オフラインの版確認や、deps.devに情報がない版の代替に使います。
-- `general_eol_reviews`：製品slug・versionなしPURL・リリース系列・サポート範囲が完全一致する一般EOLの意味レビュー。
+- `entries`: Official security support windows or end dates. Each entry requires an applicable release series, source URL, review date, and expiry date.
+- `verified_versions`: Exact versioned PURLs and publication times. These enable offline version verification and provide a fallback for versions absent from deps.dev.
+- `general_eol_reviews`: Reviews of generic EOL dates, matched exactly by product slug, unversioned PURL, release series, and support scope.
 
-公式根拠はHIGH、レビュー済み一般EOLはMEDIUMです。未レビュー／期限切れの一般EOLはEvidenceへ残し、判定には使いません。一般EOLが未来でもSUPPORTEDにはしません。同格の終了日が違えば、未来の根拠も含めてUNKNOWN／CONFLICTにします。正式な更新・撤回の証明がある根拠だけを比較から除外できます。
+Official evidence has `HIGH` confidence; reviewed generic EOL evidence has `MEDIUM` confidence. Unreviewed or expired generic EOL evidence remains in the report but is excluded from lifecycle decisions. A future generic EOL date cannot establish `SUPPORTED`. Conflicting end dates within the highest applicable tier produce `UNKNOWN / CONFLICT`, including conflicts involving future dates. Evidence is excluded from conflict detection only when a formal replacement or withdrawal has been verified.
 
-同梱の製品・レビュー・版証明は**架空の検証データ**です。動作例：
+The bundled products, reviews, and version assertions are **fictional test data**. Try the offline example:
 
 ```sh
 ./bin/eolscan scan \
@@ -73,11 +73,11 @@ sources:
   --offline --as-of 2026-10-11
 ```
 
-この例はSUPPORTED/HIGHを返します。サンプルのレビュー・版証明は2026-12-01まで有効です。期限の評価には実行日のUTC日付を使うため、期限後に過去の `--as-of` を指定しても復活しません。実運用のカタログには、確認した実際の根拠を登録してください。
+This returns `SUPPORTED / HIGH`. The example reviews and version assertions are valid through 2026-12-01. Expiry is checked against the execution date in UTC, so a historical `--as-of` date cannot restore expired evidence. Populate production catalogs with evidence you have actually verified.
 
-## CIで使う
+## Using eolscan in CI
 
-既定はreport-firstです。EOL/HIGHでのみ失敗し、UNKNOWN、EOL/MEDIUM、API障害による不完全はレポートに残します。
+The default policy is report-first: only `EOL / HIGH` fails CI. `UNKNOWN` results, `EOL / MEDIUM` results, and incomplete scans caused by API failures remain visible in the report.
 
 ```sh
 ./bin/eolscan scan \
@@ -86,9 +86,9 @@ sources:
   -f json -o report.json
 ```
 
-Strict設定はMEDIUM以上のEOL、不完全スキャン、UNKNOWN率が0.25を超えた場合に失敗します。一般EOLの意味レビューや公式根拠は、Strict設定でも別途カタログへ登録する必要があります。
+The strict policy fails for EOL with at least `MEDIUM` confidence, incomplete scans, or an `UNKNOWN` ratio above 0.25. It still requires you to supply reviewed generic EOL mappings or official support evidence in a catalog.
 
-CIで使用するシグナルの照会は必須です。
+Signals included in CI failure conditions require a successful evaluation.
 
 ```yaml
 schema_version: 2
@@ -97,32 +97,32 @@ ci:
   fail_on_incomplete_scan: true
 ```
 
-この設定で更新停止を確認した場合はexit 1、正常な否定確認ならexit 0、照会できない場合は不完全としてexit 3になります。他の明確なポリシー違反もあればexit 1を優先します。
+With this policy, a confirmed stale release exits with code `1`, a confirmed absence exits with code `0`, and an unavailable evaluation makes the scan incomplete and exits with code `3`. If another explicit policy violation is present, code `1` takes precedence.
 
-| Exit | 意味 |
+| Exit code | Meaning |
 | --- | --- |
-| 0 | 設定したCI条件を通過。不明・不完全の有無はレポートで確認 |
-| 1 | コンポーネントのCI違反、またはUNKNOWN率の超過 |
-| 2 | 入力・設定・出力エラー |
-| 3 | 必須検査が不完全で、ほかの明確なCI違反はない |
-| 4 | 内部エラー |
+| 0 | The configured CI conditions passed. Check the report for unknown results or incomplete checks. |
+| 1 | A component violates the CI policy, or the unknown ratio exceeds its limit. |
+| 2 | Input, configuration, or output error. |
+| 3 | A required check is incomplete, with no other explicit CI violation. |
+| 4 | Internal error. |
 
-CIではビルドしたバイナリを実行してください。`go run` はプログラムの終了コードをそのまま返さないため、コード1と3の区別には使えません。
+Run the compiled binary in CI. `go run` does not preserve the program's exit code and cannot reliably distinguish codes `1` and `3`.
 
-[期限付き例外](examples/eol-exceptions.example.yaml)は `exceptions.path` で指定します。正確なPURLに一致するコンポーネントのCI失敗だけを抑制し、Lifecycle、UNKNOWN率、不完全の報告は維持します。
+Configure [expiring exceptions](examples/eol-exceptions.example.yaml) using `exceptions.path`. An exception suppresses component-level CI failures for an exact PURL; lifecycle results, the unknown ratio, and incomplete status remain visible.
 
-## オフライン・キャッシュ・出力
+## Offline mode, caching, and output
 
-- `--offline`：HTTPを行わず、ローカルカタログと有効なディスクキャッシュを使います。
-- `cache.enabled: true`：OS標準のcache dir配下の `eolscan/v2` へ、正常200／404だけを保存します。DBは不要です。
-- `--no-cache`：永続キャッシュを無効にします。`--offline` との併用は設定エラーです。
-- オンラインではTTL超過のキャッシュを更新します。オフラインでは最大証拠年齢以内のTTL超過データを `CACHE_STALE` 付きで使い、それ以上古いデータは採用しません。
-- `--as-of YYYY-MM-DD`：UTC暦日で評価します。未来の評価は `projection: true` になります。公開日前の版はUNKNOWNです。
-- JSONは全コンポーネント・Evidence・診断・CI結果を保持します。ファイル出力は一時ファイルから原子的に置換します。`output.include_unknown/include_evidence` はtableの表示だけを制御します。
+- `--offline` uses the local catalog and usable disk cache entries without making HTTP requests.
+- `cache.enabled: true` stores `200` and `404` responses under `eolscan/v2` in the OS cache directory. No database is needed.
+- `--no-cache` disables persistent caching. Combining it with `--offline` is a configuration error.
+- Online scans refresh entries whose TTL has expired. Offline scans can use expired entries within the maximum evidence age, marked `CACHE_STALE`. Older entries are rejected.
+- `--as-of YYYY-MM-DD` evaluates a UTC calendar date. Future evaluations are marked `projection: true`. Versions published after the evaluation date are `UNKNOWN`.
+- JSON output retains all components, evidence, diagnostics, and CI results. File output is replaced atomically. `output.include_unknown` and `output.include_evidence` affect table display only.
 
-オンラインではパッケージ名と版を許可した公開APIへ送信します。SBOMや出典に書かれた任意のURLは取得しません。接続先は明示的な許可ホストのHTTPSに限定し、認証情報やクエリ付きの設定URLは拒否します。
+Online scans send package names and versions to the configured public APIs. Requests are restricted to HTTPS on explicitly allowed hosts. Arbitrary URLs from the SBOM or evidence are not fetched, and configuration URLs containing credentials or query strings are rejected.
 
-## 開発と検証
+## Development and validation
 
 ```sh
 go test -race ./...
@@ -130,12 +130,12 @@ go vet ./...
 go build -o bin/eolscan .
 ```
 
-設計のUT-01〜45をGoテストで確認し、10件のレポートFixtureを実際のCLIから生成して、判定・終了コード・入力ハッシュ・設定ハッシュを照合します。外部APIは固定レスポンスとローカルHTTPSサーバーで代替するため、テスト時の公開API接続は不要です。
+Go tests cover design acceptance cases UT-01 through UT-45. Ten report fixtures run through the actual CLI and verify decisions, exit codes, input hashes, and policy hashes. External APIs are replaced with fixed responses and local HTTPS servers, so tests require no public API access.
 
-Schemaはバイナリへ埋め込み、設定と出力を検証します。ドキュメントとサンプルの追加検証はPythonで実行できます。PythonはCLIの実行時依存ではありません。
+JSON schemas are embedded in the binary to validate configuration and reports. Additional documentation and example validation uses Python, which is not a CLI runtime dependency.
 
 ```sh
 uv run --with-requirements scripts/design-requirements.txt python scripts/validate_design.py
 ```
 
-[設計・Schema・固定ケース一覧](docs/README.md)も同梱しています。過去時点のサポートポリシーの完全な再現には、外部Evidenceの固定スナップショットが必要です。
+See the [design, schemas, and fixture index](docs/README.md) for implementation details. Fully reproducing historical support policies requires fixed snapshots of external evidence.

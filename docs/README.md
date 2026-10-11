@@ -1,21 +1,21 @@
-# eolscan の実装契約
+# eolscan implementation contract
 
-[v0.3設計書](EOL_Checker_Design_v0.3.md)は、v0.2へのレビューと採用された4件の判断を反映した実装仕様です。Go CLIはこの仕様に対応しています。初期試作とはCLI・入力範囲・出力契約が異なります。
+The [v0.3 design specification](EOL_Checker_Design_v0.3.md) incorporates the v0.2 review and four accepted design decisions. The Go CLI implements this specification. Its CLI, input scope, and output contract differ from the initial prototype.
 
-設定の契約版は2、レポートは2.0です。未リリースの契約を具体化したもので、文書の版とは別です。
+The configuration contract is version `2`, and the report contract is version `2.0`. These versions describe the initial implementation contract and are independent of the document version.
 
-- [Schema](../schemas/): 設定の差分入力、有効設定、カタログ、例外、共通型、レポート。
-- [サンプル](../examples/): 完全な設定、ローカル版証明、一般EOLレビュー、完全なレポート。
-- [固定ケース一覧](../examples/fixtures/manifest.json): 矛盾、未レビュー、CI必須シグナルのUNKNOWN、公開前の評価など。
+- [Schemas](../schemas/): Partial policy input, effective policy, support catalog, exceptions, common types, and reports.
+- [Examples](../examples/): Complete policies, local version assertions, generic EOL reviews, and complete reports.
+- [Fixture manifest](../examples/fixtures/manifest.json): Conflicts, unreviewed evidence, unknown CI-required signals, evaluations before publication, and other fixed cases.
 
-カタログとレポートに登場する製品・URL・日付・レビューは架空の検証データです。既定設定はカタログを無効化し、実在製品のレビューを0件として扱います。
+Products, URLs, dates, and reviews in the bundled catalogs and reports are fictional test data. The default policy disables the local catalog and includes no reviews for real products.
 
-検証にはPythonと、検証用のjsonschema／PyYAMLが必要です。Go CLIの実行時依存にはなりません。
+The design validator uses Python with jsonschema and PyYAML. These are development dependencies; they are not required to run the Go CLI.
 
 ```sh
 uv run --with-requirements scripts/design-requirements.txt python scripts/validate_design.py
 ```
 
-Schemaの参照はローカルに登録したURNから解決します。検証中に外部APIを呼びません。Schemaによる構造検証に加え、公開日・有効期限・採用根拠・Signal評価・CI集計を確認します。この検証は設計成果物の整合性を対象とし、Go CLIの適合は `go test -race ./...` の受け入れテストと、10件のFixtureを使うCLIテストで確認します。
+Schema references resolve through locally registered URNs. Validation makes no external API requests. In addition to schema structure, it checks publication dates, expiry dates, selected evidence, signal evaluations, and CI totals. The script validates design artifacts. Go acceptance tests and ten CLI fixture tests verify runtime compliance with `go test -race ./...`.
 
-policy_hashの固定例は、差分を補完した設定と参照カタログ・例外を、UTF-8 JSON、キー順ソート、余分な空白なしで正規化し、SHA-256を算出しています。設定の相対パスは記述値を保持してハッシュへ含め、実ファイルの解決には設定ファイルのディレクトリを使います。秘密値をハッシュへ含めません。
+Fixed `policy_hash` examples combine the effective policy with referenced catalog and exception content. The data is serialized as UTF-8 JSON with sorted keys and no extra whitespace, then hashed with SHA-256. Relative paths retain their literal values in the hash; file resolution uses the policy file's directory. Secret values are excluded.

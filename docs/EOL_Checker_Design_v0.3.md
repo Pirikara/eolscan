@@ -1,108 +1,114 @@
-# eolscan — 実装設計書 v0.3
+# eolscan — Implementation Design v0.3
 
-**文書ステータス:** MVP 0.1実装済み / v0.2レビュー4件の採用判断を反映  
-**改訂日:** 2026-10-11  
-**対象:** CLI実装者・セキュリティレビュー担当者・CI管理者  
-**正本:** 本Markdown。JSON Schemaとサンプル設定は本書に準拠する。  
-**対応する実装リリース:** MVP 0.1（文書の版とは別）
+**Document status:** MVP 0.1 implemented; incorporates four accepted decisions from the v0.2 review
 
-> **最重要原則:** `SUPPORTED`は「上流のセキュリティ修正サポートが現在継続している」という**明示的な根拠**がなければ返さない。対象版の実在と公開日時を確認できない場合も、Lifecycleは`UNKNOWN`とする。
+**Revised:** 2026-10-11
 
-## 0. 改訂履歴と確定事項
+**Audience:** CLI implementers, security reviewers, and CI administrators
 
-### v0.3の採用事項
+**Authoritative specification:** This Markdown document. JSON schemas and example policies conform to it.
 
-| ID | 確定した判断 | 影響箇所 |
-|---|---|---|
-| D-06 | 未来の終了日も保持して最高Tier内の矛盾を検出し、その後に評価日の状態を導出する | §7 |
-| D-07 | 一般EOLは製品・PURL・系列・サポート範囲をレビュー済みの場合だけEOL/MEDIUMへ使用。既定のホワイトリストは0件 | §2、§6、§7 |
-| D-08 | CI対象SignalはPRESENT/ABSENT/UNKNOWNで評価。代替情報でもUNKNOWNならincomplete | §6、§7、§8 |
-| D-09 | VersionAssertionに公開日時を必須化。版証明・レビューの有効期限は実行日で検証 | §5、§6、§7 |
+**Corresponding implementation release:** MVP 0.1, independent of the document version
 
-文書はv0.3だが、初回MVPで実装する未リリースの契約は引き続き設定2／レポート2.0とする。Go CLI MVP 0.1はこの契約を実装する。初期Go試作との互換性は保証しない。
+> **Core principle:** Return `SUPPORTED` only with **explicit evidence** that upstream security support covers the evaluation date. If the target version's existence and publication time cannot be verified, its lifecycle remains `UNKNOWN`.
 
-### v0.2で採用済みの事項
+## 0. Revision history and accepted decisions
 
-| ID | 問題点 | v0.2での決定 | 影響箇所 |
-|---|---|---|---|
-| D-01 | 一般的なEOL日からSUPPORTEDを推論できてしまう | `UPSTREAM_SECURITY_WINDOW`を明示的に確認した場合だけSUPPORTED。endoflife.dateの`eolFrom`単体はSUPPORTEDの根拠にしない | §2、§6、§7 |
-| D-02 | CIの既定0と利用者期待の差 | デフォルトは**report-first**。`EOL/HIGH`のみexit 1、API不完全は原則exit 0。別途Strict設定を提供 | §8、§9 |
-| D-03 | `7.2.9999`など架空版への判定 | Lifecycle判定前に**実在版の検証を必須**とする。未検証はUNKNOWN。deps.dev GetVersion またはローカルの正確な版登録で検証 | §5、§7 |
-| D-04 | `/products/full`と製品別GETの重複 | endoflife.dateは`/identifiers/purl`の対応表→一致製品だけ詳細GET。全量fullはMVPで使わない。ディスクキャッシュは**任意・既定OFF** | §6、§11 |
-| D-05 | EOL_SOON型、矛盾設定、出力例が不一致 | `EOL_SOON`は`Notice`へ分離。`unknown_on_same_tier_conflict`は削除し同格矛盾は固定でUNKNOWN。必須・nullableフィールドをSchemaに確定 | §7、§8、§10 |
+### Decisions adopted in v0.3
 
-互換性：v0.1試作の設定・レポートとの機械的な後方互換性は保証しない。設定`schema_version: 2`、出力`schema_version: "2.0"`とし、v0.1契約を黙って読み替えない。
+| ID | Decision | Affected sections |
+| --- | --- | --- |
+| D-06 | Retain future end dates, detect conflicts within the highest tier, then derive the state for the evaluation date. | §7 |
+| D-07 | Use generic EOL evidence for EOL/MEDIUM only after reviewing its meaning for the product, PURL, release series, and support scope. The default allowlist is empty. | §2, §6, §7 |
+| D-08 | Evaluate CI-required signals as PRESENT/ABSENT/UNKNOWN. If equivalent fallback information cannot resolve UNKNOWN, mark the scan incomplete. | §6, §7, §8 |
+| D-09 | Require publication timestamps in VersionAssertion. Validate assertion and review expiry against the execution date. | §5, §6, §7 |
 
-## 1. システム概要と範囲
+The document is v0.3, while the initial MVP contract remains configuration version 2 and report version 2.0. Go CLI MVP 0.1 implements this contract. Compatibility with the initial Go prototype is not guaranteed.
 
-単一のCycloneDX／SPDX JSON形式SBOMからパッケージを抽出し、PURLで識別、実在版を検証、ライフサイクル情報とメンテナンスシグナルを取得して判定・報告するCLI。
+### Decisions already adopted in v0.2
 
-### 1.1 MVPの範囲
+| ID | Issue | Decision in v0.2 | Affected sections |
+| --- | --- | --- | --- |
+| D-01 | Generic EOL dates could imply SUPPORTED. | Require an explicit `UPSTREAM_SECURITY_WINDOW` for SUPPORTED. endoflife.date's `eolFrom` alone is insufficient. | §2, §6, §7 |
+| D-02 | Default exit 0 could differ from user expectations. | Default to **report-first**: `EOL/HIGH` exits 1; API-related incompleteness normally exits 0. Provide a separate strict policy. | §8, §9 |
+| D-03 | Fabricated versions such as `7.2.9999` could receive lifecycle decisions. | **Verify version existence before lifecycle evaluation.** Unverified versions remain UNKNOWN. Use deps.dev GetVersion or an exact local version assertion. | §5, §7 |
+| D-04 | `/products/full` and per-product GET requests duplicate work. | Fetch endoflife.date's `/identifiers/purl` index, then details for matched products. The MVP does not fetch the full dataset. Disk caching is **optional and off by default**. | §6, §11 |
+| D-05 | EOL_SOON types, conflict settings, and output examples were inconsistent. | Separate `EOL_SOON` into `Notice`. Remove `unknown_on_same_tier_conflict`; same-tier conflicts always produce UNKNOWN. Define required and nullable fields in schemas. | §7, §8, §10 |
 
-| 分類 | MVP | 将来拡張 |
-|---|---|---|
-| 入力 | CycloneDX JSON 1.4–1.7、SPDX 2.3 JSON | SPDX 3.x、XML、複数SBOM |
-| 依存識別 | 完全なPURL（versionあり） | CPE等、明示的な手動マッピング |
-| エコシステム | gem、npm、pypi、maven、golang、cargo、nuget | OSディストリビューション、oci、composer等 |
-| EOL根拠 | 手動レビュー済み公式サポートカタログ、endoflife.date API v1 | ベンダー公式API、後継プロジェクト |
-| バージョン実在確認 | deps.dev GetVersion、カタログの正確な版登録 | Registry直結、署名付きスナップショット |
-| シグナル | deps.dev deprecated、公開日（取得可能な場合） | GitHub、Go retract、PyPI project status等 |
-| 出力 | table、JSON Schema 2.0 | SARIF、HTML、CycloneDX annotation |
-| 実行モード | report-first既定、CI Strict設定、offline | 組織向けポリシー配布 |
+The prototype's v0.1 configuration and reports have no guaranteed mechanical backward compatibility. Configuration uses `schema_version: 2` and output uses `schema_version: "2.0"`; the v0.1 contract must not be silently reinterpreted.
 
-**非目標:** 脆弱性・CVSSの検出、古いリリースのみを根拠とするEOL断定、名前の曖昧一致、延長サポートの自動合算、LLMによるウェブページ解釈は行わない。
+## 1. System overview and scope
 
-## 2. 概念とEOLの意味
+The CLI extracts packages from a single CycloneDX or SPDX JSON SBOM, identifies them by PURL, verifies exact versions, collects lifecycle evidence and maintenance signals, and produces decisions and reports.
 
-| 概念 | 仕様 |
-|---|---|
-| `EOL` | 上流のセキュリティ修正サポートが終了したと確認された状態。一般EOL情報は、その意味を対象製品・系列・サポート範囲についてレビュー済みの場合だけMEDIUMの根拠にできる |
-| `SUPPORTED` | **上流のセキュリティ修正サポートが評価日を含む期間に明示的に継続**していると確認できる状態 |
-| `UNKNOWN` | EOL/SUPPORTEDを確定するための根拠が不足。安全・サポート中を意味しない |
-| `GENERAL_EOL_END` | endoflife.date等が公開する一般的なEOL日。未来であることはSUPPORTEDを意味しない |
-| `UPSTREAM_SECURITY_WINDOW` | 公式情報で明示された、上流セキュリティ修正が継続する区間 `[start, end)` |
-| `UPSTREAM_SECURITY_END` | 公式に確認した上流セキュリティ修正の終了日。終了前のSUPPORTEDは保証しない |
-| `MaintenanceSignal` | 非推奨、アーカイブ、長期間更新なし等。Lifecycleとは独立 |
-| `Notice` | 判定結果から計算する通知。MVPは`EOL_SOON`のみ |
-| `Confidence` | Lifecycle判定根拠の信頼度。セキュリティリスクの強弱ではない |
+### 1.1 MVP scope
 
-### 2.1 日付の意味と境界
+| Area | MVP | Future extensions |
+| --- | --- | --- |
+| Input | CycloneDX JSON 1.4–1.7; SPDX 2.3 JSON | SPDX 3.x, XML, multiple SBOMs |
+| Dependency identity | Complete versioned PURLs | CPE and explicit manual mappings |
+| Ecosystems | gem, npm, pypi, maven, golang, cargo, nuget | OS distributions, oci, composer, and others |
+| EOL evidence | Manually reviewed official support catalog; endoflife.date API v1 | Official vendor APIs, successor projects |
+| Version verification | deps.dev GetVersion; exact catalog assertions | Direct registry access, signed snapshots |
+| Signals | deps.dev deprecation and available publication dates | GitHub, Go retract, PyPI project status, and others |
+| Output | Tables; JSON report schema 2.0 | SARIF, HTML, CycloneDX annotations |
+| Execution modes | Default report-first; strict CI policy; offline | Organization-wide policy distribution |
 
-- LifecycleはUTC暦日（`YYYY-MM-DD`）で評価する。`as_of >= eol_effective_date`なら終了済み。
-- 実行開始時に`run_started_at`を1回取得する。版証明、サポートカタログ、一般EOLレビュー、CI例外の`valid_until`／`expires_on`は、その実行UTC日付で検証する。`--as-of`を過去にしても期限切れ資料は復活しない。期限日は当日まで有効とし、翌日から失効する。
-- `published_at`はUTCへ変換した暦日と`as_of`を比較する。同じ暦日に公開された版はその日の評価対象にできる（時刻単位の過去再現ではない）。実行時刻より未来の公開日時を返す情報は、未来の版の実在証明に使わない。
-- `eol_effective_date`は**その日の0:00 UTC以降終了扱い**。資料が「当日末までサポート」を意味するなら、正規化処理で翌日に直す。元の日付・変換をEvidenceに残す。
-- `UPSTREAM_SECURITY_WINDOW`は`support_start_date <= as_of < eol_effective_date`でSUPPORTEDを返せる。`UPSTREAM_SECURITY_END`は終了前もUNKNOWN。
-- endoflife.dateの`eolFrom`は`GENERAL_EOL_END`として保存する。ホワイトリストの有効なレビューが製品・PURL・系列・サポート範囲すべてに一致し、終了済みの場合だけ`EOL/MEDIUM`を返せる。未レビュー情報はEvidenceに保持し`UNKNOWN/GENERAL_EOL_UNREVIEWED`とする。終了前は別途Security Windowがない限りUNKNOWN。booleanからSUPPORTEDを推論しない。
-- `isMaintained=true`には延長サポートが含まれ得る。上流サポートと延長サポートを混同せず、`isMaintained`によって終了済みの上流EOLを取り消さない。情報が衝突する場合は診断を記録する。
-- 一般EOLレビューの既定登録件数は0。製品名だけの許可や全製品の包括許可は禁止。レビュー期限切れもEOL根拠にしない。
-- `--as-of`未来は`projection=true`。未来時点の公開バージョン存在やサポート継続は推測しない。
+**Outside scope:** Vulnerability or CVSS detection, declaring EOL solely from release age, fuzzy name matching, automatically combining extended support with upstream support, and interpreting web pages with an LLM.
 
-### 2.2 保守主体
+## 2. Concepts and EOL semantics
 
-MVPの判定対象は`upstream_security`。ディストリビューションのバックポート／有償延長サポートは別の主体であり、上流サポート中には昇格しない。MVPの公式カタログSchemaは上流セキュリティの根拠だけを受理する。一般EOL Evidenceの元スコープは`general_eol`のまま保持し、有効なレビューで対応を確認した場合だけ比較上のスコープを`upstream_security`へ対応付ける。レビューによりsource_classやConfidenceをHIGHへ変更してはいけない。
+| Concept | Definition |
+| --- | --- |
+| `EOL` | Upstream security support has been confirmed to have ended. Generic EOL information can supply MEDIUM evidence only after reviewing its meaning for the product, release series, and support scope. |
+| `SUPPORTED` | Explicit evidence confirms that upstream security support continues throughout a period containing the evaluation date. |
+| `UNKNOWN` | Evidence is insufficient to establish EOL or SUPPORTED. It does not imply safety or ongoing support. |
+| `GENERAL_EOL_END` | A generic EOL date published by a source such as endoflife.date. A future date does not imply SUPPORTED. |
+| `UPSTREAM_SECURITY_WINDOW` | An officially stated upstream security support interval `[start, end)`. |
+| `UPSTREAM_SECURITY_END` | An officially confirmed end date for upstream security support. It does not establish SUPPORTED before that date. |
+| `MaintenanceSignal` | Deprecation, archival, prolonged inactivity, or similar information, evaluated independently of lifecycle. |
+| `Notice` | A notification derived from a decision. The MVP includes only `EOL_SOON`. |
+| `Confidence` | Confidence in the lifecycle evidence, rather than a measure of security risk. |
 
-## 3. 機能要件と品質要件
+### 2.1 Date semantics and boundaries
 
-| ID | 要件 |
-|---|---|
-| FR-01 | SBOM内のパッケージをすべて抽出し、元参照IDと版を保持 |
-| FR-02 | PURLを標準パーサで解釈し、誤った名前一致・誤ったバージョン一致を禁止 |
-| FR-03 | **Lifecycle評価に先立ってバージョン実在検証を完了** |
-| FR-04 | endoflife.dateのPURL索引と詳細を別々に必要量だけ取得 |
-| FR-05 | 公式Security Window／終了日／一般的EOL日を区別してEvidence保存 |
-| FR-06 | Lifecycle、メンテナンスSignal、派生Notice、Diagnosticを別型で保存 |
-| FR-07 | 設定とreportにJSON Schemaを持たせ、双方を検証 |
-| FR-08 | default report-first、strict CI例、安定したexit codeを提供 |
-| FR-09 | 矛盾・欠損・不完全スキャンを監査可能な理由コードとして出力 |
-| FR-10 | オフライン、再試行、実行中のメモ化、任意の永続キャッシュを提供 |
+- Evaluate lifecycle using UTC calendar dates (`YYYY-MM-DD`). Support has ended when `as_of >= eol_effective_date`.
+- Capture `run_started_at` once when execution begins. Validate `valid_until` and `expires_on` for version assertions, catalog entries, generic EOL reviews, and CI exceptions against that execution date in UTC. A past `--as-of` date cannot restore expired material. An expiry date is inclusive; the material expires the next day.
+- Convert `published_at` to a UTC calendar date before comparing it with `as_of`. A version published on the same calendar date can be evaluated for that date; this is not timestamp-level historical replay. A publication timestamp later than execution time cannot prove the existence of a future version.
+- `eol_effective_date` means support is considered ended **from 00:00 UTC on that date**. If a source means support continues through the end of that day, normalize the effective date to the next day. Preserve the original date and conversion in evidence.
+- `UPSTREAM_SECURITY_WINDOW` permits SUPPORTED when `support_start_date <= as_of < eol_effective_date`. `UPSTREAM_SECURITY_END` remains UNKNOWN before the end date.
+- Store endoflife.date's `eolFrom` as `GENERAL_EOL_END`. It can yield `EOL/MEDIUM` only after the date has passed and a valid allowlist review matches the product, PURL, release series, and support scope. Retain unreviewed information as evidence and return `UNKNOWN/GENERAL_EOL_UNREVIEWED`. Before the end date, remain UNKNOWN unless a separate security window applies. Boolean fields cannot imply SUPPORTED.
+- `isMaintained=true` may include extended support. Keep upstream and extended support distinct; `isMaintained` must not reverse an established upstream EOL. Record diagnostics for conflicting information.
+- The default generic EOL review count is zero. Product-name-only permissions and blanket permissions for all products are prohibited. Expired reviews cannot supply EOL evidence.
+- Future `--as-of` dates set `projection=true`. Do not infer future version existence or continued support.
 
-- **再現性:** `as_of`、`tool_version`、`policy_hash`、`input_sha256`、根拠の`observed_at`を保存。過去の外部APIレスポンスは復元しないため、完全なhistorical replayには固定Fixtureが必要。
-- **障害隔離:** 1パッケージのネットワーク障害で全件処理を止めない。
-- **安全性:** SBOMから任意URLをfetchしない。TLS／許可ホスト、認証情報の非出力、入力サイズ／深度の上限を設ける。
-- **プライバシー:** PURL等を公開APIへ送信し得る旨をヘルプに明記し、`--offline`を提供。
+### 2.2 Support authority
 
-## 4. アーキテクチャとモジュール境界
+The MVP evaluates `upstream_security`. Distribution backports and paid extended support are separate authorities and cannot establish upstream support. The official catalog schema accepts only upstream security evidence.
+
+Keep the original scope of generic EOL evidence as `general_eol`. Map its scope to `upstream_security` for comparison only when a valid review confirms that meaning. A review must not change `source_class` or raise confidence to HIGH.
+
+## 3. Functional and quality requirements
+
+| ID | Requirement |
+| --- | --- |
+| FR-01 | Extract SBOM packages and preserve their original reference IDs and versions. |
+| FR-02 | Parse PURLs with a standard parser and prevent incorrect name or version matches. |
+| FR-03 | **Complete version existence verification before lifecycle evaluation.** |
+| FR-04 | Fetch only the required endoflife.date PURL index and product details, separately. |
+| FR-05 | Store official security windows, official security end dates, and generic EOL dates as distinct evidence claims. |
+| FR-06 | Store lifecycle, maintenance signals, derived notices, and diagnostics as separate types. |
+| FR-07 | Provide JSON schemas for configuration and reports, and validate both. |
+| FR-08 | Provide default report-first behavior, a strict CI example, and stable exit codes. |
+| FR-09 | Report conflicts, missing information, and incomplete scans using auditable reason codes. |
+| FR-10 | Support offline execution, retries, per-run memoization, and optional persistent caching. |
+
+- **Reproducibility:** Preserve `as_of`, `tool_version`, `policy_hash`, `input_sha256`, and evidence `observed_at`. Historical API responses are not reconstructed; complete historical replay requires fixed fixtures.
+- **Failure isolation:** A network failure for one package must not stop processing all packages.
+- **Security:** Do not fetch arbitrary URLs from an SBOM. Enforce TLS, allowed hosts, secret redaction, and input size and depth limits.
+- **Privacy:** State in help that package identities such as PURLs may be sent to public APIs, and provide `--offline`.
+
+## 4. Architecture and module boundaries
 
 ```text
 SBOM JSON
@@ -129,53 +135,53 @@ SBOM JSON
      Exception / CI Gate -> table | JSON | exit
 ```
 
-| Module | 責務 | 禁止事項 |
-|---|---|---|
-| `sbom` | CycloneDX/SPDX構文と対象抽出 | 名前で公式製品に結び付けない |
-| `identity` | PURL正規化、同一性、系列解決 | 単純な文字列prefixによる誤一致 |
-| `verification` | 登録された版の存在を証明 | API 404を「ソフトウェアは存在しない」と断定 |
-| `provider` | 根拠・シグナル・診断を取得 | Lifecycleを最終決定しない |
-| `policy` | スコープ・Tier・競合・日付・Notice | deprecatedをEOLへ自動昇格しない |
-| `transport` | HTTP、retry、並列、memo、任意disk cache | SBOM由来の任意URLをfetchしない |
-| `report` | JSON/table、集計、exit | 不明を成功確認として表示しない |
+| Module | Responsibility | Constraint |
+| --- | --- | --- |
+| `sbom` | Parse CycloneDX/SPDX and extract components. | Do not associate names with official products. |
+| `identity` | Normalize PURLs, establish identity, and resolve release series. | Avoid incorrect matches from simple string prefixes. |
+| `verification` | Verify that an exact version is registered. | An API 404 does not prove that the software does not exist. |
+| `provider` | Collect evidence, signals, and diagnostics. | Do not make final lifecycle decisions. |
+| `policy` | Evaluate scope, tier, conflicts, dates, and notices. | Do not automatically promote deprecation to EOL. |
+| `transport` | Handle HTTP, retries, concurrency, memoization, and optional disk caching. | Do not fetch arbitrary SBOM-supplied URLs. |
+| `report` | Produce JSON/tables, aggregates, and exit codes. | Do not display unknown results as confirmed success. |
 
-## 5. SBOM／PURL／バージョン検証
+## 5. SBOM, PURL, and version verification
 
-### 5.1 SBOM抽出
+### 5.1 SBOM extraction
 
-| 形式 | 抽出 | PURL | ソース参照 |
-|---|---|---|---|
-| CycloneDX JSON 1.4–1.7 | `components[]`およびネストした`components[]` | `component.purl` | `bom-ref`、なければ安定したJSONパス |
-| SPDX 2.3 JSON | `packages[]` | `externalRefs`で`referenceType=purl` | `SPDXID` |
+| Format | Extraction | PURL | Source reference |
+| --- | --- | --- | --- |
+| CycloneDX JSON 1.4–1.7 | `components[]` and nested `components[]` | `component.purl` | `bom-ref`, or a stable JSON path when absent |
+| SPDX 2.3 JSON | `packages[]` | `externalRefs` with `referenceType=purl` | `SPDXID` |
 
-CycloneDX`metadata.component`は既定で除外。SPDX packageは種別フィルタを適用しない。重複PURLのネットワーク照会は1回だけ、結果は元コンポーネントごとに出力。`input.include_component_types`と`input.include_metadata_component`を設定可能とする。
+Exclude CycloneDX `metadata.component` by default. Do not apply component type filtering to SPDX packages. Query duplicate PURLs once, but emit a result for each original component. Make `input.include_component_types` and `input.include_metadata_component` configurable.
 
-### 5.2 パッケージとバージョンの妥当性
+### 5.2 Package and version validity
 
-1. PURL標準パーサを使用。`name/version`の単純splitは禁止。name/namespace/case/qualifier/subpathはエコシステム規約に従う。
-2. PURLとSBOMの`version`が両方あり異なれば`VERSION_CONFLICT`でUNKNOWN。バージョンなしやrangeのみは`VERSION_UNRESOLVED`でUNKNOWN。
-3. 公開同名パッケージとprivate packageを混同しない。プライベート依存の疑いは`PRIVATE_SOURCE_UNSUPPORTED`でUNKNOWN。
-4. PURLの**対象バージョン完全一致**で実在確認する（`version_verification.mode=required`がMVP唯一のモード）。
-5. 確認方法は(a) deps.devの`GetVersion` 200と正規化されたversion一致、または(b)信頼したローカル`verified_versions`の完全一致。系列名の一致だけは実在根拠にしない。
-6. deps.devにない404は`NOT_FOUND_IN_INDEX`であって、世界中でバージョンが存在しないと断定するものではない。LifecycleはUNKNOWNにし、理由`VERSION_NOT_FOUND_IN_INDEX`を記録する。
-7. timeout/429/5xxは`UNVERIFIED`で理由`VERSION_UNVERIFIED`および`SOURCE_ERROR`。同時にscan incompleteの判定材料にする。
-8. `published_at`のUTC暦日が`as_of`より後なら`NOT_RELEASED_AS_OF`でUNKNOWN。公開日時が欠落・不正なら、現在日の評価でも`UNVERIFIED / VERSION_UNVERIFIED`とする。GetVersionの200・version一致だけではVERIFIEDにしない。代替の有効なローカル版証明で公開日時を補えなければincomplete=true。実行時刻より未来の公開日時は`UNVERIFIED / PUBLICATION_IN_FUTURE`とする。
-9. `VERIFIED`ではないコンポーネントへLifecycle=`EOL`／`SUPPORTED`を割り当ててはならない。ただし取得済みのMaintenance Signals・Diagnosticsは出力する。
-10. `version_verification.mode=required`はポリシーの安全性を守る固定ルール。将来の緩和モードは別仕様・版で検討する。
+1. Use a standard PURL parser rather than splitting `name/version`. Follow ecosystem rules for names, namespaces, case, qualifiers, and subpaths.
+2. If both PURL and SBOM versions exist and differ, return UNKNOWN with `VERSION_CONFLICT`. Missing versions or version ranges produce UNKNOWN with `VERSION_UNRESOLVED`.
+3. Do not confuse a private package with a public package of the same name. Suspected private dependencies produce UNKNOWN with `PRIVATE_SOURCE_UNSUPPORTED`.
+4. Verify the **exact target version** in the PURL. `version_verification.mode=required` is the MVP's only mode.
+5. Verification requires either (a) deps.dev GetVersion HTTP 200 with a matching normalized version, or (b) an exact match in trusted local `verified_versions`. A release series match alone cannot prove version existence.
+6. A deps.dev 404 means `NOT_FOUND_IN_INDEX`, rather than proving global nonexistence. Keep lifecycle UNKNOWN and record `VERSION_NOT_FOUND_IN_INDEX`.
+7. Timeouts, 429s, and 5xx responses produce `UNVERIFIED` with `VERSION_UNVERIFIED` and `SOURCE_ERROR`. They also contribute to incomplete scan evaluation.
+8. If the UTC date of `published_at` is later than `as_of`, return UNKNOWN with `NOT_RELEASED_AS_OF`. Missing or invalid publication times produce `UNVERIFIED / VERSION_UNVERIFIED` even when evaluating the current date. HTTP 200 and a matching version alone are insufficient for VERIFIED. If no valid local fallback supplies the timestamp, set `incomplete=true`. A timestamp later than execution time produces `UNVERIFIED / PUBLICATION_IN_FUTURE`.
+9. Never assign `EOL` or `SUPPORTED` to a component whose verification is not `VERIFIED`. Still report maintenance signals and diagnostics already collected.
+10. `version_verification.mode=required` is a fixed policy invariant. Any future relaxed mode requires a separate specification and version.
 
-`VerificationResult`の固定値は`VERIFIED | NOT_FOUND_IN_INDEX | UNVERIFIED | NOT_RELEASED_AS_OF | NOT_APPLICABLE`。`NOT_APPLICABLE`もLifecycleはUNKNOWNとする。
+The verification status values are `VERIFIED | NOT_FOUND_IN_INDEX | UNVERIFIED | NOT_RELEASED_AS_OF | NOT_APPLICABLE`. `NOT_APPLICABLE` also leaves lifecycle UNKNOWN.
 
-### 5.3 リリース系列のマッチング
+### 5.3 Release series matching
 
-- PURLのtype・パッケージ識別が厳密一致した後で、製品のリリース系列に対応付ける。
-- MVPの自動対応は**数値ドット区切りの系列**のみ（例: `7.2` → `7.2.4`）。各数値セグメントの境界で比較し、`7.2`と`7.20`を混同しない。
-- 複数一致したら最長の系列を選ぶ。同順位・複数候補で意味が違う場合`AMBIGUOUS_CYCLE`。
-- 日付系列、コードネーム、LTS名、pre-releaseなどは明示的なcatalog mappingがなければUNKNOWN。
-- **系列一致はLifecycle Evidenceの適用範囲を確認するだけであり、バージョン実在検証の代替にはならない。**
+- Match product release series only after an exact PURL type and package identity match.
+- MVP automatic matching supports only **numeric dotted series**, such as `7.2` matching `7.2.4`. Compare complete numeric segments so `7.2` does not match `7.20`.
+- Choose the longest matching series. If equally ranked candidates differ in meaning, return `AMBIGUOUS_CYCLE`.
+- Date-based series, codenames, LTS names, and prereleases remain UNKNOWN without an explicit catalog mapping.
+- **A series match establishes the applicability of lifecycle evidence; it cannot replace exact version verification.**
 
-## 6. Provider／データ取得方式
+## 6. Providers and data retrieval
 
-### 6.1 Providerの共通契約
+### 6.1 Common provider contract
 
 ```text
 Provider {
@@ -192,31 +198,31 @@ ProviderResult {
 }
 ```
 
-通信は`transport`経由。Providerは命名・日付・適用範囲を正規化するがLifecycleの最終Statusを返さない。元の出典リンク・フィールド名・取得時刻を保存する。HTTP 404／429／timeoutを混同しない。
+Route communication through `transport`. Providers normalize identities, dates, and applicability but do not return final lifecycle statuses. Preserve original source links, field names, and observation times. Distinguish HTTP 404, HTTP 429, and timeouts.
 
-### 6.2 Official Support Catalog／版証明／一般EOLレビュー
+### 6.2 Official support catalog, version assertions, and generic EOL reviews
 
-ローカル`support-catalog.yaml`を明示指定した場合にロードする。未指定なら3種類とも登録0件。URLの内容をCLIが自動レビューするのではなく、運用者の確認を信頼する境界である。
+Load a local `support-catalog.yaml` when explicitly configured. Otherwise all three entry types are empty. The catalog is a trust boundary: the CLI relies on operator review rather than automatically reviewing linked content.
 
-- `entries[]`: 公式Security Window／Security End。公式根拠URL、サポート主体、レビュー日、有効期限が必須。Windowは開始日・終了日の両方を必須とする。Endだけでは終了前のSUPPORTEDを導出しない。
-- `verified_versions[]`: 下記VersionAssertionの配列。version付きPURLの完全一致と公開日時を人手で確認したもの。系列から版を生成しない。
-- `general_eol_reviews[]`: 下記GeneralEolReviewの配列。製品slug・versionなしPURL・系列・`upstream_security`への意味対応を確認したもの。製品だけの包括許可、ワイルドカードは禁止。
-- 各配列の有効期限は`run_started_at`のUTC暦日で確認。失効した資料は根拠として使わず`STALE_EVIDENCE`を残す。
-- 公式Entryの`match`は`numeric_segment_prefix`または`exact_versions`。前者の`versions`は空配列、後者は明示する版文字列の配列とする。系列対応と版の実在証明は別の処理である。
-- 公式根拠の正式な撤回・更新が確認できた場合だけ、`superseded_by`と`supersession_source_url`に新しい根拠IDと撤回・更新の確認URLを保存できる。単に観測時刻が新しい情報を優先してはいけない。
+- `entries[]`: Official security windows and end dates. Require an official evidence URL, support authority, review date, and expiry date. Windows require both start and end dates. An end date alone cannot establish SUPPORTED beforehand.
+- `verified_versions[]`: VersionAssertion objects defined below, with manually verified exact versioned PURLs and publication times. Do not generate versions from release series.
+- `general_eol_reviews[]`: GeneralEolReview objects defined below, confirming the meaning for a product slug, unversioned PURL, release series, and `upstream_security` scope. Blanket product permissions and wildcards are prohibited.
+- Validate expiry against the UTC date of `run_started_at`. Exclude expired material from decisions and record `STALE_EVIDENCE`.
+- An official entry's `match` is `numeric_segment_prefix` or `exact_versions`. The former requires an empty `versions` array; the latter requires explicit version strings. Series mapping and version existence verification remain separate operations.
+- Only a verified formal withdrawal or update may populate `superseded_by` and `supersession_source_url` with replacement evidence ID and proof URL. A newer observation time alone does not establish precedence.
 
 ```text
 VersionAssertion {
-  package_purl: string       # 正確なversion付きPURL
-  published_at: timestamp   # 必須。UTCへ正規化
+  package_purl: string       # Exact versioned PURL
+  published_at: timestamp   # Required; normalize to UTC
   source_url: https_url
   reviewed_at: date
-  valid_until: date         # 実行日のUTC暦日で検証
+  valid_until: date         # Validate against execution UTC date
 }
 GeneralEolReview {
   id: string
   product_slug: string
-  package_purl: string       # versionなし
+  package_purl: string       # Unversioned
   matched_cycle: string
   support_scope: upstream_security
   evidence_url: https_url
@@ -225,7 +231,7 @@ GeneralEolReview {
 }
 ```
 
-カタログ例は架空の製品であり、実在製品のサポート証明として使用しない。
+The catalog example uses a fictional product and must not be used as proof of support for a real product.
 
 ```yaml
 schema_version: 2
@@ -262,43 +268,45 @@ general_eol_reviews:
     valid_until: "2026-12-01"
 ```
 
-Schemaは`../schemas/support-catalog.schema.json`、完全なサンプルは`../examples/support-catalog.example.yaml`。レビューの対象と実際の製品詳細が一致しない場合も未レビュー扱いとする。
+The schema is `../schemas/support-catalog.schema.json`; a complete example is `../examples/support-catalog.example.yaml`. If a review's target does not match the actual product details, treat the information as unreviewed.
 
-### 6.3 endoflife.date API v1：PURL索引 → 製品詳細
+### 6.3 endoflife.date API v1: PURL index to product details
 
-**MVPで採用するネットワーク方式は以下に固定する。** `/products/full`は使わない。
+**The MVP uses the following retrieval strategy.** Do not use `/products/full`.
 
-1. 実行時に必要なら、1回だけ`GET https://endoflife.date/api/v1/identifiers/purl/`（スラッシュなし等へのリダイレクトは固定ホスト内のみ許可）。
-2. レスポンス`result[].identifier`（versionなしPURL）と`result[].product.uri`から索引を生成する。製品URIは`https://endoflife.date/api/v1/products/{slug}/`形式であることを検証し、未知ホスト・意図しないパスなら拒否。
-3. 対象コンポーネントのversionなしPURLとの**完全一致**だけを採用。複数製品が一致した場合は`AMBIGUOUS_IDENTITY`。
-4. 一致した製品に対してのみ`GET /api/v1/products/{slug}/`。同じ製品へのリクエストは1回にまとめる。
-5. 製品詳細の`identifiers[type=purl]`でも同一識別子を再確認し、`releases[].name`へ系列一致。
-6. `releases[].eolFrom`が日付なら`GENERAL_EOL_END`／`confidence=MEDIUM`として保存。`isEol`／`isMaintained`は補助情報であり、SUPPORTEDの根拠にしない。
-7. 一般EOLレビューを製品slug・PURL・系列・サポート範囲で照合。有効な一致レビューはEvidenceの`general_eol_review`へ保存。不一致・未登録はnull、失効レビューは保存するが判定には使わない。いずれも元Evidenceを保持する。
-8. レビューなしの一般EOLは`UNKNOWN/GENERAL_EOL_UNREVIEWED`。有効なレビューありの場合は、未来の終了日も含めてTier・矛盾の比較対象にする。矛盾がなければ、終了日当日以降はEOL/MEDIUM、終了前はUNKNOWN/GENERAL_EOL_ONLY。公式Windowがある場合は公式Tierの規則に従う。
+1. When needed, fetch `GET https://endoflife.date/api/v1/identifiers/purl/` once per run. Redirects, including trailing-slash normalization, must remain on the fixed host.
+2. Build an index from `result[].identifier`, an unversioned PURL, and `result[].product.uri`. Validate product URIs against `https://endoflife.date/api/v1/products/{slug}/`; reject unknown hosts or unexpected paths.
+3. Accept only **exact matches** to the component's unversioned PURL. Multiple matching products produce `AMBIGUOUS_IDENTITY`.
+4. Fetch `GET /api/v1/products/{slug}/` only for matched products. Coalesce requests for the same product.
+5. Confirm the identity again in the product's `identifiers[type=purl]`, then match the series against `releases[].name`.
+6. Store a dated `releases[].eolFrom` as `GENERAL_EOL_END` with `confidence=MEDIUM`. `isEol` and `isMaintained` are supplemental information and cannot establish SUPPORTED.
+7. Match generic EOL reviews by product slug, PURL, series, and support scope. Store matching valid reviews in evidence `general_eol_review`. Unmatched or absent reviews are null. Preserve expired reviews but exclude them from decisions. Retain original evidence in every case.
+8. Unreviewed generic EOL produces `UNKNOWN/GENERAL_EOL_UNREVIEWED`. Reviewed evidence participates in tier and conflict comparison even when its end date is in the future. Without a conflict, return EOL/MEDIUM on or after the end date and UNKNOWN/GENERAL_EOL_ONLY beforehand. An official window follows official-tier rules.
 
-OpenAPIでは`/identifiers/{identifier_type}`の`result[]`は`identifier`と`product`（URI参照）を持つ。`/products/full`が全件の詳細を返すため、索引目的の取得には使用しない。
+In the OpenAPI contract, `/identifiers/{identifier_type}` returns `result[]` items containing `identifier` and a `product` URI reference. `/products/full` returns all product details and is not used to obtain the index.
 
-### 6.4 deps.dev API v3：版実在確認・シグナル
+### 6.4 deps.dev API v3: Version verification and signals
 
-- `GET /v3/systems/{system}/packages/{name}/versions/{version}`がバージョン検証の主要Provider。`GO/RUBYGEMS/NPM/CARGO/MAVEN/PYPI/NUGET`。
-- HTTP 200だけでなく`versionKey.system/name/version`が正規化後の対象と一致するか確認。不一致は`VERSION_CONFLICT`。
-- `isDeprecated=true`は`DEPRECATED/PRESENT`を記録するだけ。`deprecatedReason`も保存。false・欠落をABSENTとするには、そのエコシステムとAPI契約で否定情報を提供することを確認する。収集機能のないエコシステム、欠損、API障害はUNKNOWNでありABSENTではない。
-- `publishedAt`は版検証に必須。欠落・不正は代替版証明で補えなければUNVERIFIED。
-- STALE_RELEASEはGetPackageの完全な版一覧から、評価日までに公開された版の公開日時の最大値を使う。必要な公開日が欠落、全件取得を確認できない、API障害、対応取得手段なし、未来as_ofで推測が必要な場合はUNKNOWN。情報が揃い、評価日との差が`stale_release_days`を超えればPRESENT、それ以下ならABSENT。
-- 404は`NOT_FOUND_IN_INDEX`であり実在版の否定確定ではない。再試行すべき障害ではないが、UNKNOWNとする。
-- Mavenは`group:artifact`、npmスコープ、Goパス、URLエンコードを公式API仕様に従って変換する。
-- システムに関わらず、deps.dev自身が上流セキュリティサポートを保証するとはみなさない。
+- `GET /v3/systems/{system}/packages/{name}/versions/{version}` is the main version verification provider. Systems are `GO/RUBYGEMS/NPM/CARGO/MAVEN/PYPI/NUGET`.
+- Require both HTTP 200 and a normalized `versionKey.system/name/version` matching the target. A mismatch produces `VERSION_CONFLICT`.
+- `isDeprecated=true` records `DEPRECATED/PRESENT` and preserves `deprecatedReason`; it does not change lifecycle. Treat false or an absent field as ABSENT only when the ecosystem and API contract provide reliable negative information. Missing collection capability, missing data, or API failures produce UNKNOWN.
+- `publishedAt` is mandatory for version verification. A missing or invalid value produces UNVERIFIED unless a valid fallback assertion supplies it.
+- STALE_RELEASE requires a complete GetPackage version list. Use the latest publication time on or before the evaluation date. Missing dates, unconfirmed completeness, API failure, unavailable retrieval capability, or a future `as_of` requiring prediction produce UNKNOWN. With complete information, a gap exceeding `stale_release_days` produces PRESENT; otherwise ABSENT.
+- A 404 means `NOT_FOUND_IN_INDEX`, without proving that the version does not exist. Do not retry it; leave the result UNKNOWN.
+- Convert Maven `group:artifact` names, npm scopes, Go paths, and URL encoding according to the official API contract.
+- deps.dev does not itself guarantee upstream security support for any ecosystem.
 
-### 6.5 将来のProviderとMVPでの扱い
+### 6.5 Future providers and MVP behavior
 
-GitHub Archived、PyPI project status、Go retract、NuGet deprecation、各Registry APIは後続対応。MVPの設定で`github.enabled=true`と指定された場合は**未実装の有効化を黙認せず設定エラー（exit 2）**。未知Provider設定も拒否する。一方、`ci.fail_on_signals`に将来対応のSignal種別を指定することは可能。そのSignalの取得手段がなければ評価はUNKNOWNでincomplete=trueとなる。
+GitHub archived status, PyPI project status, Go retract, NuGet deprecation, and individual registry APIs are future capabilities. Configuring `github.enabled=true` in the MVP is a **configuration error (exit 2)**; unimplemented enablement must not be silently accepted. Reject unknown provider settings as well.
 
-## 7. 内部型・判定処理・矛盾ルール
+Future signal types may still be listed in `ci.fail_on_signals`. If no provider can evaluate a requested signal, its status is UNKNOWN and `incomplete=true`.
 
-### 7.1 型契約（論理モデル）
+## 7. Internal types, evaluation, and conflict rules
 
-`LifecycleEvidence`（**全フィールド必須、`| null`は明示null**）:
+### 7.1 Type contracts: Logical model
+
+`LifecycleEvidence`: **Every field is required; `| null` means an explicit null value.**
 
 ```text
 LifecycleEvidence {
@@ -306,8 +314,8 @@ LifecycleEvidence {
   provider_id: string
   source_class: OFFICIAL | CURATED_DATABASE
   claim: UPSTREAM_SECURITY_WINDOW | UPSTREAM_SECURITY_END | GENERAL_EOL_END
-  package_purl: string                    # versionなし
-  product_slug: string | null             # GENERAL_EOL_ENDでは必須
+  package_purl: string                    # Unversioned
+  product_slug: string | null             # Required for GENERAL_EOL_END
   matched_cycle: string
   support_scope: upstream_security | general_eol
   support_start_date: date | null
@@ -316,11 +324,11 @@ LifecycleEvidence {
   source_field: string
   observed_at: timestamp
   source_updated_at: timestamp | null
-  reviewed_at: date | null                 # OFFICIALでは必須
-  valid_until: date | null                 # OFFICIALでは必須。実行日で検証
+  reviewed_at: date | null                 # Required for OFFICIAL
+  valid_until: date | null                 # Required for OFFICIAL; validate against execution date
   raw_payload_hash: string | null         # SHA-256 hex
   confidence: HIGH | MEDIUM
-  rule_id: string                         # この根拠の解釈ルール系統
+  rule_id: string                         # Interpretation rule for this evidence
   general_eol_review: GeneralEolReview | null
   superseded_by: string | null
   supersession_source_url: https_url | null
@@ -341,7 +349,7 @@ VersionVerification {
 }
 ```
 
-`SignalEvidence`（MVP enum）：
+`SignalEvidence`, with the MVP enum:
 
 ```text
 SignalEvidence {
@@ -354,7 +362,7 @@ SignalEvidence {
 }
 ```
 
-`SignalEvaluation`（有効化された検出種別とCI要求種別の和集合について、種別ごとに必須）：
+`SignalEvaluation`: One evaluation is required for each type in the union of enabled detection types and CI-required types.
 
 ```text
 SignalEvaluation {
@@ -367,54 +375,56 @@ SignalEvaluation {
 }
 ```
 
-PRESENTには対応する`signals[]`の根拠が必要。ABSENTは正常かつ十分な情報による否定確認であり、HTTP成功だけでは付与しない。UNKNOWNには理由を必須とする。複数Providerは正常な同等情報を集約し、相反する評価はUNKNOWN/SIGNAL_CONFLICT。例外は評価状態やincompleteを変更しない。
+PRESENT requires corresponding evidence in `signals[]`. ABSENT requires a successful evaluation with sufficient negative information; HTTP success alone is insufficient. UNKNOWN requires a reason.
 
-`Notice`は**派生情報**で、Provider Signalではない：
+Aggregate equivalent successful information across providers. Conflicting evaluations produce UNKNOWN/SIGNAL_CONFLICT. Exceptions do not change evaluation status or incompleteness.
+
+`Notice` is **derived information**, not a provider signal:
 
 ```text
 Notice {
   type: EOL_SOON
-  days_remaining: integer                 # 1..通知閾値
+  days_remaining: integer                 # 1..notice threshold
   evidence_id: string
   rule_id: "R-009"
 }
 ```
 
-`Diagnostic`: `code`, `provider_id|null`, `http_status|null`, `retryable`, `message`を必須とする。`source_url`はLifecycleEvidenceの正式な出典URL。認証パラメータ付きの取得URLは出力しない。
+`Diagnostic` requires `code`, `provider_id|null`, `http_status|null`, `retryable`, and `message`. A LifecycleEvidence `source_url` is the authoritative evidence URL. Do not output retrieval URLs containing authentication parameters.
 
-### 7.2 判定Tierと比較
+### 7.2 Evidence tiers and comparison
 
-1. 対象PURL・対象版・適用系列に合うEvidenceを収集し、元データと診断を保持する。
-2. 有効期限・日付の構文・サポート範囲・一般EOLレビューを確認する。無効・失効・未レビュー情報は判定用集合から除くが、`evidence[]`から削除しない。正式な撤回・更新の確認URLと新根拠IDがある古い情報だけを比較対象から外す。
-3. **この時点で`as_of`と終了日を比較して候補を削除しない。未来の終了日も必ず保持する。**
-4. 有効な集合の最高Tierを選ぶ：`OFFICIAL/HIGH > CURATED_DATABASE/MEDIUM`。レビュー済み一般EOLの比較上の範囲はupstream_securityだが、元Evidenceのsource_class／confidence／scopeは書き換えない。
-5. 最高Tierで同じ対象版・サポート範囲に適用される終了日が不一致なら`UNKNOWN/CONFLICT`。Window同士の開始日が不一致の場合もCONFLICT。同じ終了日のWindowとEndは矛盾ではなく、明示Windowが継続中の根拠を提供する。低いTierの異なる終了日・状態は`SOURCE_DISAGREEMENT`として残し、上位を覆さない。
-6. 矛盾がなければ、この段階で評価日と日付を比較する。Windowは`start <= as_of < end`ならSUPPORTED、`as_of >= end`ならEOL、開始前ならUNKNOWN。Security Endは終了済みならEOL、終了前ならUNKNOWN。レビュー済みGENERAL_EOL_ENDは終了済みならEOL/MEDIUM、終了前ならUNKNOWN/GENERAL_EOL_ONLY。
-7. 上位Tierが終了前のSecurity EndでUNKNOWNとなる場合、低いTierだけを使ってEOLにしてはいけない。最高Tierの根拠を先に選ぶことと、状態導出を分離する。
-8. 版の実在・公開日時が未検証なら、根拠の比較結果にかかわらずLifecycleはUNKNOWN。CONFLICT等の取得済み診断も保持する。確定したLifecycleの採用Evidence IDを`selected_evidence_ids[]`へ保存する。
-9. `SUPPORTED`かつ`0 < days_until_eol <= notices.eol_soon_days`の場合だけEOL_SOON Noticeを追加する。
+1. Collect evidence matching the target PURL, exact version, and applicable release series. Retain original data and diagnostics.
+2. Validate expiry, date syntax, support scope, and generic EOL reviews. Exclude invalid, expired, or unreviewed information from the decision set, but retain it in `evidence[]`. Exclude older material from comparison only when a verified formal withdrawal or update supplies a proof URL and replacement evidence ID.
+3. **Do not compare `as_of` with end dates to remove candidates at this stage. Retain future end dates.**
+4. Select the highest eligible tier: `OFFICIAL/HIGH > CURATED_DATABASE/MEDIUM`. Reviewed generic EOL has comparison scope upstream_security, while its original source class, confidence, and scope remain unchanged.
+5. If the highest tier contains different end dates for the same target version and support scope, return `UNKNOWN/CONFLICT`. Different start dates between windows also conflict. A window and an end-only claim with the same end date do not conflict; the explicit window can establish continued support. Record lower-tier differences in dates or states as `SOURCE_DISAGREEMENT` without overriding the higher tier.
+6. After conflict detection, compare the evaluation date with the dates. A window yields SUPPORTED for `start <= as_of < end`, EOL for `as_of >= end`, and UNKNOWN before its start. A security end claim yields EOL on or after its end date, otherwise UNKNOWN. Reviewed GENERAL_EOL_END yields EOL/MEDIUM on or after its end date, otherwise UNKNOWN/GENERAL_EOL_ONLY.
+7. If a higher-tier future security end claim yields UNKNOWN, do not fall back to lower-tier evidence to return EOL. Separate highest-tier selection from state derivation.
+8. Without verified version existence and publication time, lifecycle remains UNKNOWN regardless of the evidence comparison. Retain collected diagnostics such as CONFLICT. For a definitive lifecycle decision, save selected evidence IDs in `selected_evidence_ids[]`.
+9. Add an EOL_SOON notice only when the result is `SUPPORTED` and `0 < days_until_eol <= notices.eol_soon_days`.
 
-例：公式Security Endの2026-10-01と2026-12-01は、as_of=2026-10-11でもUNKNOWN/CONFLICT。正式な更新を確認して旧根拠を撤回した場合だけ、旧根拠を比較対象から外せる。
+Example: Official security end dates of 2026-10-01 and 2026-12-01 produce UNKNOWN/CONFLICT even for as_of=2026-10-11. Remove the older claim from comparison only after verifying a formal update that withdraws it.
 
-**重複の扱い:** 同じ一次資料・適用範囲・日付の主張は重複排除する。独立した根拠の数でConfidenceを格上げしない。
+**Deduplication:** Deduplicate claims with the same primary source, applicability, and dates. The number of independent sources must not increase confidence.
 
-### 7.3 固定Rule ID
+### 7.3 Stable rule IDs
 
-| Rule ID | 条件 |
-|---|---|
-| `R-001` | OFFICIAL Security Window/EndからEOL / HIGH |
-| `R-002` | OFFICIAL Security Windowが評価日を包含 → SUPPORTED / HIGH |
-| `R-003` | 有効な意味レビューが一致するCURATED GENERAL_EOL_ENDが終了済み → EOL / MEDIUM |
-| `R-004` | **廃止・予約済み**。v0.1のCURATED→SUPPORTEDは実施禁止 |
-| `R-005` | Maintenance Signal抽出。Lifecycle変更なし |
-| `R-006` | 有効なLifecycle候補なし → UNKNOWN |
-| `R-007` | 同格根拠の矛盾 → UNKNOWN / CONFLICT |
-| `R-008` | 下位Tierの意見不一致 → 上位優先＋Diagnostic |
-| `R-009` | SUPPORTEDで終了予定が閾値以内 → EOL_SOON Notice |
-| `R-010` | 例外／CI Gate適用（Lifecycle不変） |
-| `R-011` | バージョン未検証／索引未収録／未公開 → UNKNOWN |
+| Rule ID | Condition |
+| --- | --- |
+| `R-001` | Official security window or end evidence establishes EOL / HIGH. |
+| `R-002` | An official security window includes the evaluation date: SUPPORTED / HIGH. |
+| `R-003` | CURATED GENERAL_EOL_END has a valid matching meaning review and has ended: EOL / MEDIUM. |
+| `R-004` | **Retired and reserved.** The v0.1 CURATED-to-SUPPORTED rule must not be implemented. |
+| `R-005` | Extract maintenance signals without changing lifecycle. |
+| `R-006` | No eligible lifecycle candidate: UNKNOWN. |
+| `R-007` | Same-tier evidence conflicts: UNKNOWN / CONFLICT. |
+| `R-008` | Lower-tier disagreement: retain the higher tier and add a diagnostic. |
+| `R-009` | SUPPORTED with a scheduled end within the threshold: EOL_SOON notice. |
+| `R-010` | Apply exceptions and the CI gate without changing lifecycle. |
+| `R-011` | Version unverified, absent from the index, or not yet published: UNKNOWN. |
 
-### 7.4 必須アルゴリズム（擬似コード）
+### 7.4 Required algorithm: Pseudocode
 
 ```text
 run_started_at = utc_now_once()
@@ -436,7 +446,7 @@ for component in normalized_sbom:
     eligible = validate_identity_cycle_scope_dates_freshness(evidence, run_date)
     eligible = require_matching_general_eol_review(eligible, run_date)
     eligible = remove_explicitly_superseded_with_proof(eligible)
-    top = evidence_at_highest_tier(eligible)  # 終了日が未来でも除外しない
+    top = evidence_at_highest_tier(eligible)  # Retain evidence with future end dates
     conflict = compare_end_dates_and_support_windows(top)
     diagnostics += lower_tier_disagreements(eligible, top)
     signal_evaluations, signals = aggregate_signal_evaluations(collected)
@@ -467,29 +477,29 @@ report.ci_gate = aggregate_component_failures_unknown_ratio_incomplete()
 exit_code = apply_exit_precedence(report.ci_gate)
 ```
 
-### 7.5 UNKNOWN理由／不完全スキャンの区別
+### 7.5 UNKNOWN reasons and scan incompleteness
 
-Lifecycle理由：`MISSING_PURL`, `INVALID_PURL`, `VERSION_UNRESOLVED`, `VERSION_CONFLICT`, `VERSION_NOT_FOUND_IN_INDEX`, `VERSION_UNVERIFIED`, `NOT_RELEASED_AS_OF`, `PUBLICATION_IN_FUTURE`, `PRIVATE_SOURCE_UNSUPPORTED`, `UNSUPPORTED_ECOSYSTEM`, `AMBIGUOUS_IDENTITY`, `AMBIGUOUS_CYCLE`, `GENERAL_EOL_ONLY`, `GENERAL_EOL_UNREVIEWED`, `NO_LIFECYCLE_EVIDENCE`, `STALE_EVIDENCE`, `CONFLICT`, `SOURCE_ERROR`。
+Lifecycle reason codes: `MISSING_PURL`, `INVALID_PURL`, `VERSION_UNRESOLVED`, `VERSION_CONFLICT`, `VERSION_NOT_FOUND_IN_INDEX`, `VERSION_UNVERIFIED`, `NOT_RELEASED_AS_OF`, `PUBLICATION_IN_FUTURE`, `PRIVATE_SOURCE_UNSUPPORTED`, `UNSUPPORTED_ECOSYSTEM`, `AMBIGUOUS_IDENTITY`, `AMBIGUOUS_CYCLE`, `GENERAL_EOL_ONLY`, `GENERAL_EOL_UNREVIEWED`, `NO_LIFECYCLE_EVIDENCE`, `STALE_EVIDENCE`, `CONFLICT`, `SOURCE_ERROR`.
 
-- 必須の版検証・公開日時・最高Tier根拠の取得が障害や欠損で完了せず、同等以上の有効な情報で代替できなければincomplete=true。
-- 未収録、索引404、未レビュー一般EOL、NOT_RELEASED_AS_OF、通常の根拠不足はそれだけでは不完全扱いしない。
-- **CIで要求するSignalがUNKNOWNなら、API障害、公開日欠落、取得手段なしを問わずincomplete=true。** SignalのUNKNOWNをABSENTへ変更してはいけない。
-- 必須Signalの正常な代替評価があればincompleteを回避できる。任意Signalだけの失敗は診断に残すが、それだけではincompleteにしない。
-- `fail_on_incomplete_scan=true`なら不完全をGate違反にする。falseでも`result.incomplete`と`ci_gate.incomplete`に残す。例外は不完全を免除しない。
-- 無効な識別子でもCI必須Signalを照会できなければ、そのSignalはUNKNOWNでincomplete=true。コンポーネントを早期returnして必須評価を消してはいけない。
+- Set `incomplete=true` if required version verification, publication time, or highest-tier evidence retrieval fails because of an error or missing data, without an equivalent or better valid fallback.
+- An index miss, index 404, unreviewed generic EOL, NOT_RELEASED_AS_OF, or ordinary lack of evidence does not alone make a scan incomplete.
+- **A CI-required signal with UNKNOWN status always sets `incomplete=true`**, whether caused by an API failure, missing publication time, or unavailable retrieval capability. Never convert UNKNOWN to ABSENT.
+- A successful equivalent fallback evaluation of a required signal can avoid incompleteness. Failures affecting only optional signals remain diagnostics and do not alone make a scan incomplete.
+- `fail_on_incomplete_scan=true` makes incompleteness a gate violation. When false, retain incompleteness in `result.incomplete` and `ci_gate.incomplete`. Exceptions do not waive incompleteness.
+- Invalid identities still require UNKNOWN evaluations for CI-required signals that cannot be queried, and `incomplete=true`. An early return must not omit required evaluations.
 
-## 8. YAML設定と規定値
+## 8. YAML configuration and defaults
 
-### 8.1 設定の解決と不変条件
+### 8.1 Resolution and invariants
 
-- 設定の優先順位は`CLIフラグ > YAML > ビルトイン既定値`。設定YAMLは`schema_version: 2`を必須とし、他の項目は**差分記述も許可**する。入力Schemaで未知キー・型を検査した後にビルトイン既定値と再帰マージし、生成した有効設定を再検証する。YAML内の相対パスは設定ファイルの場所を基準に解決する。
-- 設定キー未知・型不一致・未実装機能のenable・矛盾する値は`policy validate`および`scan`で`exit 2`。
-- **削除するキー：** `decision.unknown_on_same_tier_conflict`、`decision.excluded_general_eol_products`。同格矛盾は常にUNKNOWN、一般EOLは有効なレビューのあるものだけ使用する。旧キーは未知キーとしてエラー。
-- `version_verification.mode`は`required`固定。`decision.support_scope`は`upstream_security`固定。Lifecycleの意味は設定で変更できない。
-- 設定で変更できるのは照会Provider、通知閾値、キャッシュ、ネットワーク、CI Gate、ローカルカタログ・レビュー、例外。
-- 本書と同梱の`policy.schema.json`が設定の正本。`policy_hash`は既定補完した設定・参照カタログ・例外を、`{policy, catalog, exceptions}`オブジェクトのUTF-8 JSON（キー順ソート、余分な空白なし）に正規化したSHA-256。カタログや例外が未使用ならnull。設定の相対パスは記述値を保持してハッシュへ含め、実ファイルは設定のディレクトリ基準で解決する。秘密値は含めない。
+- Precedence is `CLI flags > YAML > built-in defaults`. Policy YAML requires `schema_version: 2`; all other fields may be supplied as **partial overrides**. Validate unknown keys and types against the input schema, recursively merge into defaults, then validate the effective policy. Resolve relative paths from the policy file's directory.
+- Unknown configuration keys, type mismatches, enabling unimplemented capabilities, or contradictory values produce `exit 2` in both `policy validate` and `scan`.
+- **Removed keys:** `decision.unknown_on_same_tier_conflict` and `decision.excluded_general_eol_products`. Same-tier conflicts always yield UNKNOWN; generic EOL requires valid reviews. Reject the old keys as unknown configuration.
+- `version_verification.mode` is fixed to `required`. `decision.support_scope` is fixed to `upstream_security`. Configuration cannot change lifecycle semantics.
+- Configurable areas are query providers, notice thresholds, caching, networking, the CI gate, local catalogs and reviews, and exceptions.
+- This document and `policy.schema.json` define the policy contract. Compute `policy_hash` as SHA-256 of the normalized `{policy, catalog, exceptions}` object containing the effective policy and referenced catalog and exception content. Use UTF-8 JSON, sorted keys, and no extra whitespace. Unused catalogs or exceptions are null. Relative paths retain their literal configuration values in the hash; actual file resolution uses the policy directory. Exclude secret values.
 
-### 8.2 Default: report-first
+### 8.2 Default: Report-first
 
 ```yaml
 schema_version: 2
@@ -543,11 +553,13 @@ output:
   include_evidence: true
 ```
 
-**明示的な利用者への説明:** 既定ではカタログが無効で、公式根拠・一般EOLレビュー・ローカル版証明の登録は0件。そのためendoflife.dateの一般EOLもUNKNOWNとなり、SUPPORTEDとEOL_SOONも出ない。カタログを指定して一般EOLの意味レビューだけを登録した場合はEOL/MEDIUMを出せるが、既定のHIGH閾値ではそれだけでCIを失敗させない。API障害によるincompleteも既定ではCIを止めない。Report-firstは報告・棚卸しを優先するモードである。
+**Required user-facing explanation:** By default the catalog is disabled, with zero official support entries, generic EOL reviews, or local version assertions. Therefore generic endoflife.date information remains UNKNOWN, and SUPPORTED and EOL_SOON are unavailable.
 
-### 8.3 Strict CIプロファイル
+A catalog containing only generic EOL meaning reviews can yield EOL/MEDIUM. That result alone does not fail CI at the default HIGH threshold. API-related incompleteness also does not fail default CI. Report-first prioritizes reporting and inventory.
 
-同梱の`eol-policy.ci-strict.yaml`は上記設定を基礎として、以下を変更した**単独で読み込める完全な設定ファイル**。
+### 8.3 Strict CI profile
+
+The bundled `eol-policy.ci-strict.yaml` is a **complete standalone policy file** based on the defaults with these changes:
 
 ```yaml
 ci:
@@ -558,14 +570,14 @@ ci:
   max_unknown_ratio: 0.25
 ```
 
-上記はStrictの**差分表示**。実際に読み込ませるファイルには全設定が含まれる。`max_unknown_ratio: 0.25`はサンプル値であり、組織の許容値に合わせて調整する。UNKNOWNが多いエコシステムでは過剰に失敗し得るため、report-firstでカバレッジを観察してから有効化する。
+The snippet shows the strict policy's **differences**; the bundled file contains the full configuration. `max_unknown_ratio: 0.25` is an example threshold to adjust for an organization's tolerance. Ecosystems with many UNKNOWN results may trigger frequent failures; observe coverage in report-first mode before enabling this gate.
 
-- `ci.min_confidence`はEOLのみで評価する。UNKNOWNを`fail_on_statuses`へ設定した場合はConfidenceに依存せず失敗。
-- `ci.fail_on_signals`はSignal種別だけを対象とし、指定種別の評価を必須化する（検出設定がfalseでもCI要求が優先する）。PRESENTはコンポーネント違反、ABSENTは違反なし、UNKNOWNはincomplete。Noticeは対象外。STALE_RELEASEを要求しつつ閾値をnullにする設定は矛盾としてexit 2。
-- `max_unknown_ratio`は`unknown/in_scope > threshold`のとき違反。`in_scope=0`では比率0とする。
-- 例外はコンポーネント単位のCI失敗だけを抑制。全体のUNKNOWN率／scan incompleteを免除しない。
+- `ci.min_confidence` applies only to EOL. If `fail_on_statuses` includes UNKNOWN, that status fails regardless of confidence.
+- `ci.fail_on_signals` accepts signal types and makes their evaluations mandatory, even if detection is otherwise disabled. PRESENT is a component violation, ABSENT is not a violation, and UNKNOWN makes the scan incomplete. Notices are excluded. Requiring STALE_RELEASE with a null threshold is contradictory and exits 2.
+- `max_unknown_ratio` is violated when `unknown/in_scope > threshold`. For `in_scope=0`, the ratio is zero.
+- Exceptions suppress only component-level CI failures. They do not waive aggregate unknown ratio or scan incompleteness.
 
-## 9. CLI仕様・終了コード
+## 9. CLI and exit codes
 
 ```bash
 eolscan scan -i sbom.cdx.json --format table
@@ -576,32 +588,32 @@ eolscan providers list
 eolscan version
 ```
 
-| オプション | 意味 |
-|---|---|
-| `scan -i, --input` | 必須。ファイルまたは`-`でstdin |
-| `-c, --config` | 任意。省略時はReport-first |
-| `-f, --format` | `table`既定／`json` |
-| `-o, --output` | 省略時stdout。ファイル出力は一時ファイルから原子的置換 |
-| `--as-of` | UTC日付。既定は実行時点のUTC暦日 |
-| `--offline` | 外部HTTPを行わずローカルcatalog／使用可能なdisk cacheだけ利用 |
-| `--no-cache` | disk cache無効（`--offline`と併用禁止） |
-| `--verbose` | stderrに診断ログ。トークンと秘密値はマスク |
+| Option | Meaning |
+| --- | --- |
+| `scan -i, --input` | Required: input file, or `-` for stdin. |
+| `-c, --config` | Optional policy file. Defaults to report-first when omitted. |
+| `-f, --format` | `table` by default, or `json`. |
+| `-o, --output` | Defaults to stdout. File output uses atomic replacement from a temporary file. |
+| `--as-of` | UTC date; defaults to the execution date in UTC. |
+| `--offline` | Use only the local catalog and usable disk cache entries, without external HTTP. |
+| `--no-cache` | Disable disk caching; cannot be combined with `--offline`. |
+| `--verbose` | Write diagnostic logs to stderr with tokens and secrets masked. |
 
-| Exit | 条件 |
-|---|---|
-| `0` | 実行完了、CI違反なし。**UNKNOWN／MEDIUM EOL／不完全が残っていても既定では0** |
-| `1` | 設定されたCI Gate違反（EOL、UNKNOWN率など） |
-| `2` | 入力、設定、対応外Schema版など利用者修正可能エラー |
-| `3` | `ci.fail_on_incomplete_scan=true`かつ、他の明確なポリシー違反がない不完全スキャン |
-| `4` | 想定外の内部エラー |
+| Exit | Condition |
+| --- | --- |
+| `0` | Execution completed without CI violations. **The default may exit 0 with UNKNOWN, MEDIUM EOL, or incomplete results.** |
+| `1` | A configured CI gate violation, such as EOL or excessive unknown ratio. |
+| `2` | A user-correctable input or configuration error, including an unsupported schema version. |
+| `3` | An incomplete scan with `ci.fail_on_incomplete_scan=true` and no other explicit policy violation. |
+| `4` | An unexpected internal error. |
 
-優先順位：`2/4`（処理不能）`> 1`（明確な違反）`> 3`（不完全）`> 0`。`ci_gate.incomplete=true`でかつEOL violationがある場合はexit 1、両方レポートに残す。
+Precedence is `2/4` (processing failure) `> 1` (explicit violation) `> 3` (incomplete) `> 0`. If `ci_gate.incomplete=true` and an EOL violation is also present, exit 1 and retain both in the report.
 
-## 10. レポートJSON 2.0契約
+## 10. JSON report 2.0 contract
 
-`../schemas/report.schema.json`と本書を一致させ、`../examples/report.example.json`を有効な完全サンプルとする。Schemaは構造を検証し、日付比較・参照ID・集計等は追加の意味検証で確認する。
+Keep `../schemas/report.schema.json` consistent with this specification, and maintain `../examples/report.example.json` as a complete valid example. Schemas validate structure; additional semantic validation checks date comparisons, reference IDs, and aggregate values.
 
-### 10.1 結果構造
+### 10.1 Result structure
 
 ```text
 Report {
@@ -614,18 +626,18 @@ Report {
 }
 ComponentResult {
   source_ref, purl, name, version,
-  version_verification: VersionVerification,  # 必須
+  version_verification: VersionVerification,  # Required
   lifecycle: EOL | SUPPORTED | UNKNOWN,
   confidence: HIGH | MEDIUM | null,
   eol_effective_date: date | null,
   matched_cycle: string | null,
-  signals: SignalEvidence[],                  # PRESENTの根拠のみ
+  signals: SignalEvidence[],                  # Evidence for PRESENT evaluations only
   signal_evaluations: SignalEvaluation[],      # PRESENT/ABSENT/UNKNOWN
-  selected_evidence_ids: string[],             # UNKNOWNなら空
-  notices: Notice[],                          # EOL_SOONはここ
+  selected_evidence_ids: string[],             # Empty for UNKNOWN
+  notices: Notice[],                          # EOL_SOON belongs here
   unknown_reasons: string[],
   rule_ids: string[],
-  evidence: LifecycleEvidence[],              # 全必須フィールドを保持
+  evidence: LifecycleEvidence[],              # Retain every required field
   diagnostics: Diagnostic[],
   incomplete: bool,
   ci_failure: bool,
@@ -633,170 +645,180 @@ ComponentResult {
 }
 ```
 
-### 10.2 不変条件
+### 10.2 Invariants
 
-1. `in_scope == eol + supported + unknown`。
-2. `assessment_coverage == (eol + supported) / in_scope`（0件なら0）。
-3. `lifecycle=UNKNOWN`は`confidence=null`、`eol_effective_date=null`、`unknown_reasons`が1件以上。
-4. `lifecycle!=UNKNOWN`は`version_verification.status=VERIFIED`、`confidence in [HIGH,MEDIUM]`、`eol_effective_date`あり、採用根拠が少なくとも1件。
-5. `SUPPORTED`を出す場合、採用Evidenceは公式Window・upstream_securityで評価日が期間内。一般EOLからEOLを出す場合は製品・PURL・系列・範囲が一致し、実行日に有効なレビューを必須とする。VERIFIEDには公開日時を必須とする。
-6. `notices[].type=EOL_SOON`は`SUPPORTED`の場合のみ存在。`Notice.evidence_id`は存在するLifecycleEvidenceの`id`を参照。
-7. `evidence[]`の全フィールドを出力する。任意ではなくnullableに指定した属性も必ずキーを出し`null`とする。
-8. `ci_gate.passed=false`なら`violation_codes`非空。`ci_gate.incomplete=true`と`passed=true`は**report-firstでは許容**。
-9. `ci_failure_count`はコンポーネント単位で例外を適用した後の失敗件数。全体条件の失敗は`violation_codes`に記載。
-10. JSONはEvidence・Unknownを削除しない。`output.include_unknown/include_evidence`はtableの表示制御だけに適用する。
-11. `results[]`はPURL（nullは最後）、`source_ref`で安定ソート。各配列内の要素は安定キーで重複排除する。元SBOMの別コンポーネントの結果は同一PURLでも削除しない。
-12. selected_evidence_idsとNotice.evidence_idは出力Evidenceに存在し、採用IDは期限・Tier・矛盾の検証を通過している。UNKNOWNでは採用IDは空。
-13. CI必須SignalのUNKNOWNはresult.incomplete=trueを要求する。PRESENT評価には同種のsignals[]根拠が必要。
-14. reportのgenerated_atが実行開始時刻run_started_atであり、期限検証と版公開日時の実行時点確認に使用する。完了時刻が必要ならログへ出す。
+1. `in_scope == eol + supported + unknown`.
+2. `assessment_coverage == (eol + supported) / in_scope`, or zero when there are no components in scope.
+3. `lifecycle=UNKNOWN` requires `confidence=null`, `eol_effective_date=null`, and at least one `unknown_reasons` entry.
+4. `lifecycle!=UNKNOWN` requires `version_verification.status=VERIFIED`, `confidence in [HIGH,MEDIUM]`, an `eol_effective_date`, and at least one selected evidence item.
+5. SUPPORTED requires selected official upstream_security window evidence containing the evaluation date. EOL derived from generic EOL requires a review matching product, PURL, series, and scope, valid on the execution date. VERIFIED requires a publication timestamp.
+6. `notices[].type=EOL_SOON` exists only for SUPPORTED. `Notice.evidence_id` references an existing LifecycleEvidence `id`.
+7. Output every field of each `evidence[]` item. Required nullable properties must be present with a null value rather than omitted.
+8. `ci_gate.passed=false` requires nonempty `violation_codes`. **Report-first permits** `ci_gate.incomplete=true` together with `passed=true`.
+9. `ci_failure_count` counts component failures after exceptions are applied. Report aggregate condition failures in `violation_codes`.
+10. JSON always retains evidence and unknown results. `output.include_unknown/include_evidence` affect table display only.
+11. Stable-sort `results[]` by PURL, with null last, then `source_ref`. Deduplicate elements within arrays by stable keys. Retain separate results for different source SBOM components, even when their PURLs are identical.
+12. `selected_evidence_ids` and `Notice.evidence_id` must exist in output evidence. Selected IDs must pass expiry, tier, and conflict checks. UNKNOWN requires an empty selected ID array.
+13. UNKNOWN for a CI-required signal requires `result.incomplete=true`. PRESENT requires corresponding evidence of the same type in `signals[]`.
+14. Report `generated_at` equals `run_started_at`. Use that time for expiry checks and publication validation against execution time. Write completion time to logs if needed.
 
-### 10.3 Evidence JSONの必須フィールド
+### 10.3 Required evidence JSON fields
 
-**LifecycleEvidence:** `id`, `provider_id`, `source_class`, `claim`, `package_purl`, `product_slug`, `matched_cycle`, `support_scope`, `support_start_date`, `eol_effective_date`, `source_url`, `source_field`, `observed_at`, `source_updated_at`, `reviewed_at`, `valid_until`, `raw_payload_hash`, `confidence`, `rule_id`, `general_eol_review`, `superseded_by`, `supersession_source_url`。
+**LifecycleEvidence:** `id`, `provider_id`, `source_class`, `claim`, `package_purl`, `product_slug`, `matched_cycle`, `support_scope`, `support_start_date`, `eol_effective_date`, `source_url`, `source_field`, `observed_at`, `source_updated_at`, `reviewed_at`, `valid_until`, `raw_payload_hash`, `confidence`, `rule_id`, `general_eol_review`, `superseded_by`, `supersession_source_url`.
 
-**SignalEvidence:** `type`, `provider_id`, `source_url`, `observed_at`, `details`。
+**SignalEvidence:** `type`, `provider_id`, `source_url`, `observed_at`, `details`.
 
-**SignalEvaluation:** `type`, `status`, `provider_id`, `source_url`, `checked_at`, `reason_code`。
+**SignalEvaluation:** `type`, `status`, `provider_id`, `source_url`, `checked_at`, `reason_code`.
 
-**Notice:** `type`, `days_remaining`, `evidence_id`, `rule_id`。
+**Notice:** `type`, `days_remaining`, `evidence_id`, `rule_id`.
 
-**VersionVerification:** `status`, `provider_id`, `source_url`, `checked_at`, `published_at`, `reason_code`。
+**VersionVerification:** `status`, `provider_id`, `source_url`, `checked_at`, `published_at`, `reason_code`.
 
-**VersionAssertion:** `package_purl`, `published_at`, `source_url`, `reviewed_at`, `valid_until`。
+**VersionAssertion:** `package_purl`, `published_at`, `source_url`, `reviewed_at`, `valid_until`.
 
-**GeneralEolReview:** `id`, `product_slug`, `package_purl`, `matched_cycle`, `support_scope`, `evidence_url`, `reviewed_at`, `valid_until`。
+**GeneralEolReview:** `id`, `product_slug`, `package_purl`, `matched_cycle`, `support_scope`, `evidence_url`, `reviewed_at`, `valid_until`.
 
-**Diagnostic:** `code`, `provider_id`, `http_status`, `retryable`, `message`。
+**Diagnostic:** `code`, `provider_id`, `http_status`, `retryable`, `message`.
 
-`report.example.json`は架空のFixtureに基づく有効サンプル。個々のEvidence項目を省略しない。
+`report.example.json` is a valid example based on fictional fixtures. It must not omit evidence properties.
 
-## 11. HTTP・メモ化・永続キャッシュ
+## 11. HTTP, memoization, and persistent caching
 
 ### 11.1 HTTP
 
-- 許可Host：`endoflife.date`、`api.deps.dev`（設定`base_url`を変更する場合もTLSとnetwork.allowed_hostsへの明示登録が必要。HTTPへ無条件に送信しない）。
-- timeout 8秒／request、最大2回retry（429、5xx、短期的ネットワーク障害のみ）。`Retry-After`尊重、指数バックオフ。404は再試行なし。
-- 全Provider通算max concurrency 6。`PURL`と`product slug`をキーにin-flightを重複排除。
-- endoflife.dateのHTTP 304はdisk cacheが有効な場合のみ既存内容と結合。キャッシュなしで304は異常診断。
-- レスポンスSchema不整合は`PROVIDER_SCHEMA_MISMATCH`。成功扱いしない。
+- Allowed hosts are `endoflife.date` and `api.deps.dev`. Changing a configured `base_url` still requires TLS and explicit registration in `network.allowed_hosts`; do not silently fall back to HTTP.
+- Use an 8-second request timeout and at most two retries for 429s, 5xx responses, and transient network failures. Honor `Retry-After` and use exponential backoff. Do not retry 404s.
+- Enforce maximum concurrency 6 across all providers. Deduplicate in-flight requests by PURL and product slug.
+- An endoflife.date HTTP 304 may be combined with existing content only when disk caching is enabled. Without cached content, diagnose the 304 as an error.
+- A response schema mismatch produces `PROVIDER_SCHEMA_MISMATCH`, not a successful result.
 
-### 11.2 キャッシュ
+### 11.2 Caching
 
-| 種別 | MVP既定 | 仕様 |
-|---|---|---|
-| インメモリ・リクエストメモ | **必須・常時ON** | 1スキャン内の同一PURL・製品slugを再照会しない。プロセス終了で消去 |
-| ファイルベース永続キャッシュ | **任意・既定OFF** | `cache.enabled=true`にした場合のみ使用。DB不要 |
+| Cache type | MVP default | Contract |
+| --- | --- | --- |
+| In-memory request memoization | **Required; always enabled** | Do not repeat the same PURL or product slug query within a scan. Discard on process exit. |
+| File-based persistent cache | **Optional; disabled by default** | Use only when `cache.enabled=true`. No database is required. |
 
-永続キャッシュの内容は、許可Host・APIパス・正規化照会キー・レスポンスschema版でハッシュ化し、OS標準のcache dirに保存する。正常200はTTL 24h、確定的404は6h、429/timeout/5xxは保存しない。保存先は安全な権限で作成。`--offline`はネットワーク完全禁止：catalogや有効なdisk cacheだけで版検証・EOL判断する。**cache既定OFFでcatalogにも版アサーションがないオフライン実行では、多くがUNKNOWNになってよい。**
+Hash persistent cache keys from the allowed host, API path, normalized query key, and response schema version. Store entries in the OS cache directory with safe permissions. Successful 200 responses have a 24-hour TTL; definitive 404 responses have a 6-hour TTL. Do not persist 429s, timeouts, or 5xx responses.
 
-ディスクcacheが期限切れの場合はオンラインで再取得。offlineでTTL超過・最大証拠年齢内なら使用してCACHE_STALE診断を残す。最大証拠年齢を超えた場合はSTALE_EVIDENCEで使用不可。年齢はrun_started_atと取得時刻の差で計算し、as_ofを基準にしない。カタログの期限は各項目`valid_until`に従い、外部動的APIは`decision.max_evidence_age_days`も適用。
+`--offline` prohibits all network access. Verify versions and evaluate EOL using only catalogs and usable disk cache entries. **With default caching disabled and no local version assertions, many offline results may be UNKNOWN.**
 
-## 12. セキュリティ・監査・観測
+Refresh expired disk entries online. Offline, entries beyond their TTL but within the maximum evidence age may be used with a CACHE_STALE diagnostic. Entries older than the maximum age are unusable and produce STALE_EVIDENCE. Calculate age from observation time to `run_started_at`, never from `as_of`. Catalog entries follow their individual `valid_until` dates; dynamic external API evidence also follows `decision.max_evidence_age_days`.
 
-- SBOM input既定50MiB上限、コンポーネント100,000件上限、JSON深度上限を設定。超過はexit 2。
-- Providerが組み立てた固定host URLだけGET可能。カタログの`evidence_url`は出力用であり自動fetchしない。
-- 外部HTTPへのリクエストでPURL等が外部送信されることをREADMEと`--help`で明示。`--offline`では確実にHTTPゼロ。
-- 出力にAPI key/Authorizationを含めず、stderrログと証拠URLからも削除。`input_sha256`は元ファイルbytesに対するSHA-256。
-- metrics：`in_scope, eol, supported, unknown, assessment_coverage, provider_error_count, incomplete_component_count, version_unverified_count, version_not_found_count, cache_hit_count, ci_failure_count`。
-- アプリの公開リリースにはポリシー版、Schema、固定Fixture、依存ツールの版を記録する。
+## 12. Security, audit, and observability
 
-## 13. テスト設計（必須受け入れ条件）
+- Default SBOM limits are 50 MiB, 100,000 components, and a configured maximum JSON depth. Exceeding a limit exits 2.
+- Allow GET requests only to URLs built by providers on fixed allowed hosts. Catalog `evidence_url` values are for output and are not fetched automatically.
+- State in README and `--help` that requests may send package identities such as PURLs to external APIs. `--offline` must perform zero HTTP requests.
+- Exclude API keys and Authorization values from output, stderr logs, and evidence URLs. `input_sha256` is SHA-256 of the original input bytes.
+- Metrics: `in_scope, eol, supported, unknown, assessment_coverage, provider_error_count, incomplete_component_count, version_unverified_count, version_not_found_count, cache_hit_count, ci_failure_count`.
+- Public application releases record the policy version, schemas, fixed fixtures, and dependency/tool versions.
 
-| Test | Fixture | 期待結果 |
-|---|---|---|
-| UT-01 | verified版＋公式Security Window、終了日前 | SUPPORTED/HIGH |
-| UT-02 | verified版＋公式Security Window、終了日当日 | EOL/HIGH |
-| UT-03 | verified版＋公式Security End、終了日前 | UNKNOWN（SUPPORTED禁止） |
-| UT-04 | verified版＋endoflife.date一般的EOL日、終了日前 | UNKNOWN/GENERAL_EOL_ONLY、SUPPORTED禁止 |
-| UT-05 | verified版＋有効な意味レビュー＋一般的EOL日、終了日当日 | EOL/MEDIUM |
-| UT-06 | `isMaintained=true`のみ | UNKNOWN、SUPPORTED禁止 |
-| UT-07 | `isMaintained=true`かつ一般EOL日を過ぎた | upstream EOLの判断にbooleanを混ぜない |
-| UT-08 | 不存在の`7.2.9999`が系列7.2に一致する | UNKNOWN/VERSION_NOT_FOUND_IN_INDEX |
-| UT-09 | deps.dev版照会タイムアウト | UNKNOWN/VERSION_UNVERIFIED、incomplete=true |
-| UT-10 | カタログの`verified_versions`完全一致 | VERIFIED（オンライン不要） |
-| UT-11 | 過去のas_ofより版公開が未来 | UNKNOWN/NOT_RELEASED_AS_OF |
-| UT-12 | `7.2`と`7.20`の系列境界 | 誤照合しない |
-| UT-13 | `/identifiers/purl`→一致製品2件のみ詳細GET | `/products/full`ゼロGET、必要な製品だけGET |
-| UT-14 | PURLが索引に存在しない | UNKNOWN／曖昧な名称検索禁止 |
-| UT-15 | 索引1PURLに複数製品 | UNKNOWN/AMBIGUOUS_IDENTITY |
-| UT-16 | 同格のEOL日不一致 | UNKNOWN/CONFLICT（設定で変更不可） |
-| UT-17 | OFFICIALとCURATEDの状態不一致 | OFFICIAL優先、SOURCE_DISAGREEMENT |
-| UT-18 | EOLまで90日・Security Windowあり | SUPPORTED＋`notices:EOL_SOON`、signalsには入れない |
-| UT-19 | 一般EOL未来まで90日・Security Windowなし | UNKNOWN、EOL_SOONなし |
-| UT-20 | EOL/MEDIUM、report-first | exit 0。レポートにはEOLを表示 |
-| UT-21 | EOL/MEDIUM、Strict | exit 1 |
-| UT-22 | 必須API障害、report-first | incomplete=true、exit 0（ほか違反なし） |
-| UT-23 | 必須API障害、Strict、UNKNOWN率違反なしの4件中1件UNKNOWN | incomplete=true、exit 3 |
-| UT-24 | API障害＋Strictで別コンポーネントEOL | exit 1、incompleteもtrue |
-| UT-25 | `unknown_on_same_tier_conflict`旧設定キー | exit 2（未知キー） |
-| UT-26 | Notice/Evidenceの必須フィールド欠落 | JSON Schema検証エラー |
-| UT-27 | disk cache OFF | ファイルを書かずメモ化は動く |
-| UT-28 | offline＋cache OFF＋カタログ版証明なし | HTTPゼロ、UNKNOWN |
-| UT-29 | 有効な期限付き例外でEOL/HIGH | EOL保持、CI failureだけ抑止 |
-| UT-30 | 同一PURLがSBOMに3回 | Provider照会1回、結果3件 |
-| UT-31 | 未来`as_of`のEOL見通し | projection=true。未来の版存在を推定しない |
-| UT-32 | 同梱default/strict設定＋catalog＋report | 対応Schemaで全件validation成功 |
-| UT-33 | 同格公式Endが10月1日・12月1日、as_of=10月11日 | UNKNOWN/CONFLICT、未来根拠を除外しない |
-| UT-34 | 上位公式Endは未来、下位レビュー済み一般EOLは過去 | UNKNOWN、下位EOLへフォールバックしない |
-| UT-35 | 一般EOL経過だがレビュー0件 | UNKNOWN/GENERAL_EOL_UNREVIEWED、元Evidence保持 |
-| UT-36 | レビューの系列・範囲不一致または期限切れ | 一般EOLを採用しない |
-| UT-37 | 正式な撤回証明のある古い根拠 | 元Evidence保持、比較集合からだけ除外 |
-| UT-38 | CI必須STALE_RELEASEのAPI障害・公開日欠落・取得手段なし | UNKNOWN評価、incomplete=true |
-| UT-39 | CI必須Signalの代替データで正常な否定確認 | ABSENT、当該照会のincomplete=false |
-| UT-40 | 任意Signal失敗、Lifecycle確定、CIでは要求なし | 診断保持、当該照会のincomplete=false |
-| UT-41 | ローカルVersionAssertionに公開日時欠落 | カタログSchemaエラー（exit 2） |
-| UT-42 | deps.dev公開日時欠落、代替証明なし、現在日のas_of | UNVERIFIED、UNKNOWN、incomplete=true |
-| UT-43 | 過去as_of、ローカル版証明は実行日時点で失効 | VERIFIEDにしない。過去日に戻して復活させない |
-| UT-44 | UTC同日公開、タイムゾーン付き公開日時 | UTC暦日で比較し、同日公開は評価対象 |
-| UT-45 | ci必須Signal UNKNOWNだがfail_on_incomplete_scan=false | incompleteを報告、他違反なしならexit 0 |
+## 13. Test design: Required acceptance cases
 
-外部API依存テストは固定レスポンスFixtureを用いて、毎回のlive API接続をCI必須にしない。OpenAPIとの互換性確認は別のIntegration jobとする。
+| Test | Fixture | Expected result |
+| --- | --- | --- |
+| UT-01 | Verified version and official security window, before the end date. | SUPPORTED/HIGH |
+| UT-02 | Verified version and official security window, on the end date. | EOL/HIGH |
+| UT-03 | Verified version and official security end claim, before the end date. | UNKNOWN; SUPPORTED prohibited |
+| UT-04 | Verified version and generic endoflife.date EOL date, before the end date. | UNKNOWN/GENERAL_EOL_ONLY; SUPPORTED prohibited |
+| UT-05 | Verified version, valid meaning review, and generic EOL date, on the end date. | EOL/MEDIUM |
+| UT-06 | Only `isMaintained=true`. | UNKNOWN; SUPPORTED prohibited |
+| UT-07 | `isMaintained=true` after a generic EOL date. | Do not use the boolean to change upstream EOL evaluation |
+| UT-08 | Nonexistent `7.2.9999` matches series 7.2. | UNKNOWN/VERSION_NOT_FOUND_IN_INDEX |
+| UT-09 | deps.dev version lookup times out. | UNKNOWN/VERSION_UNVERIFIED; incomplete=true |
+| UT-10 | Exact match in catalog `verified_versions`. | VERIFIED; no online access required |
+| UT-11 | Version publication date is later than a historical as_of. | UNKNOWN/NOT_RELEASED_AS_OF |
+| UT-12 | Series boundary between `7.2` and `7.20`. | No incorrect match |
+| UT-13 | PURL index followed by details for only two matched products. | Zero `/products/full` requests; only necessary product detail requests |
+| UT-14 | PURL absent from the index. | UNKNOWN; no fuzzy name search |
+| UT-15 | One index PURL maps to multiple products. | UNKNOWN/AMBIGUOUS_IDENTITY |
+| UT-16 | Same-tier EOL dates differ. | UNKNOWN/CONFLICT; configuration cannot change this |
+| UT-17 | OFFICIAL and CURATED states differ. | OFFICIAL takes precedence; SOURCE_DISAGREEMENT |
+| UT-18 | Official security window with 90 days until EOL. | SUPPORTED and `notices:EOL_SOON`; no EOL_SOON signal |
+| UT-19 | Generic EOL is 90 days away, without a security window. | UNKNOWN; no EOL_SOON |
+| UT-20 | EOL/MEDIUM under report-first. | Exit 0; EOL remains in the report |
+| UT-21 | EOL/MEDIUM under strict policy. | Exit 1 |
+| UT-22 | Required API failure under report-first, with no other violation. | incomplete=true; exit 0 |
+| UT-23 | Required API failure under strict policy; one of four results is UNKNOWN, without an unknown ratio violation. | incomplete=true; exit 3 |
+| UT-24 | API failure and another EOL component under strict policy. | Exit 1; incomplete=true |
+| UT-25 | Old `unknown_on_same_tier_conflict` configuration key. | Exit 2 for unknown key |
+| UT-26 | Missing required notice or evidence field. | JSON schema validation error |
+| UT-27 | Disk cache disabled. | No disk writes; memoization still works |
+| UT-28 | Offline, cache disabled, and no catalog version assertion. | Zero HTTP requests; UNKNOWN |
+| UT-29 | EOL/HIGH with a valid expiring exception. | Retain EOL; suppress only CI failure |
+| UT-30 | Same PURL appears three times in the SBOM. | One provider query; three results |
+| UT-31 | EOL projection for future `as_of`. | projection=true; no inference of future version existence |
+| UT-32 | Bundled default/strict policies, catalog, and report. | All validate against their schemas |
+| UT-33 | Same-tier official end dates of October 1 and December 1, with as_of October 11. | UNKNOWN/CONFLICT; retain future evidence |
+| UT-34 | Higher-tier official end date is future; lower-tier reviewed generic EOL date is past. | UNKNOWN; no fallback to lower-tier EOL |
+| UT-35 | Generic EOL has passed, with zero reviews. | UNKNOWN/GENERAL_EOL_UNREVIEWED; retain original evidence |
+| UT-36 | Review series or scope mismatch, or expired review. | Do not select generic EOL evidence |
+| UT-37 | Older evidence with verified formal withdrawal. | Retain original evidence; exclude only from comparison |
+| UT-38 | CI-required STALE_RELEASE has an API failure, missing dates, or no retrieval capability. | UNKNOWN evaluation; incomplete=true |
+| UT-39 | Equivalent fallback data confirms absence of a CI-required signal. | ABSENT; incomplete=false for that lookup |
+| UT-40 | Optional signal fails; lifecycle is definitive and CI does not require the signal. | Retain diagnostics; incomplete=false for that lookup |
+| UT-41 | Local VersionAssertion lacks a publication timestamp. | Catalog schema error; exit 2 |
+| UT-42 | deps.dev lacks publication time, without fallback, for the current as_of date. | UNVERIFIED; UNKNOWN; incomplete=true |
+| UT-43 | Historical as_of, but local version assertion expired by execution time. | Not VERIFIED; a past date cannot restore the assertion |
+| UT-44 | Same UTC publication day, with a timezone-bearing timestamp. | Compare UTC calendar dates; same-day publication is eligible |
+| UT-45 | CI-required signal is UNKNOWN with fail_on_incomplete_scan=false. | Report incompleteness; exit 0 without other violations |
 
-## 14. 開発順序／Definition of Done
+Use fixed response fixtures for tests involving external APIs. Live API access must not be required on every CI run. Check OpenAPI compatibility in a separate integration job.
 
-**Phase 1 — 型と判定器:** 入力Parser、PURL、VersionVerification型、LifecycleEvidence／Signal／Notice分離、Evaluator、Schema、UT-01–12。すべてFixture。
+## 14. Implementation phases and definition of done
 
-**Phase 2 — Provider:** カタログ、deps.dev GetVersion、endoflife.date PURL索引→詳細、同一キーmemo、API障害、UT-13–19。
+**Phase 1 — Types and evaluator:** Input parser, PURLs, VersionVerification, separate lifecycle evidence/signals/notices, evaluator, schemas, and UT-01–12. Use fixtures throughout.
 
-**Phase 3 — CIと品質:** default/strict、Exit、例外、offline、任意disk cache、JSON出力、Schema検証、UT-20–45。
+**Phase 2 — Providers:** Catalog, deps.dev GetVersion, endoflife.date PURL index and product details, key-based memoization, API failures, and UT-13–19.
 
-DoD：全45テスト通過／`SUPPORTED`すべてにSecurity Window Evidenceあり／Lifecycleすべてに`VERIFIED`版あり／Reportと同梱Schema整合／不完全scan診断あり／ネットワーク・SSRF・秘密情報非露出の確認／READMEに既定report-firstを明示。
+**Phase 3 — CI and quality:** Default/strict policies, exit codes, exceptions, offline execution, optional disk cache, JSON output, schema validation, and UT-20–45.
 
-## 15. 例外と保留事項
+Definition of done:
 
-### 15.1 例外ファイル
+- All 45 acceptance cases pass.
+- Every SUPPORTED result has security window evidence.
+- Every definitive lifecycle decision has a VERIFIED version.
+- Reports conform to the bundled schemas.
+- Incomplete scans carry diagnostics.
+- Network restrictions, SSRF prevention, and secret redaction have been checked.
+- README explicitly explains default report-first behavior.
 
-`eol-exceptions.example.yaml`に従い、`package_purl`の完全一致、`reason`、`owner`、`expires_on`を必須とする。期限超過は無視し`EXPIRED_EXCEPTION`診断。例外はLifecycleやUNKNOWN率を変更しない。
+## 15. Exceptions and deferred work
 
-### 15.2 本仕様で意図的に保留する事項
+### 15.1 Exception files
 
-- 実在製品の一般EOLレビューの収集・維持。初期同梱データは0件、サンプルは架空製品だけ。未レビュー製品をEOL確定に使わない。
-- バイナリ配布先、データソースレート制限に合わせた数値チューニング。実装はGo 1.24以上。
-- endoflife.date実レスポンスがOpenAPI記載と差異を持つ場合のAdapter修正（Schema不整合を成功扱いにしない）。
-- private registryとディストリビューションによるバックポート対応。
+Follow `eol-exceptions.example.yaml`. Require an exact `package_purl`, `reason`, `owner`, and `expires_on`. Ignore expired exceptions and record `EXPIRED_EXCEPTION`. Exceptions do not change lifecycle or the unknown ratio.
 
-これらは本仕様のLifecycle不変条件を緩める理由にはならない。
+### 15.2 Deliberately deferred work
 
-## 16. 参照資料（確認日：2026-10-11）
+- Collecting and maintaining generic EOL reviews for real products. The initial bundled review count is zero; examples use fictional products. Unreviewed products cannot establish EOL.
+- Binary distribution and tuning numerical settings to source rate limits. The implementation uses Go 1.24 or later.
+- Adapter changes when actual endoflife.date responses differ from OpenAPI descriptions. Schema mismatches remain failures.
+- Private registries and distribution backports.
 
-1. endoflife.date v1 OpenAPI：<https://github.com/endoflife-date/endoflife.date/blob/master/api_v1/openapi.yml>
-2. endoflife.date API v1：<https://endoflife.date/docs/api/v1/>
-3. deps.dev GetVersion：<https://docs.deps.dev/api/v3/>
-4. PURL specification：<https://github.com/package-url/purl-spec>
-5. CycloneDX JSON：<https://cyclonedx.org/docs/1.7/json/>
-6. SPDX 2.3：<https://spdx.github.io/spdx-spec/v2.3.1-dev/>
+Deferred work does not relax lifecycle invariants.
 
-## 17. 同梱成果物と契約検証
+## 16. References: Checked 2026-10-11
 
-- 設定: `../schemas/policy-input.schema.json`（差分入力）、`../schemas/policy.schema.json`（既定補完後）。
-- カタログ: `../schemas/support-catalog.schema.json`。版証明と一般EOLレビューを含む。
-- 例外: `../schemas/exceptions.schema.json`。
-- 共通型／レポート: `../schemas/common.schema.json`、`../schemas/report.schema.json`。
-- 設定・カタログ・例外・レポート例: `../examples/`。
-- `../scripts/validate_design.py`は固定した実行日時のサンプルとSchemaを検証する。Go CLIの仕様適合は別途Goの受け入れテストとCLI Fixtureテストで検証する。
+1. endoflife.date v1 OpenAPI: <https://github.com/endoflife-date/endoflife.date/blob/master/api_v1/openapi.yml>
+2. endoflife.date API v1: <https://endoflife.date/docs/api/v1/>
+3. deps.dev GetVersion: <https://docs.deps.dev/api/v3/>
+4. PURL specification: <https://github.com/package-url/purl-spec>
+5. CycloneDX JSON: <https://cyclonedx.org/docs/1.7/json/>
+6. SPDX 2.3: <https://spdx.github.io/spdx-spec/v2.3.1-dev/>
+
+## 17. Bundled artifacts and contract validation
+
+- Configuration: `../schemas/policy-input.schema.json` for partial input; `../schemas/policy.schema.json` for the effective policy.
+- Catalog: `../schemas/support-catalog.schema.json`, including version assertions and generic EOL reviews.
+- Exceptions: `../schemas/exceptions.schema.json`.
+- Common types and reports: `../schemas/common.schema.json` and `../schemas/report.schema.json`.
+- Policy, catalog, exception, and report examples: `../examples/`.
+- `../scripts/validate_design.py` validates schemas and examples at a fixed execution time. Go acceptance and CLI fixture tests separately verify runtime compliance.
 
 ```sh
 uv run --with-requirements scripts/design-requirements.txt python scripts/validate_design.py
 ```
 
-**実装担当への重要な注意:** 未レビュー一般EOLでEOLを作る、未来の終了日を矛盾検出前に捨てる、公開日時なしでVERIFIEDにする、CI必須SignalのUNKNOWNをABSENTにするコードは仕様違反。EOL_SOONはNoticeであり、SUPPORTEDは公式Security Windowだけから導出する。
+**Implementation constraints:** Deriving EOL from unreviewed generic EOL, discarding future end dates before conflict detection, marking a version VERIFIED without publication time, or converting UNKNOWN CI-required signals to ABSENT violates this specification. EOL_SOON is a notice; only an official security window can establish SUPPORTED.
