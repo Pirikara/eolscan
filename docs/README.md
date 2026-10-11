@@ -1,12 +1,13 @@
 # eolscan implementation contract
 
-The [v0.3 design specification](EOL_Checker_Design_v0.3.md) incorporates the v0.2 review and four accepted design decisions. The Go CLI implements this specification. Its CLI, input scope, and output contract differ from the initial prototype.
+The [v0.3 design specification](design.md) incorporates the v0.2 review and four accepted design decisions. The Go CLI implements this specification.
 
 The configuration contract is version `2`, and the report contract is version `2.0`. These versions describe the initial implementation contract and are independent of the document version.
 
+- [Architecture](architecture.md): Package responsibilities, dependency direction, embedded assets, and testing.
 - [Schemas](../schemas/): Partial policy input, effective policy, support catalog, exceptions, common types, and reports.
 - [Examples](../examples/): Complete policies, local version assertions, generic EOL reviews, and complete reports.
-- [Fixture manifest](../examples/fixtures/manifest.json): Conflicts, unreviewed evidence, unknown CI-required signals, evaluations before publication, and other fixed cases.
+- [Fixture manifest](../testdata/fixtures/manifest.json): Conflicts, unreviewed evidence, unknown CI-required signals, evaluations before publication, and other fixed cases.
 
 Products, URLs, dates, and reviews in the bundled catalogs and reports are fictional test data. The default policy disables the local catalog and includes no reviews for real products.
 

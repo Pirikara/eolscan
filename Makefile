@@ -1,7 +1,7 @@
 .PHONY: build test vet validate-design
 
 build:
-	go build -o bin/eolscan .
+	go build -o bin/eolscan ./cmd/eolscan
 
 test:
 	go test -race ./...

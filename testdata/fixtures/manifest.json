@@ -1,0 +1,72 @@
+[
+  {
+    "name": "supported",
+    "report": "examples/report.example.json",
+    "policy": "examples/eol-policy.catalog.example.yaml",
+    "input": "testdata/fixtures/supported.cdx.json",
+    "expected_exit": 0
+  },
+  {
+    "name": "reviewed-general-eol",
+    "report": "testdata/fixtures/report.reviewed-general-eol.json",
+    "policy": "examples/eol-policy.catalog.example.yaml",
+    "input": "testdata/fixtures/reviewed-general-eol.cdx.json",
+    "expected_exit": 0
+  },
+  {
+    "name": "unreviewed-general-eol",
+    "report": "testdata/fixtures/report.unreviewed-general-eol.json",
+    "policy": "examples/eol-policy.example.yaml",
+    "input": "testdata/fixtures/unreviewed-general-eol.cdx.json",
+    "expected_exit": 0
+  },
+  {
+    "name": "future-general-eol",
+    "report": "testdata/fixtures/report.future-general-eol.json",
+    "policy": "examples/eol-policy.catalog.example.yaml",
+    "input": "testdata/fixtures/future-general-eol.cdx.json",
+    "expected_exit": 0
+  },
+  {
+    "name": "future-date-conflict",
+    "report": "testdata/fixtures/report.future-date-conflict.json",
+    "policy": "testdata/fixtures/policy.conflict.yaml",
+    "input": "testdata/fixtures/future-date-conflict.cdx.json",
+    "expected_exit": 0
+  },
+  {
+    "name": "upper-tier-future-end",
+    "report": "testdata/fixtures/report.upper-tier-future-end.json",
+    "policy": "testdata/fixtures/policy.upper-tier-end.yaml",
+    "input": "testdata/fixtures/upper-tier-future-end.cdx.json",
+    "expected_exit": 0
+  },
+  {
+    "name": "required-signal-unknown",
+    "report": "testdata/fixtures/report.required-signal-unknown.json",
+    "policy": "examples/eol-policy.signal-required.yaml",
+    "input": "testdata/fixtures/required-signal-unknown.cdx.json",
+    "expected_exit": 3
+  },
+  {
+    "name": "not-released-as-of",
+    "report": "testdata/fixtures/report.not-released-as-of.json",
+    "policy": "examples/eol-policy.catalog.example.yaml",
+    "input": "testdata/fixtures/not-released-as-of.cdx.json",
+    "expected_exit": 0
+  },
+  {
+    "name": "required-signal-absent",
+    "report": "testdata/fixtures/report.required-signal-absent.json",
+    "policy": "examples/eol-policy.signal-required.yaml",
+    "input": "testdata/fixtures/required-signal-unknown.cdx.json",
+    "expected_exit": 0
+  },
+  {
+    "name": "required-signal-present",
+    "report": "testdata/fixtures/report.required-signal-present.json",
+    "policy": "examples/eol-policy.signal-required.yaml",
+    "input": "testdata/fixtures/required-signal-unknown.cdx.json",
+    "expected_exit": 1
+  }
+]

@@ -1,13 +1,13 @@
 # eolscan
 
-eolscan is a Go CLI that reads an SBOM and checks whether upstream security support has ended for its dependencies. It implements the [v0.3 design specification](docs/EOL_Checker_Design_v0.3.md).
+eolscan is a Go CLI that reads an SBOM and checks whether upstream security support has ended for its dependencies. It implements the [v0.3 design specification](docs/design.md).
 
 No database is required. Repeated API queries share an in-memory result during each run, and disk caching is disabled by default. Build with Go 1.24 or later; the CLI runs as a single binary.
 
 ## Build and run
 
 ```sh
-go build -o bin/eolscan .
+go build -o bin/eolscan ./cmd/eolscan
 
 ./bin/eolscan scan -i sbom.cdx.json
 ./bin/eolscan scan -i sbom.spdx.json -f json -o report.json
@@ -18,7 +18,7 @@ cat sbom.cdx.json | ./bin/eolscan scan -i - -f json
 
 Supported inputs are CycloneDX JSON 1.4–1.7 and SPDX 2.3 JSON. Packages are identified by PURL, with support for the gem, npm, pypi, maven, golang, cargo, and nuget ecosystems. Components without a version remain in the report as `UNKNOWN`. CycloneDX `metadata.component` is excluded by default.
 
-Configuration uses schema version `2`, and JSON reports use version `2.0`. The CLI and output are incompatible with the initial prototype. Native Syft JSON, CPE matching, OS name matching, and direct registry queries are outside this MVP. When using Syft, provide CycloneDX or SPDX JSON.
+Configuration uses schema version `2`, and JSON reports use version `2.0`. Native Syft JSON, CPE matching, OS name matching, and direct registry queries are outside this MVP. When using Syft, provide CycloneDX or SPDX JSON.
 
 ## Understanding results
 
@@ -68,7 +68,7 @@ The bundled products, reviews, and version assertions are **fictional test data*
 
 ```sh
 ./bin/eolscan scan \
-  -i examples/fixtures/supported.cdx.json \
+  -i examples/sbom.cdx.json \
   -c examples/eol-policy.catalog.example.yaml \
   --offline --as-of 2026-10-11
 ```
@@ -122,12 +122,41 @@ Configure [expiring exceptions](examples/eol-exceptions.example.yaml) using `exc
 
 Online scans send package names and versions to the configured public APIs. Requests are restricted to HTTPS on explicitly allowed hosts. Arbitrary URLs from the SBOM or evidence are not fetched, and configuration URLs containing credentials or query strings are rejected.
 
+## Project layout
+
+```text
+cmd/eolscan/        CLI entry point and process lifecycle
+internal/
+  cli/             Command parsing and execution
+  scanner/         Scan orchestration and CI gates
+  sbom/            CycloneDX and SPDX parsing
+  identity/        PURL normalization and release series matching
+  lifecycle/       Support decisions and signal aggregation
+  provider/        Catalog, deps.dev, and endoflife.date adapters
+  transport/       HTTPS, retries, memoization, and disk cache
+  config/          Policy, catalog, and exception loading
+  contract/        Schema validation and canonical serialization
+  model/           Shared input, policy, evidence, and report types
+  report/          Table output, report invariants, and exit codes
+  fileio/          Bounded reads and atomic writes
+  version/         Application version
+  testutil/        Deterministic test helpers
+schemas/           Canonical JSON schemas, embedded in the binary
+examples/          User-facing policies, catalogs, and sample SBOM
+testdata/fixtures/  Fixed acceptance inputs, reports, and manifest
+tests/             Acceptance and HTTP integration tests
+docs/              Design specification and architecture
+.github/workflows/ CI checks
+```
+
+The command entry point delegates to the internal packages. Package tests live beside their implementations; tests spanning the scan pipeline live in `tests/`. See [architecture](docs/architecture.md) for dependencies and extension points.
+
 ## Development and validation
 
 ```sh
 go test -race ./...
 go vet ./...
-go build -o bin/eolscan .
+go build -o bin/eolscan ./cmd/eolscan
 ```
 
 Go tests cover design acceptance cases UT-01 through UT-45. Ten report fixtures run through the actual CLI and verify decisions, exit codes, input hashes, and policy hashes. External APIs are replaced with fixed responses and local HTTPS servers, so tests require no public API access.

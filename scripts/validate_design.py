@@ -1,4 +1,4 @@
-"""Validate the draft contracts and fictional fixtures without network access."""
+"""Validate the versioned contracts and fictional fixtures without network access."""
 
 from __future__ import annotations
 
@@ -16,6 +16,7 @@ from referencing import Registry, Resource
 
 ROOT = Path(__file__).resolve().parents[1]
 EXAMPLES = ROOT / "examples"
+TESTDATA = ROOT / "testdata"
 NAMESPACE = "urn:eolscan:schema:2:"
 
 
@@ -460,7 +461,7 @@ def validate_report(report, policy, catalog, exceptions, input_path):
 
 def run():
     valid_files = 0
-    for path in sorted(EXAMPLES.rglob("*.yaml")):
+    for path in sorted([*EXAMPLES.rglob("*.yaml"), *TESTDATA.rglob("*.yaml")]):
         if path.name.startswith("eol-policy") or path.name.startswith("policy."):
             load_context(path)
         elif path.name.startswith("support-catalog") or path.name.startswith("catalog."):
@@ -471,11 +472,11 @@ def run():
             raise ContractError(f"unclassified example: {path}")
         valid_files += 1
     fixtures = {}
-    manifest = json.loads((EXAMPLES / "fixtures/manifest.json").read_text())
+    manifest = json.loads((TESTDATA / "fixtures/manifest.json").read_text())
     for case in manifest:
-        report = json.loads((EXAMPLES / case["report"]).read_text())
-        context = load_context(EXAMPLES / case["policy"])
-        input_path = EXAMPLES / case["input"]
+        report = json.loads((ROOT / case["report"]).read_text())
+        context = load_context(ROOT / case["policy"])
+        input_path = ROOT / case["input"]
         actual = validate_report(report, *context, input_path)
         ensure(actual == case["expected_exit"], f"{case['name']}: unexpected exit")
         fixtures[case["name"]] = (report, context, input_path)
