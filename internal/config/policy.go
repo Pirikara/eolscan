@@ -9,6 +9,7 @@ import (
 	"path/filepath"
 	"strings"
 
+	catalogdata "github.com/Pirikara/eolscan/internal/catalog"
 	"github.com/Pirikara/eolscan/internal/contract"
 	"github.com/Pirikara/eolscan/internal/fileio"
 	"github.com/Pirikara/eolscan/internal/identity"
@@ -143,7 +144,11 @@ func LoadBundle(p model.Policy, configPath string) (model.PolicyBundle, error) {
 		base = filepath.Dir(configPath)
 	}
 	if p.Sources.OfficialCatalog.Enabled {
-		data, err := fileio.ReadLimited(resolvePath(base, *p.Sources.OfficialCatalog.Path), 16<<20)
+		data := catalogdata.Builtin
+		var err error
+		if *p.Sources.OfficialCatalog.Path != BuiltinCatalogPath {
+			data, err = fileio.ReadLimited(resolvePath(base, *p.Sources.OfficialCatalog.Path), 16<<20)
+		}
 		if err != nil {
 			return b, fmt.Errorf("read catalog: %w", err)
 		}
@@ -233,3 +238,6 @@ func CleanBase(raw string) string { return strings.TrimRight(raw, "/") }
 
 //go:embed defaults.yaml
 var defaultYAML []byte
+
+// BuiltinCatalogPath is reserved for the reviewed catalog embedded in the binary.
+const BuiltinCatalogPath = "builtin:upstream-security"

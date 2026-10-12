@@ -68,3 +68,22 @@ func TestSBOMInputLimitsAndFormats(t *testing.T) {
 		t.Fatal("excluded components bypassed count limit")
 	}
 }
+
+func TestMetadataExclusionPreservesNestedComponents(t *testing.T) {
+	input := `{"bomFormat":"CycloneDX","specVersion":"1.6","metadata":{"component":{"type":"application","name":"subject","components":[{"type":"file","name":"assembly","components":[{"type":"library","bom-ref":"dep","name":"requests","purl":"pkg:pypi/requests@2.31.0"}]}]}}}`
+	for _, includeSubject := range []bool{false, true} {
+		p := config.Default().Input
+		p.IncludeMetadataComponent = includeSubject
+		result, err := sbomparser.Parse(strings.NewReader(input), p)
+		if err != nil {
+			t.Fatal(err)
+		}
+		wantCount, wantExcluded := 1, 2
+		if includeSubject {
+			wantCount, wantExcluded = 2, 1
+		}
+		if len(result.Components) != wantCount || result.Excluded != wantExcluded || result.Components[wantCount-1].SourceRef != "dep" {
+			t.Fatalf("include subject=%t: %+v", includeSubject, result)
+		}
+	}
+}

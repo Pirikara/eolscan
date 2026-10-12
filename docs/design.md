@@ -1,6 +1,6 @@
-# eolscan — Implementation Design v0.4
+# eolscan — Implementation Design v0.5
 
-**Document status:** Release 0.2.0 implemented; includes native registry metadata and host rate control
+**Document status:** Release 0.3.0 implemented; includes scan correctness fixes and reviewed bundled evidence
 
 **Revised:** 2026-10-12
 
@@ -8,11 +8,21 @@
 
 **Authoritative specification:** This Markdown document. JSON schemas and example policies conform to it.
 
-**Corresponding implementation release:** 0.2.0, independent of the document version
+**Corresponding implementation release:** 0.3.0, independent of the document version
 
 > **Core principle:** Return `SUPPORTED` only with **explicit evidence** that upstream security support covers the evaluation date. If the target version's existence and publication time cannot be verified, its lifecycle remains `UNKNOWN`.
 
 ## 0. Revision history and accepted decisions
+
+### Decisions adopted in v0.5
+
+| ID | Decision | Affected sections |
+| --- | --- | --- |
+| D-13 | Excluding the CycloneDX metadata subject must preserve its nested components. A scan with no components in scope always fails with NO_COMPONENTS and exit 3. | §5, §8, §10 |
+| D-14 | Dispatch, workers, input, and output boundaries observe cancellation. Interrupted scans return no completed result and exit 130; a deadline exits 3. Bound process shutdown for blocked I/O. | §9 |
+| D-15 | Enable a small reviewed official catalog embedded in the binary. Keep general EOL reviews and version assertions empty. Expiry still uses execution time. | §6, §8 |
+| D-16 | Prove release inactivity only from complete available history. A verified recent release can prove ABSENT with incomplete older history. Do not let new artifacts reset an old version's release date. | §6 |
+| D-17 | Emit report 2.2 with NO_COMPONENTS. Include bundled catalog contents in policy_hash and document limited lifecycle coverage separately from registry support. | §10 |
 
 ### Decisions adopted in v0.4
 
@@ -22,7 +32,7 @@
 | D-11 | Pace all HTTP request starts per host, including retries and redirects; share 429/503 cooldowns, honor Retry-After, add jitter, and bound waits. | §8, §11 |
 | D-12 | Add YANKED independently of DEPRECATED, expose explicit PyPI project markers, and retain UNKNOWN for unavailable required signals. Emit report 2.1. | §6, §7, §10 |
 
-Configuration remains version 2, with native source and network defaults added. Reports use version 2.1; consumers must accept the new YANKED enum. Existing partial policies inherit defaults. A policy overriding `network.allowed_hosts` must allow enabled native hosts or disable those sources explicitly.
+Configuration remains version 2, with native source and network defaults added. Current reports use version 2.2; consumers must accept YANKED and NO_COMPONENTS. Existing partial policies inherit defaults, including the bundled official catalog in CLI 0.3.0. A policy overriding `network.allowed_hosts` must allow enabled native hosts or disable those sources explicitly.
 
 ### Decisions adopted in v0.3
 
@@ -45,7 +55,7 @@ Document v0.3 was implemented by CLI 0.1.0 with configuration version 2 and repo
 | D-04 | `/products/full` and per-product GET requests duplicate work. | Fetch endoflife.date's `/identifiers/purl` index, then details for matched products. The MVP does not fetch the full dataset. Disk caching is **optional and off by default**. | §6, §11 |
 | D-05 | EOL_SOON types, conflict settings, and output examples were inconsistent. | Separate `EOL_SOON` into `Notice`. Remove `unknown_on_same_tier_conflict`; same-tier conflicts always produce UNKNOWN. Define required and nullable fields in schemas. | §7, §8, §10 |
 
-Configuration uses `schema_version: 2` and output uses `schema_version: "2.1"`. The earlier v0.1 design contract must not be silently reinterpreted. The HTTP cache format remains version 2.0, independently of the output report version.
+Configuration uses `schema_version: 2` and output uses `schema_version: "2.2"`. The earlier v0.1 design contract must not be silently reinterpreted. The HTTP cache format remains version 2.0, independently of the output report version.
 
 ## 1. System overview and scope
 
@@ -61,7 +71,7 @@ The CLI extracts packages from a single CycloneDX or SPDX JSON SBOM, identifies 
 | EOL evidence | Manually reviewed official support catalog; endoflife.date API v1 | Official vendor APIs, successor projects |
 | Version verification | Exact catalog assertions; native npm/PyPI/RubyGems; deps.dev GetVersion | Additional native registries, signed snapshots |
 | Signals | Native registry deprecation, PyPI project markers and yank metadata; available publication dates; deps.dev fallback | GitHub, native Go retract, NuGet deprecation, and others |
-| Output | Tables; JSON report schema 2.1 | SARIF, HTML, CycloneDX annotations |
+| Output | Tables; JSON report schema 2.2 | SARIF, HTML, CycloneDX annotations |
 | Execution modes | Default report-first; strict CI policy; offline | Organization-wide policy distribution |
 
 **Outside scope:** Vulnerability or CVSS detection, declaring EOL solely from release age, fuzzy name matching, automatically combining extended support with upstream support, and interpreting web pages with an LLM.
@@ -168,7 +178,7 @@ SBOM JSON
 | CycloneDX JSON 1.4–1.7 | `components[]` and nested `components[]` | `component.purl` | `bom-ref`, or a stable JSON path when absent |
 | SPDX 2.3 JSON | `packages[]` | `externalRefs` with `referenceType=purl` | `SPDXID` |
 
-Exclude CycloneDX `metadata.component` by default. Do not apply component type filtering to SPDX packages. Query duplicate PURLs once, but emit a result for each original component. Make `input.include_component_types` and `input.include_metadata_component` configurable.
+Exclude only the CycloneDX `metadata.component` subject by default; inspect its nested components independently. Do not propagate exclusion of a parent to its children. Do not apply component type filtering to SPDX packages. Query duplicate PURLs once, but emit a result for each original component. Make `input.include_component_types` and `input.include_metadata_component` configurable. Zero components in scope produce a failed JSON/table report with NO_COMPONENTS and exit 3, irrespective of the report-first policy.
 
 ### 5.2 Package and version validity
 
@@ -216,7 +226,7 @@ Route communication through `transport`. Providers normalize identities, dates, 
 
 ### 6.2 Official support catalog, version assertions, and generic EOL reviews
 
-Load a local `support-catalog.yaml` when explicitly configured. Otherwise all three entry types are empty. The catalog is a trust boundary: the CLI relies on operator review rather than automatically reviewing linked content.
+The default reserved path `builtin:upstream-security` loads the official catalog embedded in the binary. It covers Angular @angular/core 18–20 and Rails 7.2/8.0, with no general EOL reviews or version assertions. See [catalog sources, expiry, and scope](catalog.md). A local `support-catalog.yaml` replaces the bundled catalog; disabling the source loads neither. The catalog is a trust boundary: scans rely on recorded review rather than automatically reviewing linked content.
 
 - `entries[]`: Official security windows and end dates. Require an official evidence URL, support authority, review date, and expiry date. Windows require both start and end dates. An end date alone cannot establish SUPPORTED beforehand.
 - `verified_versions[]`: VersionAssertion objects defined below, with manually verified exact versioned PURLs and publication times. Do not generate versions from release series.
@@ -305,7 +315,7 @@ In the OpenAPI contract, `/identifiers/{identifier_type}` returns `result[]` ite
 - Require both HTTP 200 and a normalized `versionKey.system/name/version` matching the target. A mismatch produces `VERSION_CONFLICT`.
 - `isDeprecated=true` records `DEPRECATED/PRESENT` and preserves `deprecatedReason`; it does not change lifecycle. Treat false or an absent field as ABSENT only when the ecosystem and API contract provide reliable negative information. Missing collection capability, missing data, or API failures produce UNKNOWN.
 - `publishedAt` is mandatory for version verification. A missing or invalid value produces UNVERIFIED unless a valid fallback assertion supplies it.
-- STALE_RELEASE requires a complete GetPackage version list. Use the latest publication time on or before the evaluation date. Missing dates, unconfirmed completeness, API failure, unavailable retrieval capability, or a future `as_of` requiring prediction produce UNKNOWN. With complete information, a gap exceeding `stale_release_days` produces PRESENT; otherwise ABSENT.
+- STALE_RELEASE/PRESENT requires a complete GetPackage version list and publication dates. A verified recent publication can establish ABSENT even if other version dates are missing or the Go/PyPI collection is limited. A gap exceeding `stale_release_days` establishes PRESENT only when available history is complete. API failure, invalid future publication, absent recent proof with incomplete history, or a future `as_of` requiring prediction produce UNKNOWN.
 - A 404 means `NOT_FOUND_IN_INDEX`, without proving that the version does not exist. Do not retry it; leave the result UNKNOWN.
 - Convert Maven `group:artifact` names, npm scopes, Go paths, and URL encoding according to the official API contract.
 - deps.dev does not itself guarantee upstream security support for any ecosystem.
@@ -315,10 +325,10 @@ In the OpenAPI contract, `/identifiers/{identifier_type}` returns `result[]` ite
 The authoritative endpoint and signal details are in [registry sources](registries.md). Native sources are enabled by default; all requests use the shared transport and allowed hosts. Share each immutable parsed package snapshot across its SBOM versions.
 
 - npm full metadata supplies exact version records, `time[version]`, and deprecation messages. A valid full version record without a deprecation message confirms ABSENT; missing or malformed metadata remains UNKNOWN.
-- PyPI uses the JSON Index API with its vendor media type, identifies versions from wheel/sdist filenames, and reads `upload-time`, `yanked`, and explicit `project-status`. The deprecated project JSON `releases` field is not used. Exact version aliases or unrecognized artifacts may require fallback. Missing project markers remain UNKNOWN.
+- PyPI uses the JSON Index API with its vendor media type, identifies versions from wheel/sdist and recognized legacy egg filenames, and reads `upload-time`, `yanked`, and explicit `project-status`. The deprecated project JSON `releases` field is not used. Exact version aliases or unrecognized artifacts may require fallback. Missing project markers remain UNKNOWN.
 - RubyGems uses the v1 versions list with `created_at`, and v2 exact details with `version_created_at` where needed. Never use `built_at` as publication. An explicit platform qualifier requires a matching native platform; platform-independent fallback cannot certify another artifact. Public endpoints exclude removed/yanked releases; a miss does not prove yanking or recover publication time.
 - YANKED is distinct from DEPRECATED. For PyPI, every available artifact of a target version must be explicitly yanked for PRESENT; any explicit non-yanked artifact gives ABSENT. Incomplete artifact identification or missing statuses cannot establish a positive result.
-- STALE_RELEASE uses complete currently available release metadata and the earliest artifact publication per version. A newer wheel/platform build for an old version does not reset release age. Deleted history and past marker changes cannot be reconstructed. Future `as_of` values remain UNKNOWN.
+- STALE_RELEASE/PRESENT needs complete available release metadata. ABSENT can use one recent release whose first-upload evidence is complete, despite missing dates for other versions. Unassigned PyPI artifacts can hide an earlier upload and block that proof. A newer wheel/platform build for an old version does not reset release age. Deleted history and past marker changes cannot be reconstructed. Future `as_of` values remain UNKNOWN.
 - Native failures remain diagnostics if fallback succeeds. A known native signal avoids an extra equivalent lookup; contradictory fallback data already needed for another check produces SIGNAL_CONFLICT. Registry facts cannot create lifecycle evidence.
 
 ### 6.6 Future providers and behavior
@@ -607,7 +617,7 @@ output:
   include_evidence: true
 ```
 
-**Required user-facing explanation:** By default the catalog is disabled, with zero official support entries, generic EOL reviews, or local version assertions. Therefore generic endoflife.date information remains UNKNOWN, and SUPPORTED and EOL_SOON are unavailable.
+**Required user-facing explanation:** The default embedded catalog contains five reviewed official support windows for two products. Its review expires; it does not cover every supported registry package. Generic EOL reviews and local version assertions remain empty. Version existence still needs independent verification. Unreviewed general endoflife.date information and identities outside reviewed coverage remain UNKNOWN.
 
 A catalog containing only generic EOL meaning reviews can yield EOL/MEDIUM. That result alone does not fail CI at the default HIGH threshold. API-related incompleteness also does not fail default CI. Report-first prioritizes reporting and inventory.
 
@@ -628,7 +638,7 @@ The snippet shows the strict policy's **differences**; the bundled file contains
 
 - `ci.min_confidence` applies only to EOL. If `fail_on_statuses` includes UNKNOWN, that status fails regardless of confidence.
 - `ci.fail_on_signals` accepts signal types and makes their evaluations mandatory, even if detection is otherwise disabled. PRESENT is a component violation, ABSENT is not a violation, and UNKNOWN makes the scan incomplete. Notices are excluded. Requiring STALE_RELEASE with a null threshold is contradictory and exits 2.
-- `max_unknown_ratio` is violated when `unknown/in_scope > threshold`. For `in_scope=0`, the ratio is zero.
+- `max_unknown_ratio` is violated when `unknown/in_scope > threshold`. For `in_scope=0`, the ratio is zero, but NO_COMPONENTS always fails the scan independently of this threshold.
 - Exceptions suppress only component-level CI failures. They do not waive aggregate unknown ratio or scan incompleteness.
 
 ## 9. CLI and exit codes
@@ -637,6 +647,8 @@ The snippet shows the strict policy's **differences**; the bundled file contains
 eolscan scan -i sbom.cdx.json --format table
 eolscan scan -i sbom.cdx.json -c eol-policy.ci-strict.yaml --format json -o report.json
 eolscan scan --input sbom.spdx.json --offline --as-of 2026-10-11
+eolscan scan --input sbom.cdx.json --catalog builtin
+eolscan scan --input sbom.cdx.json --catalog ./support-catalog.yaml
 eolscan policy validate --config eol-policy.example.yaml
 eolscan providers list
 eolscan version
@@ -646,6 +658,7 @@ eolscan version
 | --- | --- |
 | `scan -i, --input` | Required: input file, or `-` for stdin. |
 | `-c, --config` | Optional policy file. Defaults to report-first when omitted. |
+| `--catalog` | `builtin` or local YAML path, replacing the policy's catalog selection; CLI paths resolve from the current directory. |
 | `-f, --format` | `table` by default, or `json`. |
 | `-o, --output` | Defaults to stdout. File output uses atomic replacement from a temporary file. |
 | `--as-of` | UTC date; defaults to the execution date in UTC. |
@@ -658,12 +671,15 @@ eolscan version
 | `0` | Execution completed without CI violations. **The default may exit 0 with UNKNOWN, MEDIUM EOL, or incomplete results.** |
 | `1` | A configured CI gate violation, such as EOL or excessive unknown ratio. |
 | `2` | A user-correctable input or configuration error, including an unsupported schema version. |
-| `3` | An incomplete scan with `ci.fail_on_incomplete_scan=true` and no other explicit policy violation. |
+| `3` | NO_COMPONENTS; or a required incomplete scan with no other explicit policy violation; or a context deadline. |
 | `4` | An unexpected internal error. |
+| `130` | A scan interrupted by SIGINT/SIGTERM. |
 
-Precedence is `2/4` (processing failure) `> 1` (explicit violation) `> 3` (incomplete) `> 0`. If `ci_gate.incomplete=true` and an EOL violation is also present, exit 1 and retain both in the report.
+Cancellation takes precedence over scan outcomes. Otherwise precedence is `2/4` (processing failure) `> 1` (explicit violation) `> 3` (incomplete or empty) `> 0`. If `ci_gate.incomplete=true` and an EOL violation is also present, exit 1 and retain both in the report.
 
-## 10. JSON report 2.1 contract
+The parser and scanner check context cancellation; the dispatch loop stops submitting jobs and active workers finish cancellation. The CLI does not serialize an interrupted scan as a successful report and leaves an existing report file intact when cancellation occurs during input or provider work. The process entry point allows a bounded shutdown interval for blocked I/O. Exit 130 applies even when `ci.fail_on_incomplete_scan=false`.
+
+## 10. JSON report 2.2 contract
 
 Keep `../schemas/report.schema.json` consistent with this specification, and maintain `../examples/report.example.json` as a complete valid example. Schemas validate structure; additional semantic validation checks date comparisons, reference IDs, and aggregate values.
 
@@ -671,7 +687,7 @@ Keep `../schemas/report.schema.json` consistent with this specification, and mai
 
 ```text
 Report {
-  schema_version: "2.1", tool_version, as_of, projection, generated_at,
+  schema_version: "2.2", tool_version, as_of, projection, generated_at,
   input_sha256, policy_hash,
   summary: {in_scope, excluded, eol, supported, unknown,
             assessment_coverage, provider_error_count, ci_failure_count},
@@ -708,13 +724,14 @@ ComponentResult {
 5. SUPPORTED requires selected official upstream_security window evidence containing the evaluation date. EOL derived from generic EOL requires a review matching product, PURL, series, and scope, valid on the execution date. VERIFIED requires a publication timestamp.
 6. `notices[].type=EOL_SOON` exists only for SUPPORTED. `Notice.evidence_id` references an existing LifecycleEvidence `id`.
 7. Output every field of each `evidence[]` item. Required nullable properties must be present with a null value rather than omitted.
-8. `ci_gate.passed=false` requires nonempty `violation_codes`. **Report-first permits** `ci_gate.incomplete=true` together with `passed=true`.
+8. `ci_gate.passed=false` requires nonempty `violation_codes`. Report-first permits `ci_gate.incomplete=true` with `passed=true` for component/provider incompleteness. Zero components always require `passed=false`, `incomplete=true`, and NO_COMPONENTS. Cancellation returns no completed report.
 9. `ci_failure_count` counts component failures after exceptions are applied. Report aggregate condition failures in `violation_codes`.
 10. JSON always retains evidence and unknown results. `output.include_unknown/include_evidence` affect table display only.
 11. Stable-sort `results[]` by PURL, with null last, then `source_ref`. Deduplicate elements within arrays by stable keys. Retain separate results for different source SBOM components, even when their PURLs are identical.
 12. `selected_evidence_ids` and `Notice.evidence_id` must exist in output evidence. Selected IDs must pass expiry, tier, and conflict checks. UNKNOWN requires an empty selected ID array.
 13. UNKNOWN for a CI-required signal requires `result.incomplete=true`. PRESENT requires corresponding evidence of the same type in `signals[]`.
 14. Report `generated_at` equals `run_started_at`. Use that time for expiry checks and publication validation against execution time. Write completion time to logs if needed.
+15. `policy_hash` includes the selected catalog contents, including embedded data. A local catalog replaces the embedded snapshot rather than merging it silently.
 
 ### 10.3 Required evidence JSON fields
 
@@ -833,6 +850,8 @@ Release 0.2.0 additionally verifies package sharing across versions, native sele
 **Phase 3 — CI and quality:** Default/strict policies, exit codes, exceptions, offline execution, optional disk cache, JSON output, schema validation, and UT-20–45.
 
 **Release 0.2.0 — Native metadata and request budgets:** npm, PyPI, RubyGems, publication/signal fallback, per-host pacing and cooldowns, YANKED/report 2.1, and the additional tests above.
+
+**Release 0.3.0 — Scan correctness and bundled evidence:** nested metadata components, mandatory NO_COMPONENTS failure, cancellation and bounded shutdown, recent-release negative proof with incomplete older history, legacy PyPI eggs, informative unavailable-signal reasons, five real reviewed support windows, catalog override, and report 2.2.
 
 Definition of done:
 

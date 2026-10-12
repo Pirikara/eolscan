@@ -11,6 +11,7 @@ import (
 	"io"
 	"net/http"
 	"os"
+	"path/filepath"
 	"time"
 
 	configpkg "github.com/Pirikara/eolscan/internal/config"
@@ -18,7 +19,6 @@ import (
 	"github.com/Pirikara/eolscan/internal/model"
 	"github.com/Pirikara/eolscan/internal/provider"
 	reporting "github.com/Pirikara/eolscan/internal/report"
-	sbomparser "github.com/Pirikara/eolscan/internal/sbom"
 	scannerpkg "github.com/Pirikara/eolscan/internal/scanner"
 	"github.com/Pirikara/eolscan/internal/version"
 )
@@ -26,16 +26,31 @@ import (
 func usage(w io.Writer) {
 	fmt.Fprintln(w, `eolscan scan -i SBOM.json|- [-c policy.yaml] [-f table|json] [-o report.json]
 eolscan scan --offline --input SBOM.json --as-of YYYY-MM-DD
+eolscan scan --input SBOM.json --catalog builtin|PATH
 eolscan policy validate --config policy.yaml
 eolscan providers list
 eolscan version
 
-CycloneDX JSON 1.4–1.7 / SPDX 2.3; config 2 / report 2.1.
+CycloneDX JSON 1.4–1.7 / SPDX 2.3; config 2 / report 2.2.
 Online scans send public package identities to configured registries,
 endoflife.date, and deps.dev.
 --offline makes no HTTP requests. Disk cache is disabled by default.
 Default CI fails on EOL/HIGH; UNKNOWN and incomplete remain visible.
-The default catalog is empty: generic EOL dates alone do not confirm EOL.`)
+The bundled official catalog covers selected Angular and Rails series.
+Generic EOL dates alone do not confirm EOL. Empty scans exit 3;
+interrupted scans exit 130. Cancellation during input or provider work
+does not publish a scan result.`)
+}
+
+func contextExit(ctx context.Context, stderr io.Writer) int {
+	if ctx.Err() == nil {
+		return 0
+	}
+	fmt.Fprintln(stderr, "scan interrupted:", ctx.Err())
+	if errors.Is(ctx.Err(), context.DeadlineExceeded) {
+		return 3
+	}
+	return 130
 }
 
 // Run executes a command using injected I/O, HTTP client, and execution time.
@@ -114,7 +129,7 @@ func Run(ctx context.Context, args []string, stdin io.Reader, stdout, stderr io.
 	flags := flag.NewFlagSet("scan", flag.ContinueOnError)
 	flags.SetOutput(stderr)
 	flags.Usage = func() { usage(stderr); flags.PrintDefaults() }
-	var input, config, format, output, asOf string
+	var input, config, format, output, asOf, catalog string
 	var offline, noCache, verbose bool
 	flags.StringVar(&input, "input", "", "SBOM file or - for stdin")
 	flags.StringVar(&input, "i", "", "SBOM file or - for stdin")
@@ -125,6 +140,7 @@ func Run(ctx context.Context, args []string, stdin io.Reader, stdout, stderr io.
 	flags.StringVar(&output, "output", "", "report file; omitted for stdout")
 	flags.StringVar(&output, "o", "", "report file; omitted for stdout")
 	flags.StringVar(&asOf, "as-of", "", "evaluation date (UTC YYYY-MM-DD)")
+	flags.StringVar(&catalog, "catalog", "", "builtin or local support catalog YAML (overrides policy)")
 	flags.BoolVar(&offline, "offline", false, "disable all HTTP")
 	flags.BoolVar(&noCache, "no-cache", false, "disable persistent cache; incompatible with offline")
 	flags.BoolVar(&verbose, "verbose", false, "print redacted diagnostics to stderr")
@@ -153,6 +169,18 @@ func Run(ctx context.Context, args []string, stdin io.Reader, stdout, stderr io.
 	if noCache {
 		p.Cache.Enabled = false
 	}
+	if catalog != "" {
+		path := configpkg.BuiltinCatalogPath
+		if catalog != "builtin" {
+			path, err = filepath.Abs(catalog)
+			if err != nil {
+				fmt.Fprintln(stderr, "catalog path:", err)
+				return 2
+			}
+		}
+		p.Sources.OfficialCatalog.Enabled = true
+		p.Sources.OfficialCatalog.Path = model.Ptr(path)
+	}
 	bundle, err := configpkg.LoadBundle(p, config)
 	if err != nil {
 		fmt.Fprintln(stderr, err)
@@ -168,13 +196,19 @@ func Run(ctx context.Context, args []string, stdin io.Reader, stdout, stderr io.
 		defer f.Close()
 		reader = f
 	}
-	sbom, err := sbomparser.Parse(reader, p.Input)
+	sbom, err := parseSBOM(ctx, reader, p.Input)
+	if code := contextExit(ctx, stderr); code != 0 {
+		return code
+	}
 	if err != nil {
 		fmt.Fprintln(stderr, err)
 		return 2
 	}
 	scanner := scannerpkg.New(bundle, client, now, asOf, offline)
 	report, err := scanner.Scan(ctx, sbom)
+	if code := contextExit(ctx, stderr); code != 0 {
+		return code
+	}
 	if err != nil {
 		fmt.Fprintln(stderr, err)
 		return 4
@@ -215,6 +249,9 @@ func Run(ctx context.Context, args []string, stdin io.Reader, stdout, stderr io.
 		fmt.Fprintln(stderr, "write report:", err)
 		return 2
 	}
+	if code := contextExit(ctx, stderr); code != 0 {
+		return code
+	}
 	if output != "" {
 		err = fileio.AtomicWrite(output, buf.Bytes())
 	} else {
@@ -223,6 +260,9 @@ func Run(ctx context.Context, args []string, stdin io.Reader, stdout, stderr io.
 	if err != nil {
 		fmt.Fprintln(stderr, "write report:", err)
 		return 2
+	}
+	if code := contextExit(ctx, stderr); code != 0 {
+		return code
 	}
 	return reporting.ExitCode(report)
 }

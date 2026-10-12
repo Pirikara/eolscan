@@ -4,7 +4,7 @@
   "type": "object",
   "properties": {
     "schema_version": {
-      "const": "2.1"
+      "const": "2.2"
     },
     "tool_version": {
       "type": "string",
@@ -91,7 +91,8 @@
             "enum": [
               "COMPONENT_POLICY_VIOLATION",
               "MAX_UNKNOWN_RATIO_EXCEEDED",
-              "INCOMPLETE_SCAN"
+              "INCOMPLETE_SCAN",
+              "NO_COMPONENTS"
             ]
           },
           "uniqueItems": true
@@ -434,5 +435,31 @@
     "ci_gate",
     "results"
   ],
-  "additionalProperties": false
+  "additionalProperties": false,
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "summary": {
+            "properties": {
+              "in_scope": { "const": 0 }
+            }
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "ci_gate": {
+            "properties": {
+              "passed": { "const": false },
+              "incomplete": { "const": true },
+              "violation_codes": {
+                "contains": { "const": "NO_COMPONENTS" }
+              }
+            }
+          }
+        }
+      }
+    }
+  ]
 }

@@ -13,7 +13,7 @@ func ExitCode(r model.Report) int {
 	if model.Contains(r.CIGate.ViolationCodes, "COMPONENT_POLICY_VIOLATION") || model.Contains(r.CIGate.ViolationCodes, "MAX_UNKNOWN_RATIO_EXCEEDED") {
 		return 1
 	}
-	if model.Contains(r.CIGate.ViolationCodes, "INCOMPLETE_SCAN") {
+	if model.Contains(r.CIGate.ViolationCodes, "INCOMPLETE_SCAN") || model.Contains(r.CIGate.ViolationCodes, "NO_COMPONENTS") {
 		return 3
 	}
 	return 0
@@ -82,6 +82,9 @@ func Validate(r model.Report, p model.Policy) error {
 	}
 	if r.Summary.InScope != r.Summary.EOL+r.Summary.Supported+r.Summary.Unknown {
 		return fmt.Errorf("summary is inconsistent")
+	}
+	if r.Summary.InScope == 0 && (r.CIGate.Passed || !r.CIGate.Incomplete || !model.Contains(r.CIGate.ViolationCodes, "NO_COMPONENTS")) {
+		return fmt.Errorf("empty scans must fail with NO_COMPONENTS")
 	}
 	return nil
 }

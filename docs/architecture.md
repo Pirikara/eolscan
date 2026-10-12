@@ -15,6 +15,7 @@ eolscan is a single-binary Go CLI. The entry point is `cmd/eolscan/main.go`; imp
 | `internal/provider` | Convert catalogs, native registries, deps.dev, and endoflife.date data into evidence, version proofs, and signals; resolve metadata fallback. |
 | `internal/transport` | Enforce HTTPS and allowed hosts; handle concurrency, host rate budgets, shared cooldowns, retries, memoization, and optional disk caching. |
 | `internal/config` | Load and validate policies, catalogs, reviews, and exceptions. |
+| `internal/catalog` | Embed reviewed official security support evidence without network refresh. |
 | `internal/contract` | Validate embedded JSON schemas; decode YAML safely; produce canonical JSON and hashes. |
 | `internal/model` | Define shared data contracts and small value helpers. |
 | `internal/report` | Render tables, validate report invariants, and derive exit codes. |
@@ -40,6 +41,7 @@ flowchart TD
     config --> identity
     config --> contract
     config --> fileio
+    config --> catalog
     sbom --> contract
     report --> contract
     report --> config
@@ -52,6 +54,8 @@ flowchart TD
 Application packages share types through `model`. The entry point owns process signals and exit; the CLI receives a context, I/O streams, HTTP client, and execution timestamp. Tests can inject these dependencies without changing global state.
 
 Providers collect and normalize data. Lifecycle evaluation decides support status. The scanner combines results and applies CI policy. Provider errors remain evidence or diagnostics rather than silently becoming negative evaluations.
+
+The parser excludes only the metadata subject when configured to do so; nested components are independently filtered. Zero components in scope produce a validated failed report with `NO_COMPONENTS`. Scanner job dispatch and workers observe cancellation, and cancelled scans return no report. The CLI interrupts blocked stdin reads; the process entry point bounds shutdown even if file or output I/O is blocked. Interruptions exit 130.
 
 ### Metadata resolution
 
@@ -69,6 +73,7 @@ The run timestamp is fixed for evidence, cache age, and expiry. A separate live 
 
 - `schemas/*.json` are the canonical schemas. The `schemas` package embeds them, and `contract` compiles them locally.
 - `internal/config/defaults.yaml` contains the runtime defaults and is embedded by `config`.
+- `internal/catalog/upstream-security.yaml` contains real reviewed evidence embedded by `catalog`. The reserved path `builtin:upstream-security` selects it; local catalogs replace it. Review expiry is checked against execution time, and catalog contents participate in the policy hash.
 - `examples/eol-policy.example.yaml` documents those defaults. A test checks that the example and embedded policy agree.
 - Runtime execution requires no checkout, Python installation, or external schema files.
 

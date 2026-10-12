@@ -1,6 +1,6 @@
 # eolscan
 
-eolscan is a Go CLI that reads an SBOM and checks whether upstream security support has ended for its dependencies. Release 0.2.0 implements the [v0.4 design specification](docs/design.md).
+eolscan is a Go CLI that reads an SBOM and checks whether upstream security support has ended for its dependencies. Release 0.3.0 implements the [v0.5 design specification](docs/design.md).
 
 No database is required. Repeated API queries share an in-memory result during each run, and disk caching is disabled by default. Build with Go 1.24 or later; the CLI runs as a single binary.
 
@@ -16,11 +16,13 @@ cat sbom.cdx.json | ./bin/eolscan scan -i - -f json
 ./bin/eolscan providers list
 ```
 
-Supported inputs are CycloneDX JSON 1.4–1.7 and SPDX 2.3 JSON. Packages are identified by PURL, with support for the gem, npm, pypi, maven, golang, cargo, and nuget ecosystems. Components without a version remain in the report as `UNKNOWN`. CycloneDX `metadata.component` is excluded by default.
+Supported inputs are CycloneDX JSON 1.4–1.7 and SPDX 2.3 JSON. Packages are identified by PURL, with support for the gem, npm, pypi, maven, golang, cargo, and nuget ecosystems. Components without a version remain in the report as `UNKNOWN`. CycloneDX `metadata.component` is excluded by default; its nested components are still inspected individually. A scan with no components in scope exits `3` with `NO_COMPONENTS`.
 
-Configuration uses schema version `2`, and JSON reports use version `2.1`. Native Syft JSON, CPE matching, and OS name matching are outside the current scope. When using Syft, provide CycloneDX or SPDX JSON.
+Configuration uses schema version `2`, and JSON reports use version `2.2`. Native Syft JSON, CPE matching, and OS name matching are outside the current scope. When using Syft, provide CycloneDX or SPDX JSON. Registry ecosystem support does not imply lifecycle coverage for every package; generic runtimes and OS package PURLs are currently unsupported.
 
-When upgrading from 0.1.0, allow the three new registry hosts if your policy overrides `network.allowed_hosts`, or disable those sources explicitly. Partial version 2 policies inherit the new defaults; report consumers must accept schema 2.1 and the `YANKED` signal.
+When upgrading from 0.1.0, allow the three native registry hosts if your policy overrides `network.allowed_hosts`, or disable those sources explicitly. Partial version 2 policies inherit the new defaults.
+
+When upgrading from 0.2.0, report consumers must accept schema `2.2` and `NO_COMPONENTS`. Empty scans always fail, and interrupted scans exit `130`. The reviewed built-in catalog is enabled by default, so supported package identities may now receive definite lifecycle results and fail CI. Explicitly disabling the official catalog preserves the previous empty-catalog behavior. Catalog contents are included in `policy_hash`.
 
 ## Understanding results
 
@@ -32,10 +34,13 @@ When upgrading from 0.1.0, allow the three new registry hosts if your policy ove
 
 Lifecycle results and maintenance signals are evaluated separately. Deprecation, yanking, archival, quarantine, or release inactivity alone cannot establish EOL. Signals use three states: `PRESENT / ABSENT / UNKNOWN`. `EOL_SOON` is a notice derived from the scheduled end of a `SUPPORTED` window.
 
-**The default support catalog and general EOL reviews are empty.** A generic EOL date from endoflife.date alone cannot establish `EOL` or `SUPPORTED`. Many results will be `UNKNOWN` in an online scan without a reviewed catalog.
+**The default catalog contains reviewed official evidence for Angular `@angular/core` 18–20 and Rails 7.2/8.0.** It was reviewed on 2026-10-12 and expires after 2026-11-11 UTC. Exact version existence and publication time still require independent verification. Other packages remain `UNKNOWN` unless you supply applicable reviewed evidence. See [catalog scope, sources, and maintenance](docs/catalog.md).
+
+The default general EOL review list remains empty. A generic EOL date from endoflife.date alone cannot establish `EOL` or `SUPPORTED`.
 
 | Data source | Role |
 | --- | --- |
+| Bundled official catalog | Reviewed upstream security support windows for selected Angular and Rails series; embedded in the binary. |
 | Local support catalog | Reviewed official support windows and end dates, exact version publication times, and reviews of what generic EOL dates mean. |
 | [endoflife.date API v1](https://endoflife.date/docs/api/v1/) | Fetches the PURL index once, then fetches generic EOL dates for matched products. |
 | [npm registry](https://github.com/npm/registry/blob/main/docs/REGISTRY-API.md) | Full package metadata: versions, publication times, and per-version deprecation. |
@@ -51,13 +56,15 @@ A version absent from every available source remains `UNKNOWN`; a 404 cannot pro
 
 `YANKED`, `ARCHIVED`, and `QUARANTINED` are opt-in report signals, or mandatory when listed in `ci.fail_on_signals`. PyPI supplies all three. `YANKED` means all available artifacts for the target version are explicitly yanked; one explicit non-yanked artifact makes it `ABSENT`. RubyGems can supply explicit yank status for available releases, but its public APIs do not prove the status of a removed release.
 
-`STALE_RELEASE` uses the available version list with complete publication dates. The earliest artifact publication for each version is its release date; uploading a new wheel for an old release does not reset it. Missing dates, unrecognized PyPI artifacts, or a future evaluation date produce `UNKNOWN`. Native PyPI data can evaluate this signal; deps.dev's limited Go/PyPI collections cannot establish absence of new releases. Current registry data cannot reconstruct deleted releases or historical status changes.
+`STALE_RELEASE/PRESENT` requires a complete available release list with publication dates. `ABSENT` can be established by a sufficiently recent verified release even if older versions have missing dates. For artifact-based native data, that release needs complete first-upload evidence; uploading another wheel for an old version does not reset its age. Native PyPI recognizes retained legacy eggs. deps.dev's limited Go/PyPI collections can confirm a recent release, but cannot prove prolonged inactivity. A future evaluation date remains `UNKNOWN`. Current registry data cannot reconstruct deleted releases or historical status changes.
 
 See [registry sources and request behavior](docs/registries.md) for endpoints, capabilities, and limitations. Native Go and NuGet adapters and GitHub archived status remain future work; CI-required signals without a usable provider make the scan incomplete.
 
 ## Using a support catalog
 
-Policy files are recursively merged into the built-in defaults. Relative paths are resolved from the policy file's directory.
+Policy files are recursively merged into the built-in defaults. Relative paths are resolved from the policy file's directory. The default `official_catalog.path` is the reserved value `builtin:upstream-security`.
+
+A local catalog replaces the bundled one. You can also override the policy with `--catalog builtin` or `--catalog ./support-catalog.yaml`; CLI paths are relative to the current directory.
 
 ```yaml
 schema_version: 2
@@ -75,7 +82,7 @@ The catalog contains three arrays. See the [example](examples/support-catalog.ex
 
 Official evidence has `HIGH` confidence; reviewed generic EOL evidence has `MEDIUM` confidence. Unreviewed or expired generic EOL evidence remains in the report but is excluded from lifecycle decisions. A future generic EOL date cannot establish `SUPPORTED`. Conflicting end dates within the highest applicable tier produce `UNKNOWN / CONFLICT`, including conflicts involving future dates. Evidence is excluded from conflict detection only when a formal replacement or withdrawal has been verified.
 
-The bundled products, reviews, and version assertions are **fictional test data**. Try the offline example:
+The products, reviews, and version assertions in `examples/support-catalog.example.yaml` are **fictional test data**, separate from the real built-in catalog. Try the offline example:
 
 ```sh
 ./bin/eolscan scan \
@@ -88,7 +95,7 @@ This returns `SUPPORTED / HIGH`. The example reviews and version assertions are 
 
 ## Using eolscan in CI
 
-The default policy is report-first: only `EOL / HIGH` fails CI. `UNKNOWN` results, `EOL / MEDIUM` results, and incomplete scans caused by API failures remain visible in the report.
+The default component policy is report-first: only `EOL / HIGH` fails CI. `UNKNOWN` results, `EOL / MEDIUM` results, and incomplete scans caused by API failures remain visible in the report. A scan with no components in scope always fails, and SIGINT/SIGTERM interruption always exits nonzero.
 
 ```sh
 ./bin/eolscan scan \
@@ -97,7 +104,7 @@ The default policy is report-first: only `EOL / HIGH` fails CI. `UNKNOWN` result
   -f json -o report.json
 ```
 
-The strict policy fails for EOL with at least `MEDIUM` confidence, incomplete scans, or an `UNKNOWN` ratio above 0.25. It still requires you to supply reviewed generic EOL mappings or official support evidence in a catalog.
+The strict policy fails for EOL with at least `MEDIUM` confidence, incomplete scans, or an `UNKNOWN` ratio above 0.25. It uses the same bundled catalog. Most SBOMs need additional reviewed support evidence to achieve enough lifecycle coverage for this unknown-ratio threshold.
 
 Signals included in CI failure conditions require a successful evaluation.
 
@@ -115,8 +122,11 @@ With this policy, a confirmed stale release exits with code `1`, a confirmed abs
 | 0 | The configured CI conditions passed. Check the report for unknown results or incomplete checks. |
 | 1 | A component violates the CI policy, or the unknown ratio exceeds its limit. |
 | 2 | Input, configuration, or output error. |
-| 3 | A required check is incomplete, with no other explicit CI violation. |
+| 3 | No components were in scope (`NO_COMPONENTS`), or a required check is incomplete with no other explicit CI violation. |
 | 4 | Internal error. |
+| 130 | Interrupted by SIGINT or SIGTERM. |
+
+Cancellation while reading input or querying providers does not publish a report.
 
 Run the compiled binary in CI. `go run` does not preserve the program's exit code and cannot reliably distinguish codes `1` and `3`.
 
@@ -164,6 +174,7 @@ internal/
   provider/        Catalog, registry, deps.dev, and endoflife.date adapters
   transport/       HTTPS, host rate limits, retries, memoization, and disk cache
   config/          Policy, catalog, and exception loading
+  catalog/         Reviewed official support data embedded in the binary
   contract/        Schema validation and canonical serialization
   model/           Shared input, policy, evidence, and report types
   report/          Table output, report invariants, and exit codes
@@ -188,7 +199,7 @@ go vet ./...
 go build -o bin/eolscan ./cmd/eolscan
 ```
 
-Go tests cover design acceptance cases UT-01 through UT-45, native registry selection, fallback, signal completeness, offline caching, and host rate control. Ten report fixtures run through the actual CLI and verify decisions, exit codes, input hashes, and policy hashes. External APIs are replaced with fixed responses and local HTTPS servers, so tests require no public API access.
+Go tests cover design acceptance cases UT-01 through UT-45, native registry selection, fallback, signal completeness, offline caching, and host rate control. Regression tests cover nested metadata components, empty scans, cancellation, recent-release proof with incomplete older history, and bundled catalog expiry. Eleven report fixtures run through the actual CLI and verify decisions, exit codes, input hashes, and policy hashes. External APIs are replaced with fixed responses and local HTTPS servers, so tests require no public API access.
 
 JSON schemas are embedded in the binary to validate configuration and reports. Additional documentation and example validation uses Python, which is not a CLI runtime dependency.
 

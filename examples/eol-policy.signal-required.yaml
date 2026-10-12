@@ -1,4 +1,4 @@
-# Contract example; catalogue data is fictional when enabled.
+# Full configuration using the reviewed built-in catalog.
 schema_version: 2
 input:
   include_component_types:

@@ -20,6 +20,22 @@ func TestDefaultPolicyMatchesExample(t *testing.T) {
 	}
 }
 
+func TestBuiltinCatalogLoadsWithoutExternalFiles(t *testing.T) {
+	p := config.Default()
+	bundle, err := config.LoadBundle(p, filepath.Join(t.TempDir(), "policy.yaml"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	if bundle.Catalog == nil || len(bundle.Catalog.Entries) != 5 || len(bundle.Catalog.GeneralEolReviews) != 0 || len(bundle.Catalog.VerifiedVersions) != 0 || bundle.CatalogHash == "" {
+		t.Fatalf("builtin catalog: %+v", bundle.Catalog)
+	}
+	p.Sources.OfficialCatalog.Enabled = false
+	disabled, err := config.LoadBundle(p, "")
+	if err != nil || disabled.Catalog != nil || disabled.Hash == bundle.Hash {
+		t.Fatalf("disable builtin: %+v error=%v", disabled.Catalog, err)
+	}
+}
+
 func TestPolicyValidationRejectionAndMerge(t *testing.T) {
 	for _, data := range []string{
 		"schema_version: 1\n",

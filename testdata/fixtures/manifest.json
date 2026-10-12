@@ -68,5 +68,12 @@
     "policy": "examples/eol-policy.signal-required.yaml",
     "input": "testdata/fixtures/required-signal-unknown.cdx.json",
     "expected_exit": 1
+  },
+  {
+    "name": "no-components",
+    "report": "testdata/fixtures/report.no-components.json",
+    "policy": "examples/eol-policy.example.yaml",
+    "input": "testdata/fixtures/empty.cdx.json",
+    "expected_exit": 3
   }
 ]

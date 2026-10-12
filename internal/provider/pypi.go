@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"net/url"
+	"regexp"
 	"strings"
 
 	"github.com/Pirikara/eolscan/internal/config"
@@ -12,6 +13,8 @@ import (
 )
 
 const pypiJSON = "application/vnd.pypi.simple.v1+json"
+
+var eggPythonTag = regexp.MustCompile(`^py[0-9]+(?:\.[0-9]+)?$`)
 
 func (r *registry) pypi(ctx context.Context, id identity.Identity) (packageSnapshot, error) {
 	s := packageSnapshot{Provider: "pypi", URL: config.CleanBase(r.t.Policy().Sources.PyPI.BaseURL) + "/simple/" + url.PathEscape(id.Name) + "/", Versions: map[string][]release{}, Complete: true}
@@ -50,6 +53,7 @@ func (r *registry) pypi(ctx context.Context, id identity.Identity) (packageSnaps
 		version, ok := pypiFileVersion(file.Filename, id.Name)
 		if !ok {
 			s.Complete = false
+			s.UnassignedArtifacts = true
 			continue
 		}
 		var yanked *bool
@@ -81,6 +85,15 @@ func pypiFileVersion(filename, name string) (string, bool) {
 	if strings.HasSuffix(filename, ".whl") {
 		parts := strings.Split(strings.TrimSuffix(filename, ".whl"), "-")
 		if (len(parts) == 5 || len(parts) == 6) && identity.NormalizeName("PYPI", parts[0]) == name && parts[1] != "" {
+			return parts[1], true
+		}
+		return "", false
+	}
+	// PyPI retains legacy eggs. Their normalized distribution/version prefix
+	// and mandatory Python tag identify the release just as wheel names do.
+	if strings.HasSuffix(filename, ".egg") {
+		parts := strings.Split(strings.TrimSuffix(filename, ".egg"), "-")
+		if len(parts) >= 3 && identity.NormalizeName("PYPI", parts[0]) == name && parts[1] != "" && eggPythonTag.MatchString(parts[2]) {
 			return parts[1], true
 		}
 		return "", false

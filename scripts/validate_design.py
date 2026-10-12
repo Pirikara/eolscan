@@ -204,7 +204,12 @@ def load_context(policy_path):
     catalog = None
     catalog_source = policy["sources"]["official_catalog"]
     if catalog_source["enabled"]:
-        catalog = load_yaml(policy_path.parent / catalog_source["path"])
+        catalog_path = (
+            ROOT / "internal/catalog/upstream-security.yaml"
+            if catalog_source["path"] == "builtin:upstream-security"
+            else policy_path.parent / catalog_source["path"]
+        )
+        catalog = load_yaml(catalog_path)
         validate_catalog(catalog)
     exceptions = None
     if policy["exceptions"]["path"]:
@@ -452,25 +457,28 @@ def validate_report(report, policy, catalog, exceptions, input_path):
     coverage = (counts["EOL"] + counts["SUPPORTED"]) / len(rows) if rows else 0
     ensure(math.isclose(summary["assessment_coverage"], coverage), "coverage is inconsistent")
     ensure(summary["ci_failure_count"] == failures, "CI failure count is inconsistent")
-    incomplete = any(row["incomplete"] for row in rows)
+    incomplete = not rows or any(row["incomplete"] for row in rows)
     ensure(report["ci_gate"]["incomplete"] == incomplete, "aggregate incomplete is inconsistent")
     codes = []
+    if not rows:
+        codes.append("NO_COMPONENTS")
     if failures:
         codes.append("COMPONENT_POLICY_VIOLATION")
     ratio = counts["UNKNOWN"] / len(rows) if rows else 0
     threshold = policy["ci"]["max_unknown_ratio"]
     if threshold is not None and ratio > threshold:
         codes.append("MAX_UNKNOWN_RATIO_EXCEEDED")
-    if incomplete and policy["ci"]["fail_on_incomplete_scan"]:
+    if rows and incomplete and policy["ci"]["fail_on_incomplete_scan"]:
         codes.append("INCOMPLETE_SCAN")
     ensure(set(report["ci_gate"]["violation_codes"]) == set(codes), "gate violations are inconsistent")
     ensure(report["ci_gate"]["passed"] == (not codes), "gate result is inconsistent")
     if failures or "MAX_UNKNOWN_RATIO_EXCEEDED" in codes:
         return 1
-    return 3 if "INCOMPLETE_SCAN" in codes else 0
+    return 3 if set(codes) & {"INCOMPLETE_SCAN", "NO_COMPONENTS"} else 0
 
 
 def run():
+    validate_catalog(load_yaml(ROOT / "internal/catalog/upstream-security.yaml"))
     valid_files = 0
     for path in sorted([*EXAMPLES.rglob("*.yaml"), *TESTDATA.rglob("*.yaml")]):
         if path.name.startswith("eol-policy") or path.name.startswith("policy."):
@@ -580,6 +588,11 @@ def run():
     rejected(
         "credentials in evidence URLs",
         lambda: change_report("supported", lambda r: r["results"][0]["evidence"][0].update(source_url="https://token@example.org/support")),
+    )
+
+    rejected(
+        "empty scan cannot pass CI",
+        lambda: change_report("no-components", lambda r: r["ci_gate"].update(passed=True, incomplete=False, violation_codes=[])),
     )
 
     for label, modify in (

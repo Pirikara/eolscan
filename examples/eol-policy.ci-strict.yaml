@@ -1,4 +1,4 @@
-# Contract example; catalogue data is fictional when enabled.
+# Full configuration using the reviewed built-in catalog.
 schema_version: 2
 input:
   include_component_types:
@@ -21,8 +21,8 @@ sources:
     enabled: true
     base_url: "https://rubygems.org"
   official_catalog:
-    enabled: false
-    path: null
+    enabled: true
+    path: "builtin:upstream-security"
   endoflife_date:
     enabled: true
     base_url: "https://endoflife.date/api/v1"

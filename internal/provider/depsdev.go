@@ -4,7 +4,6 @@ import (
 	"context"
 	"encoding/json"
 	"strings"
-	"time"
 
 	"github.com/Pirikara/eolscan/internal/contract"
 	"github.com/Pirikara/eolscan/internal/identity"
@@ -117,12 +116,6 @@ func StaleRelease(ctx context.Context, t *transport.Transport, id identity.Ident
 		e.ReasonCode = model.Ptr("FUTURE_AS_OF")
 		return e, nil, ds
 	}
-	// These indices have documented gaps (proxy-only Go, wheels/sdists-only
-	// PyPI), so their version lists cannot prove package-wide inactivity.
-	if id.Type == "golang" || id.Type == "pypi" {
-		e.ReasonCode = model.Ptr("INCOMPLETE_VERSION_INDEX")
-		return e, nil, ds
-	}
 	raw := identity.PackageURL(t.Policy().Sources.DepsDev.BaseURL, id)
 	data, err := t.Get(ctx, raw)
 	ds = append(ds, ProviderDiagnostics("deps_dev", data.Diagnostics)...)
@@ -146,11 +139,7 @@ func StaleRelease(ctx context.Context, t *transport.Transport, id identity.Ident
 		ds = append(ds, model.NewDiagnostic("PROVIDER_SCHEMA_MISMATCH", "deps_dev", "Package version list is malformed or identifies another package"))
 		return e, nil, ds
 	}
-	if p.NextPageToken != "" || len(*p.Versions) == 0 {
-		e.ReasonCode = model.Ptr("INCOMPLETE_VERSION_LIST")
-		return e, nil, ds
-	}
-	var latest time.Time
+	versions := map[string][]release{}
 	seen := map[string]bool{}
 	for _, v := range *p.Versions {
 		if strings.ToUpper(v.Key.System) != id.System || identity.NormalizeName(id.System, v.Key.Name) != id.Name || v.Key.Version == "" || seen[v.Key.Version] {
@@ -158,26 +147,20 @@ func StaleRelease(ctx context.Context, t *transport.Transport, id identity.Ident
 			return e, nil, ds
 		}
 		seen[v.Key.Version] = true
-		when, err := time.Parse(time.RFC3339Nano, v.PublishedAt)
-		if err != nil {
-			e.ReasonCode = model.Ptr("MISSING_PUBLICATION_DATE")
-			return e, nil, ds
-		}
-		if when.After(t.Now()) {
-			e.ReasonCode = model.Ptr("PUBLICATION_IN_FUTURE")
-			return e, nil, ds
-		}
-		if model.UTCDate(when) <= asOf && when.After(latest) {
-			latest = when
-		}
+		versions[v.Key.Version] = []release{{PublishedAt: v.PublishedAt}}
 	}
-	if latest.IsZero() {
-		e.ReasonCode = model.Ptr("NO_RELEASE_AS_OF")
+	// These collections cannot prove package-wide inactivity, but a verified
+	// recent publication still proves that the package is not stale.
+	limitedIndex := id.Type == "golang" || id.Type == "pypi"
+	latest, reason := latestRelease(versions, !limitedIndex && p.NextPageToken == "", false, asOf, t.Now(), *t.Policy().Signals.StaleReleaseDays)
+	if reason != "" {
+		if limitedIndex && reason == "INCOMPLETE_VERSION_LIST" {
+			reason = "INCOMPLETE_VERSION_INDEX"
+		}
+		e.ReasonCode = model.Ptr(reason)
 		return e, nil, ds
 	}
-	at, _ := time.Parse("2006-01-02", asOf)
-	publishedDay, _ := time.Parse("2006-01-02", model.UTCDate(latest))
-	days := int(at.Sub(publishedDay).Hours() / 24)
+	days := releaseAge(latest, asOf)
 	e.Status = "ABSENT"
 	e.ReasonCode = nil
 	if days > *t.Policy().Signals.StaleReleaseDays {

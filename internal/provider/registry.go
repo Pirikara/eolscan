@@ -29,6 +29,7 @@ type packageSnapshot struct {
 	Data                         transport.HTTPData
 	Versions                     map[string][]release
 	Complete                     bool
+	UnassignedArtifacts          bool
 }
 
 type registry struct {
@@ -221,40 +222,11 @@ func (s packageSnapshot) signal(kind string, id identity.Identity, asOf string, 
 		if asOf > model.UTCDate(t.Now()) {
 			return unknown("FUTURE_AS_OF")
 		}
-		if !s.Complete || len(s.Versions) == 0 {
-			return unknown("INCOMPLETE_VERSION_LIST")
+		latest, reason := latestRelease(s.Versions, s.Complete, s.UnassignedArtifacts, asOf, t.Now(), *t.Policy().Signals.StaleReleaseDays)
+		if reason != "" {
+			return unknown(reason)
 		}
-		var latest time.Time
-		// Sort the keys so invalid metadata produces a deterministic reason.
-		keys := []string{}
-		for v := range s.Versions {
-			keys = append(keys, v)
-		}
-		sort.Strings(keys)
-		for _, version := range keys {
-			var first time.Time
-			for _, v := range s.Versions[version] {
-				at, err := time.Parse(time.RFC3339Nano, v.PublishedAt)
-				if err != nil {
-					return unknown("MISSING_PUBLICATION_DATE")
-				}
-				if at.After(t.Now()) {
-					return unknown("PUBLICATION_IN_FUTURE")
-				}
-				if first.IsZero() || at.Before(first) {
-					first = at
-				}
-			}
-			if model.UTCDate(first) <= asOf && first.After(latest) {
-				latest = first
-			}
-		}
-		if latest.IsZero() {
-			return unknown("NO_RELEASE_AS_OF")
-		}
-		day, _ := time.Parse("2006-01-02", asOf)
-		published, _ := time.Parse("2006-01-02", model.UTCDate(latest))
-		days := int(day.Sub(published).Hours() / 24)
+		days := releaseAge(latest, asOf)
 		positive = days > *t.Policy().Signals.StaleReleaseDays
 		details["latest_published_at"], details["days_since_latest_release"], details["threshold_days"] = model.Timestamp(latest), days, *t.Policy().Signals.StaleReleaseDays
 	default:

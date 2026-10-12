@@ -1,6 +1,6 @@
 # Registry sources and request behavior
 
-eolscan 0.2.0 queries npm, PyPI, and RubyGems directly. Remote version verification for Maven, Go, Cargo, and NuGet still uses deps.dev. None of these registry facts alone establishes an upstream security support window or an EOL date.
+eolscan 0.3.0 queries npm, PyPI, and RubyGems directly. Remote version verification for Maven, Go, Cargo, and NuGet still uses deps.dev. None of these registry facts alone establishes an upstream security support window or an EOL date. The separate [bundled official catalog](catalog.md) supplies reviewed lifecycle evidence for selected products.
 
 ## Selection and fallback
 
@@ -30,7 +30,7 @@ All requests use configured HTTPS base URLs on allowed hosts. Download URLs from
 
 Full packument metadata provides exact version records and publication timestamps. Names and versions must match the requested package. Scoped names are URL encoded. A nonempty version-level deprecation message is positive evidence. Under the full metadata contract, a valid version record with an omitted, null, or empty deprecation message is negative evidence. A missing version record or invalid response stays unknown.
 
-The `time` map can retain removed version identifiers. If a timestamp refers to a version missing from `versions`, release-list completeness is unknown and native `STALE_RELEASE` cannot be resolved from that snapshot.
+The `time` map can retain removed version identifiers. If a timestamp refers to a version missing from `versions`, release-list completeness is unknown and native `STALE_RELEASE/PRESENT` cannot be established. A fully dated available recent version can still establish `ABSENT`.
 
 ### PyPI
 
@@ -50,7 +50,7 @@ Although the project-status specification defines a default for omitted status, 
 
 Yank status is a boolean or a string reason, including an empty string meaning yanked. `YANKED/PRESENT` requires every available artifact for the target version to be explicitly yanked. Any explicit non-yanked artifact makes it `ABSENT`. Missing status or unidentified artifacts that prevent this conclusion leave it `UNKNOWN`. This version-level rule does not describe which artifact a particular installer selected.
 
-The adapter recognizes modern wheels, `.tar.gz`, and `.zip` sdists. Unrecognized filenames make the release list incomplete. The optional `versions` list can retain an identifier, but it cannot supply a missing publication time. Version strings are matched exactly; legacy filenames and PEP 440 aliases may need deps.dev or a local assertion rather than native proof.
+The adapter recognizes modern wheels, `.tar.gz` and `.zip` sdists, and retained legacy eggs with a normalized distribution/version prefix and a valid Python tag. Unrecognized filenames make the release list incomplete and can prevent proving a version's first upload. The optional `versions` list can retain an identifier, but it cannot supply a missing publication time. Version strings are matched exactly; other legacy filenames and PEP 440 aliases may need deps.dev or a local assertion rather than native proof.
 
 ### RubyGems
 
@@ -60,11 +60,11 @@ Version details are requested when the list cannot verify an unqualified target 
 
 ## Release inactivity and historical limits
 
-`STALE_RELEASE` evaluates the currently available release list. Every considered version needs a valid publication timestamp; incomplete lists remain unknown. For a version with multiple artifacts, its earliest artifact upload is its publication. The latest such version publication on or before `--as-of` is compared with `stale_release_days`; a gap strictly greater than the threshold is `PRESENT`.
+`STALE_RELEASE` evaluates the currently available release list. `PRESENT` requires a complete list and complete publication timestamps. `ABSENT` needs one sufficiently recent verified release; missing dates for other versions do not invalidate that proof. For a version with multiple artifacts, all its available artifacts need dates to establish its earliest upload. Unassigned PyPI artifacts can hide an earlier upload for the candidate version and therefore prevent this negative proof. A gap strictly greater than `stale_release_days` is `PRESENT` only when the available history is complete.
 
 Uploading another wheel or platform build for an old version does not reset its release date. A future evaluation date remains unknown because subsequent releases cannot be predicted. Deleted releases, removed artifacts, and past deprecation/project-status changes cannot be fully reconstructed from live metadata. `--as-of` compares known dates, without recreating a historical registry snapshot. Strict historical replay needs saved evidence.
 
-deps.dev's documented Go and PyPI collection limits prevent its lists from resolving package-wide inactivity. Native PyPI can resolve it when the available artifact list and timestamps are complete. Other native failures may use a complete deps.dev list.
+deps.dev's documented Go and PyPI collection limits prevent its lists from proving prolonged inactivity. Its version publication timestamps can still establish a recent release and resolve `ABSENT`. The same rule applies when older NuGet or other version records lack dates. Native failures may use capable fallback data. An unresolved evaluation retains an actual provider failure reason rather than being hidden by a placeholder `NO_CAPABILITY`.
 
 ## Host budgets, retries, and cache
 

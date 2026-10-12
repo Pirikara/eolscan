@@ -210,6 +210,9 @@ func (s *Scanner) applyCI(r *model.ComponentResult) {
 
 // Scan evaluates each component and returns a validated, deterministic report.
 func (s *Scanner) Scan(ctx context.Context, sbom model.SBOM) (model.Report, error) {
+	if err := ctx.Err(); err != nil {
+		return model.Report{}, err
+	}
 	report := model.Report{
 		SchemaVersion: version.ReportSchema, ToolVersion: version.Current, AsOf: s.asOf, Projection: s.asOf > model.UTCDate(s.now),
 		GeneratedAt: model.Timestamp(s.now), InputSHA256: sbom.SHA256, PolicyHash: s.bundle.Hash,
@@ -229,6 +232,9 @@ func (s *Scanner) Scan(ctx context.Context, sbom model.SBOM) (model.Report, erro
 		go func() {
 			defer workers.Done()
 			for index := range jobs {
+				if ctx.Err() != nil {
+					return
+				}
 				func() {
 					defer func() {
 						if recover() != nil {
@@ -242,11 +248,19 @@ func (s *Scanner) Scan(ctx context.Context, sbom model.SBOM) (model.Report, erro
 			}
 		}()
 	}
+queue:
 	for i := range sbom.Components {
-		jobs <- i
+		select {
+		case <-ctx.Done():
+			break queue
+		case jobs <- i:
+		}
 	}
 	close(jobs)
 	workers.Wait()
+	if err := ctx.Err(); err != nil {
+		return model.Report{}, err
+	}
 	if internalErr != nil {
 		return report, internalErr
 	}
@@ -261,6 +275,10 @@ func (s *Scanner) Scan(ctx context.Context, sbom model.SBOM) (model.Report, erro
 		return a.SourceRef < b.SourceRef
 	})
 	report.Summary.InScope = len(report.Results)
+	if report.Summary.InScope == 0 {
+		report.CIGate.Incomplete = true
+		report.CIGate.ViolationCodes = append(report.CIGate.ViolationCodes, "NO_COMPONENTS")
+	}
 	for _, r := range report.Results {
 		switch r.Lifecycle {
 		case "EOL":
@@ -299,12 +317,18 @@ func (s *Scanner) Scan(ctx context.Context, sbom model.SBOM) (model.Report, erro
 	if p.CI.MaxUnknownRatio != nil && ratio > *p.CI.MaxUnknownRatio {
 		report.CIGate.ViolationCodes = append(report.CIGate.ViolationCodes, "MAX_UNKNOWN_RATIO_EXCEEDED")
 	}
-	if p.CI.FailOnIncompleteScan && report.CIGate.Incomplete {
+	if p.CI.FailOnIncompleteScan && report.CIGate.Incomplete && report.Summary.InScope > 0 {
 		report.CIGate.ViolationCodes = append(report.CIGate.ViolationCodes, "INCOMPLETE_SCAN")
 	}
 	report.CIGate.Passed = len(report.CIGate.ViolationCodes) == 0
+	if err := ctx.Err(); err != nil {
+		return model.Report{}, err
+	}
 	if err := reporting.Validate(report, p); err != nil {
 		return report, fmt.Errorf("report contract: %w", err)
+	}
+	if err := ctx.Err(); err != nil {
+		return model.Report{}, err
 	}
 	return report, nil
 }

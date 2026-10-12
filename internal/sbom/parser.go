@@ -72,7 +72,9 @@ func Parse(r io.Reader, p model.InputPolicy) (model.SBOM, error) {
 				} else {
 					out.Components = append(out.Components, model.Component{SourceRef: ref, Name: e.Name, Version: e.Version, PURL: e.PURL})
 				}
-				if err := walk(e.Components, childPath, exclude); err != nil {
+				// Excluding the BOM's subject does not exclude its constituent
+				// components. Apply the type policy to each child independently.
+				if err := walk(e.Components, childPath, false); err != nil {
 					return err
 				}
 			}

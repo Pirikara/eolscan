@@ -1,6 +1,6 @@
 {
-  "schema_version": "2.1",
-  "tool_version": "0.2.0",
+  "schema_version": "2.2",
+  "tool_version": "0.3.0",
   "as_of": "2024-01-01",
   "projection": false,
   "generated_at": "2026-10-11T00:00:00Z",

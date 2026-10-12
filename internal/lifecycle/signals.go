@@ -46,7 +46,14 @@ func AggregateSignals(requested []string, evaluations []model.SignalEvaluation, 
 		case len(negative) > 0:
 			out = append(out, negative[0])
 		case len(unknown) > 0:
-			out = append(out, unknown[0])
+			chosen := unknown[0]
+			for _, unavailable := range unknown {
+				if model.Text(unavailable.ReasonCode) != "NO_CAPABILITY" {
+					chosen = unavailable
+					break
+				}
+			}
+			out = append(out, chosen)
 		default:
 			out = append(out, provider.UnknownSignal(kind, "NO_CAPABILITY"))
 		}
