@@ -19,6 +19,7 @@ decision:
   eol_rules:
     - id: deprecated-version
       any_of: [DEPRECATED]
+      ecosystems: [npm, pypi, nuget]
     - id: archived-and-inactive
       all_of: [ARCHIVED, STALE_RELEASE]
 ci:
@@ -26,7 +27,7 @@ ci:
   fail_on_incomplete_scan: true
 ```
 
-This classifies a version as EOL when it is deprecated, when its project is archived **and** its releases have been inactive for more than 365 days, or when an eligible support end date has passed.
+This classifies a version as EOL when it is deprecated in npm/PyPI/NuGet, when its project is archived **and** its releases have been inactive for more than 365 days, or when an eligible support end date has passed. The deprecation rule is scoped to ecosystems where both positive and negative deprecation checks are available; the archival/inactivity rule applies across ecosystems. Broaden the scopes when you have the necessary acquisition capability.
 
 ```sh
 ./bin/eolscan policy validate -c examples/eol-policy.rules.example.yaml

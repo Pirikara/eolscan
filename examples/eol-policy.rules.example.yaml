@@ -8,6 +8,7 @@ decision:
   eol_rules:
     - id: deprecated-version
       any_of: [DEPRECATED]
+      ecosystems: [npm, pypi, nuget]
     - id: archived-and-inactive
       all_of: [ARCHIVED, STALE_RELEASE]
 ci:

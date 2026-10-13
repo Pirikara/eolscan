@@ -39,6 +39,7 @@ decision:
   eol_rules:
     - id: deprecated-version
       any_of: [DEPRECATED]
+      ecosystems: [npm, pypi, nuget]
     - id: archived-and-inactive
       all_of: [ARCHIVED, STALE_RELEASE]
 ci:
@@ -46,7 +47,7 @@ ci:
   fail_on_incomplete_scan: true
 ```
 
-Rules are ORed together; `all_of` combines conditions with AND. This policy warns and fails CI for a deprecated version, an archived project with more than 365 days of release inactivity, or an eligible support end date that has passed. `eol_rules` replaces the default list. Rules can be scoped by ecosystem or exact package PURL. See [criteria, acquisition, unknown conditions, and CI](docs/eol-rules.md).
+Rules are ORed together; `all_of` combines conditions with AND. This policy warns and fails CI for a deprecated npm/PyPI/NuGet version, an archived project with more than 365 days of release inactivity, or an eligible support end date that has passed. `eol_rules` replaces the default list. Rules can be scoped by ecosystem or exact package PURL. See [criteria, acquisition, unknown conditions, and CI](docs/eol-rules.md).
 
 The defaults use support dates, deprecation for npm/PyPI/NuGet, and project/source-repository archival. Release inactivity becomes EOL only when selected in a rule. An EOL rule automatically requests the facts it needs. Missing methods and API failures remain unresolved, never a confirmed negative.
 
