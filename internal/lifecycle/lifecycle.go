@@ -32,15 +32,24 @@ func Evaluate(r *model.ComponentResult, id identity.Identity, p model.Policy, as
 				reasons = model.AddUnique(reasons, "STALE_EVIDENCE")
 				continue
 			}
-			review := e.GeneralEolReview
-			if review == nil || review.PackagePURL != id.BasePURL || e.ProductSlug == nil || review.ProductSlug != *e.ProductSlug ||
-				review.MatchedCycle != e.MatchedCycle || review.SupportScope != "upstream_security" ||
-				!model.Active(review.ReviewedAt, review.ValidUntil, model.UTCDate(now)) {
-				reasons = model.AddUnique(reasons, "GENERAL_EOL_UNREVIEWED")
-				if review != nil {
-					r.Diagnostics = append(r.Diagnostics, model.NewDiagnostic("STALE_EVIDENCE", e.ProviderID, "General EOL review is expired, future or does not match"))
+			if e.Claim == "CURATED_SECURITY_END" {
+				if !p.Sources.EndoflifeDate.UseSecuritySupportLabel || e.ProviderID != "endoflife_date" ||
+					e.SourceField != "releases[].eolFrom" || !model.SecuritySupportLabel(model.Text(e.SourceLabel)) ||
+					e.SupportScope != "upstream_security" || e.ProductSlug == nil || e.Confidence != "MEDIUM" {
+					reasons = model.AddUnique(reasons, "SECURITY_SCOPE_UNCONFIRMED")
+					continue
 				}
-				continue
+			} else {
+				review := e.GeneralEolReview
+				if review == nil || review.PackagePURL != id.BasePURL || e.ProductSlug == nil || review.ProductSlug != *e.ProductSlug ||
+					review.MatchedCycle != e.MatchedCycle || review.SupportScope != "upstream_security" ||
+					!model.Active(review.ReviewedAt, review.ValidUntil, model.UTCDate(now)) {
+					reasons = model.AddUnique(reasons, "GENERAL_EOL_UNREVIEWED")
+					if review != nil {
+						r.Diagnostics = append(r.Diagnostics, model.NewDiagnostic("STALE_EVIDENCE", e.ProviderID, "General EOL review is expired, future or does not match"))
+					}
+					continue
+				}
 			}
 		}
 		if e.SupersededBy != nil && e.SupersessionSourceURL != nil {
@@ -161,6 +170,8 @@ func Evaluate(r *model.ComponentResult, id identity.Identity, p model.Policy, as
 		r.Confidence = model.Ptr(top[0].Confidence)
 		if tier == "OFFICIAL" {
 			r.RuleIDs = model.AddUnique(r.RuleIDs, "R-001")
+		} else if top[0].Claim == "CURATED_SECURITY_END" {
+			r.RuleIDs = model.AddUnique(r.RuleIDs, "R-012")
 		} else {
 			r.RuleIDs = model.AddUnique(r.RuleIDs, "R-003")
 		}
@@ -178,6 +189,9 @@ func Evaluate(r *model.ComponentResult, id identity.Identity, p model.Policy, as
 		reason := "NO_LIFECYCLE_EVIDENCE"
 		if tier == "CURATED_DATABASE" {
 			reason = "GENERAL_EOL_ONLY"
+			if top[0].Claim == "CURATED_SECURITY_END" {
+				reason = "SECURITY_END_ONLY"
+			}
 		}
 		r.UnknownReasons = model.AddUnique(r.UnknownReasons, reason)
 		r.RuleIDs = model.AddUnique(r.RuleIDs, "R-006")

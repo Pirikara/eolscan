@@ -73,6 +73,9 @@
             },
             "match_purl_exactly": {
               "const": true
+            },
+            "use_security_support_label": {
+              "type": "boolean"
             }
           },
           "required": [],

@@ -98,6 +98,7 @@ type LifecycleEvidence struct {
 	EOLEffectiveDate      string            `json:"eol_effective_date"`
 	SourceURL             string            `json:"source_url"`
 	SourceField           string            `json:"source_field"`
+	SourceLabel           *string           `json:"source_label"`
 	ObservedAt            string            `json:"observed_at"`
 	SourceUpdatedAt       *string           `json:"source_updated_at"`
 	ReviewedAt            *string           `json:"reviewed_at"`

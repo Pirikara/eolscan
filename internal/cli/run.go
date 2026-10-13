@@ -26,17 +26,18 @@ import (
 func usage(w io.Writer) {
 	fmt.Fprintln(w, `eolscan scan -i SBOM.json|- [-c policy.yaml] [-f table|json] [-o report.json]
 eolscan scan --offline --input SBOM.json --as-of YYYY-MM-DD
-eolscan scan --input SBOM.json --catalog builtin|PATH
+eolscan scan --input SBOM.json --catalog PATH
 eolscan policy validate --config policy.yaml
 eolscan providers list
 eolscan version
 
-CycloneDX JSON 1.4–1.7 / SPDX 2.3; config 2 / report 2.2.
+CycloneDX JSON 1.4–1.7 / SPDX 2.3; config 2 / report 2.3.
 Online scans send public package identities to configured registries,
 endoflife.date, and deps.dev.
 --offline makes no HTTP requests. Disk cache is disabled by default.
 Default CI fails on EOL/HIGH; UNKNOWN and incomplete remain visible.
-The bundled official catalog covers selected Angular and Rails series.
+Security end dates explicitly labelled by endoflife.date establish EOL/MEDIUM.
+Lifecycle data is fetched automatically; no fixed product catalog is bundled.
 Generic EOL dates alone do not confirm EOL. Empty scans exit 3;
 interrupted scans exit 130. Cancellation during input or provider work
 does not publish a scan result.`)
@@ -140,7 +141,7 @@ func Run(ctx context.Context, args []string, stdin io.Reader, stdout, stderr io.
 	flags.StringVar(&output, "output", "", "report file; omitted for stdout")
 	flags.StringVar(&output, "o", "", "report file; omitted for stdout")
 	flags.StringVar(&asOf, "as-of", "", "evaluation date (UTC YYYY-MM-DD)")
-	flags.StringVar(&catalog, "catalog", "", "builtin or local support catalog YAML (overrides policy)")
+	flags.StringVar(&catalog, "catalog", "", "local support catalog YAML (overrides policy)")
 	flags.BoolVar(&offline, "offline", false, "disable all HTTP")
 	flags.BoolVar(&noCache, "no-cache", false, "disable persistent cache; incompatible with offline")
 	flags.BoolVar(&verbose, "verbose", false, "print redacted diagnostics to stderr")
@@ -170,13 +171,14 @@ func Run(ctx context.Context, args []string, stdin io.Reader, stdout, stderr io.
 		p.Cache.Enabled = false
 	}
 	if catalog != "" {
-		path := configpkg.BuiltinCatalogPath
-		if catalog != "builtin" {
-			path, err = filepath.Abs(catalog)
-			if err != nil {
-				fmt.Fprintln(stderr, "catalog path:", err)
-				return 2
-			}
+		if catalog == "builtin" {
+			fmt.Fprintln(stderr, "the fixed builtin catalog was removed; lifecycle dates are fetched automatically, or use --catalog PATH")
+			return 2
+		}
+		path, err := filepath.Abs(catalog)
+		if err != nil {
+			fmt.Fprintln(stderr, "catalog path:", err)
+			return 2
 		}
 		p.Sources.OfficialCatalog.Enabled = true
 		p.Sources.OfficialCatalog.Path = model.Ptr(path)

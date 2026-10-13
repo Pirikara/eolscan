@@ -413,7 +413,8 @@
           "enum": [
             "UPSTREAM_SECURITY_WINDOW",
             "UPSTREAM_SECURITY_END",
-            "GENERAL_EOL_END"
+            "GENERAL_EOL_END",
+            "CURATED_SECURITY_END"
           ]
         },
         "package_purl": {
@@ -557,6 +558,16 @@
               "type": "null"
             }
           ]
+        },
+        "source_label": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
         }
       },
       "required": [
@@ -572,6 +583,7 @@
         "eol_effective_date",
         "source_url",
         "source_field",
+        "source_label",
         "observed_at",
         "source_updated_at",
         "reviewed_at",
@@ -626,26 +638,82 @@
             }
           },
           "else": {
-            "properties": {
-              "source_class": {
-                "const": "OFFICIAL"
-              },
-              "confidence": {
-                "const": "HIGH"
-              },
-              "support_scope": {
-                "const": "upstream_security"
-              },
-              "reviewed_at": {
-                "type": "string",
-                "format": "date"
-              },
-              "valid_until": {
-                "type": "string",
-                "format": "date"
-              },
-              "general_eol_review": {
-                "type": "null"
+            "if": {
+              "properties": {
+                "claim": {
+                  "const": "CURATED_SECURITY_END"
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "source_class": {
+                  "const": "CURATED_DATABASE"
+                },
+                "confidence": {
+                  "const": "MEDIUM"
+                },
+                "support_scope": {
+                  "const": "upstream_security"
+                },
+                "source_label": {
+                  "enum": [
+                    "Security Support",
+                    "Maintenance & Security Support"
+                  ]
+                },
+                "provider_id": {
+                  "const": "endoflife_date"
+                },
+                "source_field": {
+                  "const": "releases[].eolFrom"
+                },
+                "product_slug": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "reviewed_at": {
+                  "type": "null"
+                },
+                "valid_until": {
+                  "type": "null"
+                },
+                "general_eol_review": {
+                  "type": "null"
+                },
+                "superseded_by": {
+                  "type": "null"
+                },
+                "supersession_source_url": {
+                  "type": "null"
+                }
+              }
+            },
+            "else": {
+              "properties": {
+                "source_class": {
+                  "const": "OFFICIAL"
+                },
+                "confidence": {
+                  "const": "HIGH"
+                },
+                "support_scope": {
+                  "const": "upstream_security"
+                },
+                "reviewed_at": {
+                  "type": "string",
+                  "format": "date"
+                },
+                "valid_until": {
+                  "type": "string",
+                  "format": "date"
+                },
+                "general_eol_review": {
+                  "type": "null"
+                },
+                "source_label": {
+                  "type": "null"
+                }
               }
             }
           }

@@ -62,6 +62,9 @@ func TestRuntimeFixtureManifest(t *testing.T) {
 					name := model.Text(e.ProductSlug)
 					indices = append(indices, provider.EolIndexRow{Identifier: e.PackagePURL, Product: provider.ProductRef{Name: name, URI: "https://endoflife.date/api/v1/products/" + name + "/"}})
 					stub.Bodies["endoflife.date/api/v1/products/"+name+"/"] = testutil.ProductBody(name, e.MatchedCycle, model.Ptr(e.EOLEffectiveDate), false)
+					if e.SourceLabel != nil {
+						setSupportLabel(t, stub, "endoflife.date/api/v1/products/"+name+"/", e.SourceLabel)
+					}
 				}
 				for _, e := range row.SignalEvaluations {
 					if e.Type != "STALE_RELEASE" || e.Status == "UNKNOWN" {

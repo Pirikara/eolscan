@@ -1,0 +1,104 @@
+{
+  "schema_version": "2.3",
+  "tool_version": "0.4.0",
+  "as_of": "2026-10-11",
+  "projection": false,
+  "generated_at": "2026-10-11T00:00:00Z",
+  "input_sha256": "466e996234a1c394fb2a964bb6482461aa3226cd81b66d3d2b3ca7ac16a32be6",
+  "policy_hash": "2b48131f86b9847026fcb38e19260916ca957ffe0710f796d58b1d817e891a3b",
+  "summary": {
+    "in_scope": 1,
+    "excluded": 0,
+    "eol": 1,
+    "supported": 0,
+    "unknown": 0,
+    "assessment_coverage": 1.0,
+    "provider_error_count": 0,
+    "ci_failure_count": 1
+  },
+  "ci_gate": {
+    "passed": false,
+    "violation_codes": [
+      "COMPONENT_POLICY_VIOLATION"
+    ],
+    "incomplete": false
+  },
+  "results": [
+    {
+      "source_ref": "component-1",
+      "purl": "pkg:gem/legacy-example@1.0.2",
+      "name": "legacy-example",
+      "version": "1.0.2",
+      "version_verification": {
+        "status": "VERIFIED",
+        "provider_id": "deps_dev",
+        "source_url": "https://api.deps.dev/v3/systems/rubygems/packages/legacy-example/versions/1.0.2",
+        "checked_at": "2026-10-11T00:00:00Z",
+        "published_at": "2018-04-12T09:00:00Z",
+        "reason_code": null
+      },
+      "lifecycle": "EOL",
+      "confidence": "MEDIUM",
+      "eol_effective_date": "2026-10-01",
+      "matched_cycle": "1.0",
+      "signals": [],
+      "signal_evaluations": [
+        {
+          "type": "DEPRECATED",
+          "status": "UNKNOWN",
+          "provider_id": null,
+          "source_url": null,
+          "checked_at": null,
+          "reason_code": "NO_CAPABILITY"
+        },
+        {
+          "type": "STALE_RELEASE",
+          "status": "UNKNOWN",
+          "provider_id": null,
+          "source_url": null,
+          "checked_at": null,
+          "reason_code": "NO_CAPABILITY"
+        }
+      ],
+      "selected_evidence_ids": [
+        "endoflife_date:legacy-example:1.0"
+      ],
+      "notices": [],
+      "unknown_reasons": [],
+      "rule_ids": [
+        "R-012"
+      ],
+      "evidence": [
+        {
+          "id": "endoflife_date:legacy-example:1.0",
+          "provider_id": "endoflife_date",
+          "source_class": "CURATED_DATABASE",
+          "claim": "CURATED_SECURITY_END",
+          "package_purl": "pkg:gem/legacy-example",
+          "product_slug": "legacy-example",
+          "matched_cycle": "1.0",
+          "support_scope": "upstream_security",
+          "support_start_date": null,
+          "eol_effective_date": "2026-10-01",
+          "source_url": "https://endoflife.date/legacy-example",
+          "source_field": "releases[].eolFrom",
+          "observed_at": "2026-10-11T00:00:00Z",
+          "source_updated_at": null,
+          "reviewed_at": null,
+          "valid_until": null,
+          "raw_payload_hash": null,
+          "confidence": "MEDIUM",
+          "rule_id": "R-012",
+          "general_eol_review": null,
+          "superseded_by": null,
+          "supersession_source_url": null,
+          "source_label": "Security Support"
+        }
+      ],
+      "diagnostics": [],
+      "incomplete": false,
+      "ci_failure": true,
+      "exception_applied": false
+    }
+  ]
+}

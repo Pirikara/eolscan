@@ -15,7 +15,6 @@ eolscan is a single-binary Go CLI. The entry point is `cmd/eolscan/main.go`; imp
 | `internal/provider` | Convert catalogs, native registries, deps.dev, and endoflife.date data into evidence, version proofs, and signals; resolve metadata fallback. |
 | `internal/transport` | Enforce HTTPS and allowed hosts; handle concurrency, host rate budgets, shared cooldowns, retries, memoization, and optional disk caching. |
 | `internal/config` | Load and validate policies, catalogs, reviews, and exceptions. |
-| `internal/catalog` | Embed reviewed official security support evidence without network refresh. |
 | `internal/contract` | Validate embedded JSON schemas; decode YAML safely; produce canonical JSON and hashes. |
 | `internal/model` | Define shared data contracts and small value helpers. |
 | `internal/report` | Render tables, validate report invariants, and derive exit codes. |
@@ -41,7 +40,6 @@ flowchart TD
     config --> identity
     config --> contract
     config --> fileio
-    config --> catalog
     sbom --> contract
     report --> contract
     report --> config
@@ -56,6 +54,10 @@ Application packages share types through `model`. The entry point owns process s
 Providers collect and normalize data. Lifecycle evaluation decides support status. The scanner combines results and applies CI policy. Provider errors remain evidence or diagnostics rather than silently becoming negative evaluations.
 
 The parser excludes only the metadata subject when configured to do so; nested components are independently filtered. Zero components in scope produce a validated failed report with `NO_COMPONENTS`. Scanner job dispatch and workers observe cancellation, and cancelled scans return no report. The CLI interrupts blocked stdin reads; the process entry point bounds shutdown even if file or output I/O is blocked. Interruptions exit 130.
+
+### Lifecycle retrieval
+
+The endoflife.date adapter loads an exact PURL index, then matched product details. Explicit security phase labels create curated security end claims at MEDIUM confidence. Unknown labels require a separate meaning review. Current online responses or usable cached snapshots supply dates; there is no fixed date catalog. Source labels, timestamps, and hashes remain in evidence. See [automatic lifecycle data](catalog.md).
 
 ### Metadata resolution
 
@@ -73,7 +75,7 @@ The run timestamp is fixed for evidence, cache age, and expiry. A separate live 
 
 - `schemas/*.json` are the canonical schemas. The `schemas` package embeds them, and `contract` compiles them locally.
 - `internal/config/defaults.yaml` contains the runtime defaults and is embedded by `config`.
-- `internal/catalog/upstream-security.yaml` contains real reviewed evidence embedded by `catalog`. The reserved path `builtin:upstream-security` selects it; local catalogs replace it. Review expiry is checked against execution time, and catalog contents participate in the policy hash.
+- Product lifecycle dates are retrieved by the endoflife.date adapter. Optional local official catalogs are loaded from files; their review expiry is checked against execution time and their contents participate in the policy hash.
 - `examples/eol-policy.example.yaml` documents those defaults. A test checks that the example and embedded policy agree.
 - Runtime execution requires no checkout, Python installation, or external schema files.
 

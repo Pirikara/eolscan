@@ -1,11 +1,11 @@
 {
-  "schema_version": "2.2",
-  "tool_version": "0.3.0",
+  "schema_version": "2.3",
+  "tool_version": "0.4.0",
   "as_of": "2026-10-11",
   "projection": false,
   "generated_at": "2026-10-11T00:00:00Z",
   "input_sha256": "432833ae712c4cfe1914581f56635f6a9dda9a5c94f13608681390381fe44799",
-  "policy_hash": "ad1af592b9e08e178f51d5ac23f1693d4e4eb4db34a05d3972323eb675963d82",
+  "policy_hash": "4203eb9898508c0bbe322ae7a7b59414a24bc458527f0c54f18914e7b3225e79",
   "summary": {
     "in_scope": 1,
     "excluded": 0,
@@ -97,7 +97,8 @@
           "rule_id": "R-002",
           "general_eol_review": null,
           "superseded_by": null,
-          "supersession_source_url": null
+          "supersession_source_url": null,
+          "source_label": null
         }
       ],
       "diagnostics": [],

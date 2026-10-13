@@ -4,7 +4,7 @@
   "type": "object",
   "properties": {
     "schema_version": {
-      "const": "2.2"
+      "const": "2.3"
     },
     "tool_version": {
       "type": "string",
@@ -263,7 +263,9 @@
                 "NO_LIFECYCLE_EVIDENCE",
                 "STALE_EVIDENCE",
                 "CONFLICT",
-                "SOURCE_ERROR"
+                "SOURCE_ERROR",
+                "SECURITY_END_ONLY",
+                "SECURITY_SCOPE_UNCONFIRMED"
               ]
             },
             "uniqueItems": true
@@ -442,7 +444,9 @@
         "properties": {
           "summary": {
             "properties": {
-              "in_scope": { "const": 0 }
+              "in_scope": {
+                "const": 0
+              }
             }
           }
         }
@@ -451,10 +455,16 @@
         "properties": {
           "ci_gate": {
             "properties": {
-              "passed": { "const": false },
-              "incomplete": { "const": true },
+              "passed": {
+                "const": false
+              },
+              "incomplete": {
+                "const": true
+              },
               "violation_codes": {
-                "contains": { "const": "NO_COMPONENTS" }
+                "contains": {
+                  "const": "NO_COMPONENTS"
+                }
               }
             }
           }

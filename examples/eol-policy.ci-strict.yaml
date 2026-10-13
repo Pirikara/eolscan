@@ -1,4 +1,4 @@
-# Full configuration using the reviewed built-in catalog.
+# Full configuration with automatic lifecycle retrieval and optional local evidence.
 schema_version: 2
 input:
   include_component_types:
@@ -21,12 +21,13 @@ sources:
     enabled: true
     base_url: "https://rubygems.org"
   official_catalog:
-    enabled: true
-    path: "builtin:upstream-security"
+    enabled: false
+    path: null
   endoflife_date:
     enabled: true
     base_url: "https://endoflife.date/api/v1"
     match_purl_exactly: true
+    use_security_support_label: true
   deps_dev:
     enabled: true
     base_url: "https://api.deps.dev/v3"

@@ -1,0 +1,5 @@
+# Fail CI for automatically confirmed security EOL dates as well as official evidence.
+# Unknown components remain visible without failing the unknown-ratio gate.
+schema_version: 2
+ci:
+  min_confidence: MEDIUM

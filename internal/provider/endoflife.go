@@ -40,7 +40,10 @@ type eolProduct struct {
 		Type string `json:"type"`
 	} `json:"identifiers"`
 	Releases *[]eolRelease `json:"releases"`
-	Links    struct {
+	Labels   struct {
+		EOL *string `json:"eol"`
+	} `json:"labels"`
+	Links struct {
 		HTML string `json:"html"`
 	} `json:"links"`
 }
@@ -70,6 +73,7 @@ func (p *EOLProvider) loadIndex(ctx context.Context) {
 			return
 		}
 		if p.indexData.Status == 404 {
+			p.indexErr = &transport.LookupError{Code: "SOURCE_ERROR", Status: 404}
 			return
 		}
 		var response struct {
@@ -153,7 +157,7 @@ func (p *EOLProvider) Evidence(ctx context.Context, id identity.Identity) ([]mod
 		return out, append(ds, transport.ErrorDiagnostic("endoflife_date", err)), "SOURCE_ERROR", true
 	}
 	if data.Status == 404 {
-		return out, ds, "", false
+		return out, append(ds, transport.ErrorDiagnostic("endoflife_date", &transport.LookupError{Code: "SOURCE_ERROR", Status: 404})), "SOURCE_ERROR", true
 	}
 	var response struct {
 		SchemaVersion string      `json:"schema_version"`
@@ -168,6 +172,10 @@ func (p *EOLProvider) Evidence(ctx context.Context, id identity.Identity) ([]mod
 		return out, append(ds, model.NewDiagnostic("PROVIDER_SCHEMA_MISMATCH", "endoflife_date", "Product details are malformed")), "SOURCE_ERROR", true
 	}
 	product := response.Result
+	if product.Name != ref.Name {
+		p.t.Invalidate(raw)
+		return out, append(ds, model.NewDiagnostic("PROVIDER_IDENTITY_MISMATCH", "endoflife_date", "Product details identify another product")), "SOURCE_ERROR", true
+	}
 	if response.LastModified != nil {
 		if modified, err := time.Parse(time.RFC3339Nano, *response.LastModified); err == nil {
 			response.LastModified = model.Ptr(model.Timestamp(modified))
@@ -232,12 +240,17 @@ func (p *EOLProvider) Evidence(ctx context.Context, id identity.Identity) ([]mod
 			}
 		}
 		hash := contract.Digest(data.Body)
-		out = append(out, model.LifecycleEvidence{
+		evidence := model.LifecycleEvidence{
 			ID: "endoflife_date:" + product.Name + ":" + r.Name, ProviderID: "endoflife_date", SourceClass: "CURATED_DATABASE", Claim: "GENERAL_EOL_END",
 			PackagePURL: id.BasePURL, ProductSlug: model.Ptr(product.Name), MatchedCycle: r.Name, SupportScope: "general_eol", EOLEffectiveDate: *r.EOLFrom,
-			SourceURL: source, SourceField: "releases[].eolFrom", ObservedAt: data.ObservedAt, SourceUpdatedAt: response.LastModified,
+			SourceURL: source, SourceField: "releases[].eolFrom", SourceLabel: product.Labels.EOL, ObservedAt: data.ObservedAt, SourceUpdatedAt: response.LastModified,
 			RawPayloadHash: model.Ptr(hash), Confidence: "MEDIUM", RuleID: "R-003", GeneralEolReview: review,
-		})
+		}
+		if p.t.Policy().Sources.EndoflifeDate.UseSecuritySupportLabel && model.SecuritySupportLabel(model.Text(product.Labels.EOL)) {
+			evidence.Claim, evidence.SupportScope, evidence.RuleID = "CURATED_SECURITY_END", "upstream_security", "R-012"
+			evidence.GeneralEolReview = nil
+		}
+		out = append(out, evidence)
 		if *r.IsMaintained && *r.EOLFrom <= model.UTCDate(p.t.Now()) {
 			ds = append(ds, model.NewDiagnostic("SUPPORT_SCOPE_DIFFERENCE", "endoflife_date", "isMaintained may include extended support; upstream EOL date is retained"))
 		}

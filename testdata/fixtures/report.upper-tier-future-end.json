@@ -1,11 +1,11 @@
 {
-  "schema_version": "2.2",
-  "tool_version": "0.3.0",
+  "schema_version": "2.3",
+  "tool_version": "0.4.0",
   "as_of": "2026-10-11",
   "projection": false,
   "generated_at": "2026-10-11T00:00:00Z",
   "input_sha256": "432833ae712c4cfe1914581f56635f6a9dda9a5c94f13608681390381fe44799",
-  "policy_hash": "4443ada3ec304f6c3f69fab373af19bec7b9aa9dc165844c1f4a6bc97d962e6b",
+  "policy_hash": "97b27d8d35ff89bd1508a2f48c3627300a2f403e5fcba18d30a98e1b61bac326",
   "summary": {
     "in_scope": 1,
     "excluded": 0,
@@ -89,7 +89,8 @@
           "rule_id": "R-001",
           "general_eol_review": null,
           "superseded_by": null,
-          "supersession_source_url": null
+          "supersession_source_url": null,
+          "source_label": null
         },
         {
           "id": "endoflife-date-example-2.4",
@@ -122,7 +123,8 @@
             "valid_until": "2026-12-01"
           },
           "superseded_by": null,
-          "supersession_source_url": null
+          "supersession_source_url": null,
+          "source_label": null
         }
       ],
       "diagnostics": [

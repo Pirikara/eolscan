@@ -1,6 +1,6 @@
 # Registry sources and request behavior
 
-eolscan 0.3.0 queries npm, PyPI, and RubyGems directly. Remote version verification for Maven, Go, Cargo, and NuGet still uses deps.dev. None of these registry facts alone establishes an upstream security support window or an EOL date. The separate [bundled official catalog](catalog.md) supplies reviewed lifecycle evidence for selected products.
+eolscan 0.4.0 queries npm, PyPI, and RubyGems directly. Remote version verification for Maven, Go, Cargo, and NuGet still uses deps.dev. None of these registry facts alone establishes an upstream security support window or an EOL date. The separate [lifecycle data adapter](catalog.md) retrieves security end dates automatically; reviewed local official catalogs remain optional.
 
 ## Selection and fallback
 

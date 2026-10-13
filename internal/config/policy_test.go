@@ -20,19 +20,20 @@ func TestDefaultPolicyMatchesExample(t *testing.T) {
 	}
 }
 
-func TestBuiltinCatalogLoadsWithoutExternalFiles(t *testing.T) {
+func TestDefaultsUseAutomaticSourcesWithoutCatalogFiles(t *testing.T) {
 	p := config.Default()
 	bundle, err := config.LoadBundle(p, filepath.Join(t.TempDir(), "policy.yaml"))
 	if err != nil {
 		t.Fatal(err)
 	}
-	if bundle.Catalog == nil || len(bundle.Catalog.Entries) != 5 || len(bundle.Catalog.GeneralEolReviews) != 0 || len(bundle.Catalog.VerifiedVersions) != 0 || bundle.CatalogHash == "" {
-		t.Fatalf("builtin catalog: %+v", bundle.Catalog)
+	if bundle.Catalog != nil || bundle.CatalogHash != "" || p.Sources.OfficialCatalog.Enabled ||
+		!p.Sources.EndoflifeDate.Enabled || !p.Sources.EndoflifeDate.UseSecuritySupportLabel {
+		t.Fatalf("automatic defaults: %+v", bundle)
 	}
-	p.Sources.OfficialCatalog.Enabled = false
+	p.Sources.EndoflifeDate.UseSecuritySupportLabel = false
 	disabled, err := config.LoadBundle(p, "")
 	if err != nil || disabled.Catalog != nil || disabled.Hash == bundle.Hash {
-		t.Fatalf("disable builtin: %+v error=%v", disabled.Catalog, err)
+		t.Fatalf("disable automatic scope: %+v error=%v", disabled.Catalog, err)
 	}
 }
 
@@ -42,6 +43,7 @@ func TestPolicyValidationRejectionAndMerge(t *testing.T) {
 		"schema_version: 2\nschema_version: 2\n",
 		"schema_version: 2\nsources:\n  github:\n    enabled: true\n",
 		"schema_version: 2\nversion_verification:\n  mode: optional\n",
+		"schema_version: 2\nsources:\n  official_catalog:\n    enabled: true\n    path: builtin:upstream-security\n",
 		"schema_version: 2\nsignals:\n  stale_release_days: null\nci:\n  fail_on_signals: [STALE_RELEASE]\n",
 		"schema_version: 2\nsources:\n  deps_dev:\n    base_url: http://api.deps.dev/v3\n",
 		"schema_version: 2\nsources:\n  deps_dev:\n    base_url: https://api.deps.dev/v3?token=secret\n",

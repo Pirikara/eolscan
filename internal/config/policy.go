@@ -9,7 +9,6 @@ import (
 	"path/filepath"
 	"strings"
 
-	catalogdata "github.com/Pirikara/eolscan/internal/catalog"
 	"github.com/Pirikara/eolscan/internal/contract"
 	"github.com/Pirikara/eolscan/internal/fileio"
 	"github.com/Pirikara/eolscan/internal/identity"
@@ -116,6 +115,9 @@ func Validate(p model.Policy) error {
 	if p.Sources.OfficialCatalog.Enabled && p.Sources.OfficialCatalog.Path == nil {
 		return fmt.Errorf("official_catalog.enabled requires a path")
 	}
+	if p.Sources.OfficialCatalog.Enabled && model.Text(p.Sources.OfficialCatalog.Path) == "builtin:upstream-security" {
+		return fmt.Errorf("the fixed builtin catalog was removed; disable official_catalog or provide a local catalog path")
+	}
 	if model.Contains(p.CI.FailOnSignals, "STALE_RELEASE") && p.Signals.StaleReleaseDays == nil {
 		return fmt.Errorf("CI requires STALE_RELEASE but stale_release_days is null")
 	}
@@ -144,11 +146,7 @@ func LoadBundle(p model.Policy, configPath string) (model.PolicyBundle, error) {
 		base = filepath.Dir(configPath)
 	}
 	if p.Sources.OfficialCatalog.Enabled {
-		data := catalogdata.Builtin
-		var err error
-		if *p.Sources.OfficialCatalog.Path != BuiltinCatalogPath {
-			data, err = fileio.ReadLimited(resolvePath(base, *p.Sources.OfficialCatalog.Path), 16<<20)
-		}
+		data, err := fileio.ReadLimited(resolvePath(base, *p.Sources.OfficialCatalog.Path), 16<<20)
 		if err != nil {
 			return b, fmt.Errorf("read catalog: %w", err)
 		}
@@ -238,6 +236,3 @@ func CleanBase(raw string) string { return strings.TrimRight(raw, "/") }
 
 //go:embed defaults.yaml
 var defaultYAML []byte
-
-// BuiltinCatalogPath is reserved for the reviewed catalog embedded in the binary.
-const BuiltinCatalogPath = "builtin:upstream-security"

@@ -82,12 +82,16 @@
             },
             "match_purl_exactly": {
               "const": true
+            },
+            "use_security_support_label": {
+              "type": "boolean"
             }
           },
           "required": [
             "enabled",
             "base_url",
-            "match_purl_exactly"
+            "match_purl_exactly",
+            "use_security_support_label"
           ],
           "additionalProperties": false
         },

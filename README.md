@@ -1,6 +1,6 @@
 # eolscan
 
-eolscan is a Go CLI that reads an SBOM and checks whether upstream security support has ended for its dependencies. Release 0.3.0 implements the [v0.5 design specification](docs/design.md).
+eolscan is a Go CLI that reads an SBOM and checks whether upstream security support has ended for its dependencies. Release 0.4.0 implements the [v0.6 design specification](docs/design.md).
 
 No database is required. Repeated API queries share an in-memory result during each run, and disk caching is disabled by default. Build with Go 1.24 or later; the CLI runs as a single binary.
 
@@ -11,6 +11,7 @@ go build -o bin/eolscan ./cmd/eolscan
 
 ./bin/eolscan scan -i sbom.cdx.json
 ./bin/eolscan scan -i sbom.spdx.json -f json -o report.json
+./bin/eolscan scan -i sbom.cdx.json -c examples/eol-policy.auto-eol.yaml
 cat sbom.cdx.json | ./bin/eolscan scan -i - -f json
 ./bin/eolscan policy validate -c examples/eol-policy.ci-strict.yaml
 ./bin/eolscan providers list
@@ -18,11 +19,11 @@ cat sbom.cdx.json | ./bin/eolscan scan -i - -f json
 
 Supported inputs are CycloneDX JSON 1.4–1.7 and SPDX 2.3 JSON. Packages are identified by PURL, with support for the gem, npm, pypi, maven, golang, cargo, and nuget ecosystems. Components without a version remain in the report as `UNKNOWN`. CycloneDX `metadata.component` is excluded by default; its nested components are still inspected individually. A scan with no components in scope exits `3` with `NO_COMPONENTS`.
 
-Configuration uses schema version `2`, and JSON reports use version `2.2`. Native Syft JSON, CPE matching, and OS name matching are outside the current scope. When using Syft, provide CycloneDX or SPDX JSON. Registry ecosystem support does not imply lifecycle coverage for every package; generic runtimes and OS package PURLs are currently unsupported.
+Configuration uses schema version `2`, and JSON reports use version `2.3`. Native Syft JSON, CPE matching, and OS name matching are outside the current scope. When using Syft, provide CycloneDX or SPDX JSON. Registry ecosystem support does not imply lifecycle coverage for every package; generic runtimes and OS package PURLs are currently unsupported.
 
 When upgrading from 0.1.0, allow the three native registry hosts if your policy overrides `network.allowed_hosts`, or disable those sources explicitly. Partial version 2 policies inherit the new defaults.
 
-When upgrading from 0.2.0, report consumers must accept schema `2.2` and `NO_COMPONENTS`. Empty scans always fail, and interrupted scans exit `130`. The reviewed built-in catalog is enabled by default, so supported package identities may now receive definite lifecycle results and fail CI. Explicitly disabling the official catalog preserves the previous empty-catalog behavior. Catalog contents are included in `policy_hash`.
+When upgrading from 0.3.0, report consumers must accept schema `2.3`, the `source_label` evidence field, and the `CURATED_SECURITY_END` claim. Fixed bundled support dates and `--catalog builtin` have been removed. Disable the old `official_catalog` selection or provide a local path. Partial policies inherit automatic security-scope detection. Empty scans still exit `3`; interrupted scans exit `130`. Local catalog contents participate in `policy_hash`; remote responses are identified by evidence hashes.
 
 ## Understanding results
 
@@ -34,15 +35,16 @@ When upgrading from 0.2.0, report consumers must accept schema `2.2` and `NO_COM
 
 Lifecycle results and maintenance signals are evaluated separately. Deprecation, yanking, archival, quarantine, or release inactivity alone cannot establish EOL. Signals use three states: `PRESENT / ABSENT / UNKNOWN`. `EOL_SOON` is a notice derived from the scheduled end of a `SUPPORTED` window.
 
-**The default catalog contains reviewed official evidence for Angular `@angular/core` 18–20 and Rails 7.2/8.0.** It was reviewed on 2026-10-12 and expires after 2026-11-11 UTC. Exact version existence and publication time still require independent verification. Other packages remain `UNKNOWN` unless you supply applicable reviewed evidence. See [catalog scope, sources, and maintenance](docs/catalog.md).
+**Online scans automatically retrieve lifecycle data from endoflife.date.** They fetch the exact PURL index once, then details for the products present in the SBOM. When the API explicitly labels the phase ending at `eolFrom` as `Security Support` or `Maintenance & Security Support`, an elapsed date can establish `EOL / MEDIUM`. No product or release-series date table is embedded in the binary. New matching products and series can be used without rebuilding eolscan. See [automatic data retrieval, coverage, and optional catalogs](docs/catalog.md).
 
-The default general EOL review list remains empty. A generic EOL date from endoflife.date alone cannot establish `EOL` or `SUPPORTED`.
+A future security end date alone remains `UNKNOWN / SECURITY_END_ONLY`. `SUPPORTED / HIGH` still requires a reviewed official support window. Missing identities, dates, or verified publication times also remain `UNKNOWN`.
+
+The default general EOL review list remains empty. A date with an unknown or generic support label alone cannot establish `EOL` or `SUPPORTED`.
 
 | Data source | Role |
 | --- | --- |
-| Bundled official catalog | Reviewed upstream security support windows for selected Angular and Rails series; embedded in the binary. |
 | Local support catalog | Reviewed official support windows and end dates, exact version publication times, and reviews of what generic EOL dates mean. |
-| [endoflife.date API v1](https://endoflife.date/docs/api/v1/) | Fetches the PURL index once, then fetches generic EOL dates for matched products. |
+| [endoflife.date API v1](https://endoflife.date/docs/api/v1/) | Automatically fetches the PURL index and matched product dates; explicit security labels enable EOL/MEDIUM, while other dates require meaning review. |
 | [npm registry](https://github.com/npm/registry/blob/main/docs/REGISTRY-API.md) | Full package metadata: versions, publication times, and per-version deprecation. |
 | [PyPI Index API](https://docs.pypi.org/api/index-api/) | JSON file metadata: publication times, yank status, and project status. |
 | [RubyGems API](https://guides.rubygems.org/rubygems-org-api/) | Available versions and publication times; explicit yank status where supplied. |
@@ -62,9 +64,9 @@ See [registry sources and request behavior](docs/registries.md) for endpoints, c
 
 ## Using a support catalog
 
-Policy files are recursively merged into the built-in defaults. Relative paths are resolved from the policy file's directory. The default `official_catalog.path` is the reserved value `builtin:upstream-security`.
+Policy files are recursively merged into the built-in defaults. Relative paths are resolved from the policy file's directory. The optional official catalog is disabled by default; normal online scans use automatically fetched lifecycle evidence.
 
-A local catalog replaces the bundled one. You can also override the policy with `--catalog builtin` or `--catalog ./support-catalog.yaml`; CLI paths are relative to the current directory.
+A local catalog adds reviewed official support information, version assertions, and generic EOL reviews alongside remote evidence. You can override its path with `--catalog ./support-catalog.yaml`; CLI paths are relative to the current directory. Official evidence takes precedence over curated evidence, and disagreements remain diagnostics.
 
 ```yaml
 schema_version: 2
@@ -80,9 +82,9 @@ The catalog contains three arrays. See the [example](examples/support-catalog.ex
 - `verified_versions`: Exact versioned PURLs and publication times. These are preferred for version verification and enable offline checks or proof of versions absent from remote indexes.
 - `general_eol_reviews`: Reviews of generic EOL dates, matched exactly by product slug, unversioned PURL, release series, and support scope.
 
-Official evidence has `HIGH` confidence; reviewed generic EOL evidence has `MEDIUM` confidence. Unreviewed or expired generic EOL evidence remains in the report but is excluded from lifecycle decisions. A future generic EOL date cannot establish `SUPPORTED`. Conflicting end dates within the highest applicable tier produce `UNKNOWN / CONFLICT`, including conflicts involving future dates. Evidence is excluded from conflict detection only when a formal replacement or withdrawal has been verified.
+Official evidence has `HIGH` confidence; automatically scoped security end dates and reviewed generic EOL evidence have `MEDIUM` confidence. Unreviewed or expired generic EOL evidence remains in the report but is excluded from lifecycle decisions. A future generic EOL date cannot establish `SUPPORTED`. Conflicting end dates within the highest applicable tier produce `UNKNOWN / CONFLICT`, including conflicts involving future dates. Evidence is excluded from conflict detection only when a formal replacement or withdrawal has been verified.
 
-The products, reviews, and version assertions in `examples/support-catalog.example.yaml` are **fictional test data**, separate from the real built-in catalog. Try the offline example:
+The products, reviews, and version assertions in `examples/support-catalog.example.yaml` are **fictional test data**. Try the offline example:
 
 ```sh
 ./bin/eolscan scan \
@@ -104,7 +106,9 @@ The default component policy is report-first: only `EOL / HIGH` fails CI. `UNKNO
   -f json -o report.json
 ```
 
-The strict policy fails for EOL with at least `MEDIUM` confidence, incomplete scans, or an `UNKNOWN` ratio above 0.25. It uses the same bundled catalog. Most SBOMs need additional reviewed support evidence to achieve enough lifecycle coverage for this unknown-ratio threshold.
+The strict policy fails for EOL with at least `MEDIUM` confidence, incomplete scans, or an `UNKNOWN` ratio above 0.25. It retrieves lifecycle data automatically. Adjust the unknown-ratio threshold to the coverage of your actual SBOM.
+
+To fail CI on automatically confirmed security end dates while leaving unknown components visible, use `examples/eol-policy.auto-eol.yaml`. It sets `ci.min_confidence: MEDIUM` and keeps the default report-first treatment of unknown and incomplete checks. The default `HIGH` threshold reports automatically retrieved EOL/MEDIUM without failing CI.
 
 Signals included in CI failure conditions require a successful evaluation.
 
@@ -174,7 +178,6 @@ internal/
   provider/        Catalog, registry, deps.dev, and endoflife.date adapters
   transport/       HTTPS, host rate limits, retries, memoization, and disk cache
   config/          Policy, catalog, and exception loading
-  catalog/         Reviewed official support data embedded in the binary
   contract/        Schema validation and canonical serialization
   model/           Shared input, policy, evidence, and report types
   report/          Table output, report invariants, and exit codes
@@ -199,7 +202,7 @@ go vet ./...
 go build -o bin/eolscan ./cmd/eolscan
 ```
 
-Go tests cover design acceptance cases UT-01 through UT-45, native registry selection, fallback, signal completeness, offline caching, and host rate control. Regression tests cover nested metadata components, empty scans, cancellation, recent-release proof with incomplete older history, and bundled catalog expiry. Eleven report fixtures run through the actual CLI and verify decisions, exit codes, input hashes, and policy hashes. External APIs are replaced with fixed responses and local HTTPS servers, so tests require no public API access.
+Go tests cover design acceptance cases UT-01 through UT-45, native registry selection, fallback, signal completeness, offline caching, and host rate control. Regression tests cover nested metadata components, empty scans, cancellation, recent-release proof with incomplete older history, automatic security-scope detection, date refresh, and offline cache expiry. Thirteen report fixtures run through the actual CLI and verify decisions, exit codes, input hashes, and policy hashes. External APIs are replaced with fixed responses and local HTTPS servers, so tests require no public API access.
 
 JSON schemas are embedded in the binary to validate configuration and reports. Additional documentation and example validation uses Python, which is not a CLI runtime dependency.
 

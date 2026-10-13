@@ -204,11 +204,8 @@ def load_context(policy_path):
     catalog = None
     catalog_source = policy["sources"]["official_catalog"]
     if catalog_source["enabled"]:
-        catalog_path = (
-            ROOT / "internal/catalog/upstream-security.yaml"
-            if catalog_source["path"] == "builtin:upstream-security"
-            else policy_path.parent / catalog_source["path"]
-        )
+        ensure(catalog_source["path"] != "builtin:upstream-security", "the fixed builtin catalog was removed")
+        catalog_path = policy_path.parent / catalog_source["path"]
         catalog = load_yaml(catalog_path)
         validate_catalog(catalog)
     exceptions = None
@@ -251,7 +248,14 @@ def eligible_evidence(component, policy, catalog, run_at):
     for evidence in component["evidence"]:
         if not applicable(evidence, component, catalog):
             continue
-        if evidence["claim"] == "GENERAL_EOL_END":
+        if evidence["source_class"] == "CURATED_DATABASE":
+            age = (run_at - instant(evidence["observed_at"])).total_seconds() / 86400
+            if age < 0 or age > policy["decision"]["max_evidence_age_days"]:
+                continue
+        if evidence["claim"] == "CURATED_SECURITY_END":
+            if not policy["sources"]["endoflife_date"]["use_security_support_label"]:
+                continue
+        elif evidence["claim"] == "GENERAL_EOL_END":
             review = evidence["general_eol_review"]
             if not review or not current_review(review, run_date):
                 continue
@@ -261,9 +265,6 @@ def eligible_evidence(component, policy, catalog, run_at):
             ):
                 continue
             if review not in (catalog or {}).get("general_eol_reviews", []):
-                continue
-            age = (run_at - instant(evidence["observed_at"])).total_seconds() / 86400
-            if age > policy["decision"]["max_evidence_age_days"]:
                 continue
         elif not (
             day(evidence["reviewed_at"]) <= run_date <= day(evidence["valid_until"])
@@ -478,7 +479,6 @@ def validate_report(report, policy, catalog, exceptions, input_path):
 
 
 def run():
-    validate_catalog(load_yaml(ROOT / "internal/catalog/upstream-security.yaml"))
     valid_files = 0
     for path in sorted([*EXAMPLES.rglob("*.yaml"), *TESTDATA.rglob("*.yaml")]):
         if path.name.startswith("eol-policy") or path.name.startswith("policy."):
@@ -529,6 +529,12 @@ def run():
 
     for name in ("future-date-conflict", "upper-tier-future-end", "unreviewed-general-eol"):
         rejected(name + " cannot become EOL", lambda name=name: change_report(name, force_eol))
+
+    for label in (None, "OSS support", "Commercial Support"):
+        rejected(
+            "automatic security EOL requires an explicit label: " + str(label),
+            lambda label=label: change_report("automatic-security-eol", lambda r: r["results"][0]["evidence"][0].update(source_label=label)),
+        )
 
     rejected(
         "missing version publication",

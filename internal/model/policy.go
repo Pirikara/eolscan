@@ -27,9 +27,10 @@ type SourcePolicy struct {
 		Path    *string `json:"path"`
 	} `json:"official_catalog"`
 	EndoflifeDate struct {
-		Enabled          bool   `json:"enabled"`
-		BaseURL          string `json:"base_url"`
-		MatchPURLExactly bool   `json:"match_purl_exactly"`
+		Enabled                 bool   `json:"enabled"`
+		BaseURL                 string `json:"base_url"`
+		MatchPURLExactly        bool   `json:"match_purl_exactly"`
+		UseSecuritySupportLabel bool   `json:"use_security_support_label"`
 	} `json:"endoflife_date"`
 	DepsDev struct {
 		Enabled bool   `json:"enabled"`
