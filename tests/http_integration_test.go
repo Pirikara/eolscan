@@ -73,7 +73,7 @@ func TestRegistryAdaptersThroughCLIAndHTTPS(t *testing.T) {
 	if err := json.Unmarshal(out.Bytes(), &report); err != nil {
 		t.Fatal(err)
 	}
-	if report.SchemaVersion != "2.3" || report.CIGate.Incomplete {
+	if report.SchemaVersion != "2.4" || report.CIGate.Incomplete {
 		t.Fatalf("report contract: %+v", report)
 	}
 	for _, row := range report.Results {
@@ -129,6 +129,8 @@ func TestRealHTTPSAdaptersAndRedirectBoundary(t *testing.T) {
 	p.Sources.NPM.Enabled = false
 	p.Sources.PyPI.Enabled = false
 	p.Sources.RubyGems.Enabled = false
+	p.Sources.GitHub.Enabled = false
+	p.Decision.EOLRules = []model.EOLRule{}
 	p.Network.AllowedHosts = []string{host.Hostname()}
 	p.Network.Retries = 0
 	p.Sources.EndoflifeDate.BaseURL = base + "/api/v1"

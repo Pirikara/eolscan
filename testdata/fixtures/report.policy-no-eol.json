@@ -1,0 +1,87 @@
+{
+  "schema_version": "2.4",
+  "tool_version": "0.5.0",
+  "as_of": "2026-10-11",
+  "projection": false,
+  "generated_at": "2026-10-11T00:00:00Z",
+  "input_sha256": "5bd51ac31a61014559366261d53d63241cdf69971cdc5082ec649f0a3adeee2d",
+  "policy_hash": "567d2feffb2fd887ba8e01ae8da550212d12c860c66b9bf5a0d22d9ebb689e30",
+  "summary": {
+    "in_scope": 1,
+    "excluded": 0,
+    "eol": 0,
+    "supported": 0,
+    "unknown": 0,
+    "no_eol_detected": 1,
+    "assessment_coverage": 1.0,
+    "provider_error_count": 0,
+    "ci_failure_count": 0
+  },
+  "ci_gate": {
+    "passed": true,
+    "violation_codes": [],
+    "incomplete": false
+  },
+  "results": [
+    {
+      "source_ref": "leaf",
+      "purl": "pkg:npm/transitive-leaf@1.0.0",
+      "name": "transitive-leaf",
+      "version": "1.0.0",
+      "version_verification": {
+        "status": "VERIFIED",
+        "provider_id": "npm",
+        "source_url": "https://registry.npmjs.org/transitive-leaf",
+        "checked_at": "2026-10-11T00:00:00Z",
+        "published_at": "2020-01-01T00:00:00Z",
+        "reason_code": null
+      },
+      "lifecycle": "NO_EOL_DETECTED",
+      "confidence": null,
+      "eol_effective_date": null,
+      "matched_cycle": null,
+      "support_assessment": {
+        "lifecycle": "UNKNOWN",
+        "confidence": null,
+        "eol_effective_date": null,
+        "matched_cycle": null,
+        "selected_evidence_ids": [],
+        "unknown_reasons": [
+          "NO_LIFECYCLE_EVIDENCE"
+        ]
+      },
+      "eol_basis": null,
+      "eol_rule_evaluations": [
+        {
+          "rule_id": "retired-version",
+          "status": "ABSENT",
+          "matched_signals": [],
+          "unknown_signals": [],
+          "reason_code": null
+        }
+      ],
+      "signal_evaluations": [
+        {
+          "type": "DEPRECATED",
+          "status": "ABSENT",
+          "provider_id": "npm",
+          "source_url": "https://registry.npmjs.org/transitive-leaf",
+          "checked_at": "2026-10-11T00:00:00Z",
+          "reason_code": null
+        }
+      ],
+      "signals": [],
+      "selected_evidence_ids": [],
+      "notices": [],
+      "unknown_reasons": [],
+      "rule_ids": [
+        "R-006"
+      ],
+      "evidence": [],
+      "diagnostics": [],
+      "incomplete": false,
+      "ci_failure": false,
+      "exception_applied": false
+    }
+  ]
+}

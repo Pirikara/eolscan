@@ -1,0 +1,15 @@
+# Replace the default rule list with the criteria used by your organization.
+# Across rules: OR. Within all_of: AND. Within any_of: OR.
+schema_version: 2
+signals:
+  stale_release_days: 365
+decision:
+  use_support_dates: true
+  eol_rules:
+    - id: deprecated-version
+      any_of: [DEPRECATED]
+    - id: archived-and-inactive
+      all_of: [ARCHIVED, STALE_RELEASE]
+ci:
+  min_confidence: MEDIUM
+  fail_on_incomplete_scan: true

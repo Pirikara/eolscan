@@ -52,6 +52,9 @@ func (s *Scanner) component(ctx context.Context, c model.Component) model.Compon
 	}
 	id, reason := identity.Resolve(c)
 	requested := config.RequestedSignals(p)
+	if reason == "" {
+		requested = config.RequestedSignalsForPackage(p, id)
+	}
 	if reason != "" {
 		r.UnknownReasons = append(r.UnknownReasons, reason)
 		r.VersionVerification.ReasonCode = model.Ptr(reason)
@@ -94,7 +97,7 @@ func (s *Scanner) component(ctx context.Context, c model.Component) model.Compon
 			eolUnavailable = failed
 		}
 		lifecycle.Evaluate(&r, id, p, s.asOf, s.now)
-		if eolUnavailable {
+		if eolUnavailable && p.Decision.UseSupportDates {
 			// A reviewed local official claim is a higher tier alternative to
 			// the unavailable curated lookup, even when it derives UNKNOWN.
 			officialAlternative := false
@@ -116,6 +119,7 @@ func (s *Scanner) component(ctx context.Context, c model.Component) model.Compon
 			r.Incomplete = true
 		}
 	}
+	lifecycle.EvaluateEOLRules(&r, id, p, s.asOf, s.now)
 	s.applyCI(&r)
 	normalizeResult(&r)
 	return r
@@ -285,6 +289,8 @@ queue:
 			report.Summary.EOL++
 		case "SUPPORTED":
 			report.Summary.Supported++
+		case "NO_EOL_DETECTED":
+			report.Summary.NoEOLDetected++
 		default:
 			report.Summary.Unknown++
 		}
@@ -304,7 +310,7 @@ queue:
 		}
 	}
 	if report.Summary.InScope > 0 {
-		report.Summary.AssessmentCoverage = float64(report.Summary.EOL+report.Summary.Supported) / float64(report.Summary.InScope)
+		report.Summary.AssessmentCoverage = float64(report.Summary.EOL+report.Summary.Supported+report.Summary.NoEOLDetected) / float64(report.Summary.InScope)
 	}
 	if report.Summary.CIFailureCount > 0 {
 		report.CIGate.ViolationCodes = append(report.CIGate.ViolationCodes, "COMPONENT_POLICY_VIOLATION")

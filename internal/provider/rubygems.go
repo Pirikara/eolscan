@@ -39,11 +39,15 @@ func (r *registry) rubygems(ctx context.Context, id identity.Identity) (packageS
 func (r *registry) gemVersion(ctx context.Context, id identity.Identity) (packageSnapshot, error) {
 	s := packageSnapshot{Provider: "rubygems", URL: config.CleanBase(r.t.Policy().Sources.RubyGems.BaseURL) + "/api/v2/rubygems/" + url.PathEscape(id.Name) + "/versions/" + url.PathEscape(id.Version) + ".json", Versions: map[string][]release{}}
 	var v struct {
-		Name        string `json:"name"`
-		Version     string `json:"version"`
-		Platform    string `json:"platform"`
-		PublishedAt string `json:"version_created_at"`
-		Yanked      *bool  `json:"yanked"`
+		Name          string `json:"name"`
+		Version       string `json:"version"`
+		Platform      string `json:"platform"`
+		PublishedAt   string `json:"version_created_at"`
+		Yanked        *bool  `json:"yanked"`
+		SourceCodeURI string `json:"source_code_uri"`
+		Metadata      struct {
+			SourceCodeURI string `json:"source_code_uri"`
+		} `json:"metadata"`
 	}
 	var err error
 	s.Data, err = r.decode(ctx, s.URL, "application/json", &v)
@@ -54,5 +58,11 @@ func (r *registry) gemVersion(ctx context.Context, id identity.Identity) (packag
 		return r.mismatch(s, "application/json")
 	}
 	s.Versions[v.Version] = []release{{PublishedAt: v.PublishedAt, Platform: v.Platform, Yanked: v.Yanked}}
+	s.Repositories = map[string][]repositoryRef{}
+	for _, raw := range []string{v.SourceCodeURI, v.Metadata.SourceCodeURI} {
+		if project := githubProject(raw); project != "" {
+			s.Repositories[v.Version] = append(s.Repositories[v.Version], repositoryRef{ProjectID: project, MappingURL: s.URL, Provenance: "REGISTRY_METADATA"})
+		}
+	}
 	return s, nil
 }

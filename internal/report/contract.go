@@ -2,10 +2,13 @@ package report
 
 import (
 	"fmt"
+	"reflect"
 	"time"
 
 	"github.com/Pirikara/eolscan/internal/config"
 	"github.com/Pirikara/eolscan/internal/contract"
+	"github.com/Pirikara/eolscan/internal/identity"
+	"github.com/Pirikara/eolscan/internal/lifecycle"
 	"github.com/Pirikara/eolscan/internal/model"
 )
 
@@ -29,7 +32,11 @@ func Validate(r model.Report, p model.Policy) error {
 	}
 	runAt, _ := time.Parse(time.RFC3339Nano, r.GeneratedAt)
 	for _, row := range r.Results {
+		id, identityReason := identity.Resolve(model.Component{PURL: model.Text(row.PURL), Version: model.Text(row.Version)})
 		requested := config.RequestedSignals(p)
+		if identityReason == "" {
+			requested = config.RequestedSignalsForPackage(p, id)
+		}
 		if len(row.SignalEvaluations) != len(requested) {
 			return fmt.Errorf("signal evaluation coverage")
 		}
@@ -49,6 +56,36 @@ func Validate(r model.Report, p model.Policy) error {
 			if e.Status == "PRESENT" && !positive || e.Status == "ABSENT" && positive {
 				return fmt.Errorf("signal evidence inconsistent with evaluation")
 			}
+		}
+		// Recompute policy matches from the retained support assessment and
+		// signal results. A report cannot label a configured rule as matched
+		// merely because a CI signal was selected.
+		expected := row
+		expected.Lifecycle, expected.Confidence = row.SupportAssessment.Lifecycle, row.SupportAssessment.Confidence
+		expected.EOLEffectiveDate, expected.MatchedCycle = row.SupportAssessment.EOLEffectiveDate, row.SupportAssessment.MatchedCycle
+		expected.SelectedEvidenceIDs = append([]string{}, row.SupportAssessment.SelectedEvidenceIDs...)
+		expected.UnknownReasons = append([]string{}, row.SupportAssessment.UnknownReasons...)
+		expected.EOLBasis = nil
+		lifecycle.EvaluateEOLRules(&expected, id, p, r.AsOf, runAt)
+		if expected.Lifecycle != row.Lifecycle || model.Text(expected.EOLBasis) != model.Text(row.EOLBasis) ||
+			model.Text(expected.Confidence) != model.Text(row.Confidence) || !reflect.DeepEqual(expected.EOLRuleEvaluations, row.EOLRuleEvaluations) {
+			return fmt.Errorf("EOL result contradicts configured rules")
+		}
+		if expected.Incomplete && !row.Incomplete {
+			return fmt.Errorf("unavailable EOL conditions must mark incomplete")
+		}
+		if identityReason == "" {
+			support := model.ComponentResult{Lifecycle: "UNKNOWN", VersionVerification: row.VersionVerification, Evidence: row.Evidence,
+				UnknownReasons: append([]string{}, row.SupportAssessment.UnknownReasons...), SelectedEvidenceIDs: []string{}, Notices: []model.Notice{}}
+			lifecycle.Evaluate(&support, id, p, r.AsOf, runAt)
+			if support.Lifecycle != row.SupportAssessment.Lifecycle || model.Text(support.Confidence) != model.Text(row.SupportAssessment.Confidence) ||
+				model.Text(support.EOLEffectiveDate) != model.Text(row.SupportAssessment.EOLEffectiveDate) ||
+				model.Text(support.MatchedCycle) != model.Text(row.SupportAssessment.MatchedCycle) ||
+				!reflect.DeepEqual(support.SelectedEvidenceIDs, row.SupportAssessment.SelectedEvidenceIDs) {
+				return fmt.Errorf("support assessment contradicts eligible evidence")
+			}
+		} else if row.SupportAssessment.Lifecycle != "UNKNOWN" {
+			return fmt.Errorf("invalid identity cannot have a support conclusion")
 		}
 		if row.Lifecycle != "UNKNOWN" {
 			pub, err := time.Parse(time.RFC3339Nano, model.Text(row.VersionVerification.PublishedAt))
@@ -74,13 +111,22 @@ func Validate(r model.Report, p model.Policy) error {
 				}
 			}
 		}
+		for _, selected := range row.SupportAssessment.SelectedEvidenceIDs {
+			found := false
+			for _, evidence := range row.Evidence {
+				found = found || evidence.ID == selected
+			}
+			if !found {
+				return fmt.Errorf("support evidence missing")
+			}
+		}
 		for _, n := range row.Notices {
 			if !model.Contains(row.SelectedEvidenceIDs, n.EvidenceID) {
 				return fmt.Errorf("notice must reference selected evidence")
 			}
 		}
 	}
-	if r.Summary.InScope != r.Summary.EOL+r.Summary.Supported+r.Summary.Unknown {
+	if r.Summary.InScope != r.Summary.EOL+r.Summary.Supported+r.Summary.NoEOLDetected+r.Summary.Unknown {
 		return fmt.Errorf("summary is inconsistent")
 	}
 	if r.Summary.InScope == 0 && (r.CIGate.Passed || !r.CIGate.Incomplete || !model.Contains(r.CIGate.ViolationCodes, "NO_COMPONENTS")) {

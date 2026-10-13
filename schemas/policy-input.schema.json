@@ -140,6 +140,25 @@
           },
           "required": [],
           "additionalProperties": false
+        },
+        "github": {
+          "type": "object",
+          "properties": {
+            "enabled": {
+              "type": "boolean"
+            },
+            "base_url": {
+              "type": "string",
+              "format": "uri",
+              "pattern": "^https://[^/?#@]+(?:[/?#]|$)"
+            },
+            "token_env": {
+              "type": "string",
+              "pattern": "^[A-Za-z_][A-Za-z0-9_]*$"
+            }
+          },
+          "required": [],
+          "additionalProperties": false
         }
       },
       "required": [],
@@ -218,6 +237,16 @@
         "max_evidence_age_days": {
           "type": "integer",
           "minimum": 1
+        },
+        "use_support_dates": {
+          "type": "boolean"
+        },
+        "eol_rules": {
+          "type": "array",
+          "items": {
+            "$ref": "urn:eolscan:schema:2:common#/$defs/eol_rule"
+          },
+          "maxItems": 128
         }
       },
       "required": [],

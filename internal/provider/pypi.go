@@ -5,11 +5,13 @@ import (
 	"encoding/json"
 	"net/url"
 	"regexp"
+	"strconv"
 	"strings"
 
 	"github.com/Pirikara/eolscan/internal/config"
 	"github.com/Pirikara/eolscan/internal/identity"
 	"github.com/Pirikara/eolscan/internal/model"
+	"github.com/Pirikara/eolscan/internal/transport"
 )
 
 const pypiJSON = "application/vnd.pypi.simple.v1+json"
@@ -43,6 +45,15 @@ func (r *registry) pypi(ctx context.Context, id identity.Identity) (packageSnaps
 	}
 	if doc.ProjectStatus != nil && model.Contains([]string{"active", "archived", "deprecated", "quarantined"}, doc.ProjectStatus.Status) {
 		s.ProjectStatus = doc.ProjectStatus.Status
+	} else if doc.ProjectStatus == nil {
+		// PEP 792 defines omitted status as active. API 1.4 introduced this
+		// contract; older APIs remain unable to certify that marker.
+		parts := strings.Split(doc.Meta.Version, ".")
+		if len(parts) >= 2 {
+			if minor, err := strconv.Atoi(parts[1]); err == nil && minor >= 4 {
+				s.ProjectStatus = "active"
+			}
+		}
 	}
 	seen := map[string]bool{}
 	for _, file := range *doc.Files {
@@ -79,6 +90,38 @@ func (r *registry) pypi(ctx context.Context, id identity.Identity) (packageSnaps
 		}
 	}
 	return s, nil
+}
+
+// The version JSON endpoint supplies publisher-declared project URLs; release
+// history/publication remains sourced from the non-deprecated Index API.
+func (r *registry) pypiRepositories(ctx context.Context, id identity.Identity) ([]repositoryRef, transport.HTTPData, error) {
+	raw := config.CleanBase(r.t.Policy().Sources.PyPI.BaseURL) + "/pypi/" + url.PathEscape(id.Name) + "/" + url.PathEscape(id.Version) + "/json"
+	var doc struct {
+		Info struct {
+			Name        string            `json:"name"`
+			Version     string            `json:"version"`
+			ProjectURLs map[string]string `json:"project_urls"`
+		} `json:"info"`
+	}
+	data, err := r.decode(ctx, raw, "application/json", &doc)
+	if err != nil || data.Status != 200 {
+		return nil, data, err
+	}
+	if identity.NormalizeName("PYPI", doc.Info.Name) != id.Name || doc.Info.Version != id.Version {
+		r.t.Invalidate(raw)
+		return nil, data, &transport.LookupError{Code: "PROVIDER_SCHEMA_MISMATCH", Status: 200}
+	}
+	refs := []repositoryRef{}
+	for label, rawURL := range doc.Info.ProjectURLs {
+		label = strings.ToLower(strings.NewReplacer(" ", "", "-", "", "_", "").Replace(label))
+		if !model.Contains([]string{"source", "sourcecode", "repository", "code", "github"}, label) {
+			continue
+		}
+		if project := githubProject(rawURL); project != "" {
+			refs = append(refs, repositoryRef{ProjectID: project, MappingURL: raw, Provenance: "REGISTRY_METADATA"})
+		}
+	}
+	return refs, data, nil
 }
 
 func pypiFileVersion(filename, name string) (string, bool) {

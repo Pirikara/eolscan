@@ -1,6 +1,6 @@
 # Registry sources and request behavior
 
-eolscan 0.4.0 queries npm, PyPI, and RubyGems directly. Remote version verification for Maven, Go, Cargo, and NuGet still uses deps.dev. None of these registry facts alone establishes an upstream security support window or an EOL date. The separate [lifecycle data adapter](catalog.md) retrieves security end dates automatically; reviewed local official catalogs remain optional.
+eolscan 0.5.0 queries npm, PyPI, and RubyGems directly. Remote version verification for Maven, Go, Cargo, and NuGet still uses deps.dev. Registry and repository facts can satisfy your configured EOL rules. They do not invent an upstream security support window or official end date. See [EOL criteria](eol-rules.md). The separate [lifecycle data adapter](catalog.md) retrieves security end dates automatically; reviewed local official catalogs remain optional.
 
 ## Selection and fallback
 
@@ -8,9 +8,9 @@ eolscan 0.4.0 queries npm, PyPI, and RubyGems directly. Remote version verificat
 2. Use the native registry when enabled and selected in `version_verification.sources` as `registries`.
 3. Use deps.dev when enabled and selected as `deps_dev`, if the version/publication proof remains unresolved.
 
-The sources array selects available verification methods; the precedence above is fixed. Signals are selected independently through `signals` and `ci.fail_on_signals`. A valid local version assertion can therefore avoid all metadata requests when no signals are requested, but it does not certify maintenance status.
+The sources array selects available verification methods; the precedence above is fixed. Signals are requested through optional `signals`, scoped `decision.eol_rules`, and `ci.fail_on_signals`. EOL-rule inputs are mandatory for that policy evaluation even when optional collection is off. A valid local version assertion can therefore avoid all metadata requests when no signals are requested, but it does not certify maintenance status.
 
-Native metadata is requested only if the target ecosystem supports it and a version or requested signal needs it. Each package response is fetched and parsed once per run and shared across its SBOM versions. A complete native result avoids the corresponding deps.dev query. Unresolved deprecation or release inactivity can use equivalent deps.dev data where that provider has a capability. Yanking and PyPI project markers have no deps.dev fallback.
+Native metadata is requested only if the target ecosystem supports it and a version or requested signal needs it. Each package response is fetched and parsed once per run and shared across its SBOM versions. A complete native result avoids the corresponding deps.dev query. Unresolved deprecation or release inactivity can use equivalent deps.dev data where that provider has a capability. Yanking and PyPI project markers have no deps.dev fallback. GitHub source-repository archival complements registry archival through native source links or deps.dev relationships.
 
 Native failures remain diagnostics if a fallback succeeds. Successful equivalent fallback can complete the check; an unresolved CI-required signal makes the component and scan incomplete. API failures never mean `ABSENT`. If fallback data already needed for another check contradicts native signal evidence, that signal becomes `UNKNOWN / SIGNAL_CONFLICT` and both pieces of evidence remain visible.
 
@@ -46,7 +46,7 @@ Explicit project status maps as follows:
 | `quarantined` | ABSENT | ABSENT | PRESENT |
 | Missing or unrecognized | UNKNOWN | UNKNOWN | UNKNOWN |
 
-Although the project-status specification defines a default for omitted status, eolscan conservatively requires an explicit known marker for negative evidence. An `active` marker does not certify security support. Quarantine may hide artifacts; the marker can be reported even when publication proof needs fallback.
+For Index API 1.4 or later, an omitted project status means active under PEP 792. Older API versions and unrecognized explicit markers remain UNKNOWN. An `active` marker does not certify security support. Quarantine may hide artifacts; the marker can be reported even when publication proof needs fallback.
 
 Yank status is a boolean or a string reason, including an empty string meaning yanked. `YANKED/PRESENT` requires every available artifact for the target version to be explicitly yanked. Any explicit non-yanked artifact makes it `ABSENT`. Missing status or unidentified artifacts that prevent this conclusion leave it `UNKNOWN`. This version-level rule does not describe which artifact a particular installer selected.
 
@@ -56,7 +56,15 @@ The adapter recognizes modern wheels, `.tar.gz` and `.zip` sdists, and retained 
 
 Publication is based on upload/creation time, never `built_at`. Multiple platform artifacts are grouped by version; the earliest publication establishes a version's release date. A PURL with `platform` requires a matching platform in the native list. The unspecified default platform of the v2 endpoint, and deps.dev's platform-independent version response, cannot prove another platform artifact. An exact local assertion can still supply that proof.
 
-Version details are requested when the list cannot verify an unqualified target version, or a requested `YANKED` evaluation lacks explicit status. A missing yank field remains unknown. One platform's positive status cannot certify other platform/ABI artifacts; a known non-yanked artifact is sufficient for ABSENT. Public RubyGems version endpoints currently exclude unindexed/yanked releases, so a 404 cannot recover their publication time or confirm yanking. These cases need independent proof such as a reviewed local assertion; deps.dev may retain version metadata but does not supply a reliable yank signal.
+Version details are requested when publication/yank proof needs them or an ARCHIVED condition needs the exact version’s source_code_uri. A missing yank field remains unknown. One platform's positive status cannot certify other platform/ABI artifacts; a known non-yanked artifact is sufficient for ABSENT. Public RubyGems version endpoints currently exclude unindexed/yanked releases, so a 404 cannot recover their publication time or confirm yanking. These cases need independent proof such as a reviewed local assertion; deps.dev may retain version metadata but does not supply a reliable yank signal.
+
+## GitHub source-repository archival
+
+The adapter uses `GET /repos/{owner}/{repo}` after mapping an exact package version from native publisher metadata or deps.dev SOURCE_REPO relations. It accepts explicit archival booleans after checking canonical response identity and same-host numeric-ID redirects for renamed repositories. Metadata URLs themselves are not fetched. GitLab/Bitbucket and missing or ambiguous source mappings remain unresolved.
+
+For PyPI, an archived registry marker or an archived source repository satisfies ARCHIVED. An active registry marker does not negate archival of the source repository. Without a positive finding, a failed required repository check cannot be hidden by a registry negative.
+
+GitHub is enabled by default. Supply EOLSCAN_GITHUB_TOKEN for authenticated public API quota; sources.github.token_env selects the environment-variable name. The token is excluded from policy hashes, reports, and cache files, and is not sent to custom mirrors. GitHub quota-related 403 responses honor the reset timestamp and establish a shared cooldown. See [quota configuration](eol-rules.md#github-quotas-and-ci).
 
 ## Release inactivity and historical limits
 
@@ -70,7 +78,7 @@ deps.dev's documented Go and PyPI collection limits prevent its lists from provi
 
 Defaults are 2 requests per second per host, burst 1, concurrency 6, request timeout 8 seconds, and at most two retries. These are eolscan's conservative defaults, not promises about the services' quotas. All attempted request starts, including redirects and retries, consume host tokens.
 
-HTTP 429 and 503 establish a cooldown shared by requests to the same hostname. `Retry-After` seconds and HTTP dates are respected, with exponential backoff and jitter. A long cooldown or token wait exceeding `network.max_wait_seconds` returns an unavailable lookup instead of an early retry. This is a per-wait budget, not an overall scan deadline. Other hosts keep independent budgets; already in-flight requests can finish.
+HTTP 429, 503, and GitHub quota-related 403 responses establish a cooldown shared by requests to the same hostname. `Retry-After` seconds and HTTP dates are respected, with exponential backoff and jitter. A long cooldown or token wait exceeding `network.max_wait_seconds` returns an unavailable lookup instead of an early retry. This is a per-wait budget, not an overall scan deadline. Other hosts keep independent budgets; already in-flight requests can finish.
 
 ```yaml
 schema_version: 2
@@ -101,4 +109,5 @@ Budgets and cooldowns are process-local. Concurrent CI jobs sharing an egress IP
 - [npm registry API](https://github.com/npm/registry/blob/main/docs/REGISTRY-API.md) and [package metadata](https://github.com/npm/registry/blob/main/docs/responses/package-metadata.md).
 - [PyPI Index API](https://docs.pypi.org/api/index-api/), [project JSON API](https://docs.pypi.org/api/json/), and [project status markers](https://packaging.python.org/en/latest/specifications/project-status-markers/).
 - [RubyGems API guide](https://guides.rubygems.org/rubygems-org-api/), [rate limits](https://guides.rubygems.org/rubygems-org-rate-limits/), and [public version selection in source](https://github.com/rubygems/rubygems.org/blob/master/app/models/rubygem.rb).
+- [GitHub repository API](https://docs.github.com/en/rest/repos/repos#get-a-repository) and [API rate limits](https://docs.github.com/en/rest/using-the-rest-api/rate-limits-for-the-rest-api).
 - [deps.dev API v3](https://docs.deps.dev/api/v3/) and [maintainer explanation of rate limiting](https://github.com/google/deps.dev/issues/33#issuecomment-1744108819).

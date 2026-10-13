@@ -61,6 +61,7 @@ func DescribeProviders() string {
 		fmt.Sprintln("npm: exact versions and publication; DEPRECATED and STALE_RELEASE") +
 		fmt.Sprintln("pypi: Index API publication; DEPRECATED, ARCHIVED, QUARANTINED, YANKED, and STALE_RELEASE") +
 		fmt.Sprintln("rubygems: exact versions and publication; YANKED where explicit, and STALE_RELEASE") +
+		fmt.Sprintln("github: source-repository ARCHIVED; publisher metadata or verified origin maps a package version to its repository") +
 		fmt.Sprintln("deps_dev: gem/npm/pypi/maven/golang/cargo/nuget version publication; DEPRECATED and STALE_RELEASE where metadata is sufficient")
 }
 

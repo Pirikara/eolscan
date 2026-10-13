@@ -1,11 +1,11 @@
 {
-  "schema_version": "2.3",
-  "tool_version": "0.4.0",
+  "schema_version": "2.4",
+  "tool_version": "0.5.0",
   "as_of": "2026-10-11",
   "projection": false,
   "generated_at": "2026-10-11T00:00:00Z",
   "input_sha256": "432833ae712c4cfe1914581f56635f6a9dda9a5c94f13608681390381fe44799",
-  "policy_hash": "97b27d8d35ff89bd1508a2f48c3627300a2f403e5fcba18d30a98e1b61bac326",
+  "policy_hash": "504d8f2ef53bdd5f62487d7204f946b2dcaafb9d98dcfa7747bc3f5e4a0ec387",
   "summary": {
     "in_scope": 1,
     "excluded": 0,
@@ -14,7 +14,8 @@
     "unknown": 1,
     "assessment_coverage": 0.0,
     "provider_error_count": 0,
-    "ci_failure_count": 0
+    "ci_failure_count": 0,
+    "no_eol_detected": 0
   },
   "ci_gate": {
     "passed": true,
@@ -138,7 +139,19 @@
       ],
       "incomplete": false,
       "ci_failure": false,
-      "exception_applied": false
+      "exception_applied": false,
+      "support_assessment": {
+        "lifecycle": "UNKNOWN",
+        "confidence": null,
+        "eol_effective_date": null,
+        "matched_cycle": null,
+        "selected_evidence_ids": [],
+        "unknown_reasons": [
+          "NO_LIFECYCLE_EVIDENCE"
+        ]
+      },
+      "eol_basis": null,
+      "eol_rule_evaluations": []
     }
   ]
 }

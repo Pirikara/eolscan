@@ -1,6 +1,6 @@
-# eolscan — Implementation Design v0.6
+# eolscan — Implementation Design v0.7
 
-**Document status:** Release 0.4.0 implemented; automatic lifecycle retrieval with explicit security scope
+**Document status:** Release 0.5.0 implemented; configurable EOL criteria and automatic registry/repository acquisition
 
 **Revised:** 2026-10-13
 
@@ -8,11 +8,22 @@
 
 **Authoritative specification:** This Markdown document. JSON schemas and example policies conform to it.
 
-**Corresponding implementation release:** 0.4.0, independent of the document version
+**Corresponding implementation release:** 0.5.0, independent of the document version
 
 > **Core principle:** Return `SUPPORTED` only with **explicit evidence** that upstream security support covers the evaluation date. If the target version's existence and publication time cannot be verified, its lifecycle remains `UNKNOWN`.
 
 ## 0. Revision history and accepted decisions
+
+### Decisions adopted in v0.7
+
+| ID | Decision | Affected sections |
+| --- | --- | --- |
+| D-21 | EOL is defined by configured criteria. Add scoped any_of/all_of maintenance rules and use_support_dates; a match produces EOL, warning, and a CI-policy result. | §2, §7, §8 |
+| D-22 | Automatically map exact package versions to source repositories through registry metadata/deps.dev and query GitHub archival. Verify response identity, renamed-repository IDs, and rate limits. | §6, §11 |
+| D-23 | Retain support_assessment separately, record matched/unknown rule inputs, and never invent a policy-derived end date. Completed unmatched checks can produce NO_EOL_DETECTED. Emit report 2.4. | §7, §10 |
+| D-24 | Configured EOL inputs are mandatory. Use three-valued AND/OR logic; unresolved outcomes remain incomplete. Preserve required version verification and official SUPPORTED proof. | §5, §7, §8 |
+
+[EOL criteria](eol-rules.md) specifies the rule language, source capabilities, default rules, scopes, and migration. Rules replace the default list rather than appending to it.
 
 ### Decisions adopted in v0.6
 
@@ -40,7 +51,7 @@
 | D-11 | Pace all HTTP request starts per host, including retries and redirects; share 429/503 cooldowns, honor Retry-After, add jitter, and bound waits. | §8, §11 |
 | D-12 | Add YANKED independently of DEPRECATED, expose explicit PyPI project markers, and retain UNKNOWN for unavailable required signals. Emit report 2.1. | §6, §7, §10 |
 
-Configuration remains version 2, with native source and network defaults added. Current reports use version 2.3; consumers must accept YANKED, NO_COMPONENTS, source_label, and CURATED_SECURITY_END. Existing partial policies inherit automatic security-scope detection. Fixed bundled dates from CLI 0.3.0 are removed. A policy overriding `network.allowed_hosts` must allow enabled native hosts or disable those sources explicitly.
+Configuration remains version 2, with native source and network defaults added. Current reports use version 2.4; consumers must accept NO_EOL_DETECTED, support_assessment, eol_basis, and eol_rule_evaluations in addition to the previous fields. Partial policies inherit configurable deprecation/archive EOL criteria. Use decision.eol_rules: [] for support dates only. Fixed bundled dates from CLI 0.3.0 are removed. A policy overriding `network.allowed_hosts` must allow enabled native hosts or disable those sources explicitly.
 
 ### Decisions adopted in v0.3
 
@@ -63,7 +74,7 @@ Document v0.3 was implemented by CLI 0.1.0 with configuration version 2 and repo
 | D-04 | `/products/full` and per-product GET requests duplicate work. | Fetch endoflife.date's `/identifiers/purl` index, then details for matched products. The MVP does not fetch the full dataset. Disk caching is **optional and off by default**. | §6, §11 |
 | D-05 | EOL_SOON types, conflict settings, and output examples were inconsistent. | Separate `EOL_SOON` into `Notice`. Remove `unknown_on_same_tier_conflict`; same-tier conflicts always produce UNKNOWN. Define required and nullable fields in schemas. | §7, §8, §10 |
 
-Configuration uses `schema_version: 2` and output uses `schema_version: "2.3"`. The earlier v0.1 design contract must not be silently reinterpreted. The HTTP cache format remains version 2.0, independently of the output report version.
+Configuration uses `schema_version: 2` and output uses `schema_version: "2.4"`. The earlier v0.1 design contract must not be silently reinterpreted. The HTTP cache format remains version 2.0, independently of the output report version.
 
 ## 1. System overview and scope
 
@@ -76,26 +87,29 @@ The CLI extracts packages from a single CycloneDX or SPDX JSON SBOM, identifies 
 | Input | CycloneDX JSON 1.4–1.7; SPDX 2.3 JSON | SPDX 3.x, XML, multiple SBOMs |
 | Dependency identity | Complete versioned PURLs | CPE and explicit manual mappings |
 | Ecosystems | gem, npm, pypi, maven, golang, cargo, nuget | OS distributions, oci, composer, and others |
-| EOL evidence | Automatically retrieved endoflife.date security end dates; optional reviewed official catalog | Official vendor APIs, successor projects |
+| EOL criteria | Configurable maintenance rules and support dates; native/deps.dev facts and GitHub archival | Official vendor APIs, successor projects |
 | Version verification | Exact catalog assertions; native npm/PyPI/RubyGems; deps.dev GetVersion | Additional native registries, signed snapshots |
-| Signals | Native registry deprecation, PyPI project markers and yank metadata; available publication dates; deps.dev fallback | GitHub, native Go retract, NuGet deprecation, and others |
-| Output | Tables; JSON report schema 2.3 | SARIF, HTML, CycloneDX annotations |
+| Signals | Native deprecation/project/yank metadata, GitHub archival, release dates, and deps.dev fallback | Native Go retract, native NuGet deprecation, repository inactivity, and other hosts |
+| Output | Tables; JSON report schema 2.4 | SARIF, HTML, CycloneDX annotations |
 | Execution modes | Default report-first; strict CI policy; offline | Organization-wide policy distribution |
 
-**Outside scope:** Vulnerability or CVSS detection, declaring EOL solely from release age, fuzzy name matching, automatically combining extended support with upstream support, and interpreting web pages with an LLM.
+**Outside scope:** Vulnerability or CVSS detection, inventing support dates from release age, fuzzy name matching, automatically combining extended support with upstream support, and interpreting web pages with an LLM.
 
 ## 2. Concepts and EOL semantics
 
+The date semantics in §2.1 and the evidence-tier algorithm in §7.2 derive `support_assessment`. The configurable evaluator then derives the final policy classification; see [EOL criteria](eol-rules.md).
+
 | Concept | Definition |
 | --- | --- |
-| `EOL` | Upstream security support has been confirmed to have ended. Generic EOL information can supply MEDIUM evidence only after reviewing its meaning for the product, release series, and support scope. |
+| `EOL` | An enabled support-date criterion or configured maintenance rule matched. Support-date evidence and maintenance evidence retain their distinct meanings. |
 | `SUPPORTED` | Explicit evidence confirms that upstream security support continues throughout a period containing the evaluation date. |
-| `UNKNOWN` | Evidence is insufficient to establish EOL or SUPPORTED. It does not imply safety or ongoing support. |
+| `NO_EOL_DETECTED` | Required EOL-policy checks resolved without a match; it does not certify upstream support or safety. |
+| `UNKNOWN` | A required EOL criterion, identity, or version cannot be resolved. Dates-only mode retains UNKNOWN when support evidence is insufficient. |
 | `CURATED_SECURITY_END` | An endoflife.date cutoff explicitly labelled as the end of a security phase. Eligible for EOL/MEDIUM without a per-product date review; future cutoffs alone remain UNKNOWN. |
 | `GENERAL_EOL_END` | A generic EOL date published by a source such as endoflife.date. A future date does not imply SUPPORTED. |
 | `UPSTREAM_SECURITY_WINDOW` | An officially stated upstream security support interval `[start, end)`. |
 | `UPSTREAM_SECURITY_END` | An officially confirmed end date for upstream security support. It does not establish SUPPORTED before that date. |
-| `MaintenanceSignal` | Deprecation, archival, prolonged inactivity, or similar information, evaluated independently of lifecycle. |
+| `MaintenanceSignal` | Collected deprecation, archival, inactivity, or other facts. Configured rules decide whether those facts count as EOL. |
 | `Notice` | A notification derived from a decision. The MVP includes only `EOL_SOON`. |
 | `Confidence` | Confidence in the lifecycle evidence, rather than a measure of security risk. |
 
@@ -133,6 +147,7 @@ Keep the original scope of generic EOL evidence as `general_eol`. Map its scope 
 | FR-10 | Support offline execution, retries, per-run memoization, and optional persistent caching. |
 | FR-11 | Share parsed native metadata across package versions and use capable fallback only for unresolved checks. |
 | FR-12 | Limit request starts per host, share server cooldowns, and retain unavailable lookups when wait budgets are exceeded. |
+| FR-13 | Allow users to define EOL with scoped AND/OR conditions and inactivity thresholds; record rule evaluations and warn on matches. |
 
 - **Reproducibility:** Preserve `as_of`, `tool_version`, `policy_hash`, `input_sha256`, and evidence `observed_at`. Historical API responses are not reconstructed; complete historical replay requires fixed fixtures.
 - **Failure isolation:** A network failure for one package must not stop processing all packages.
@@ -159,7 +174,9 @@ SBOM JSON
      EvidenceValidator (scope, version, freshness, dates)
         |
         v
-     LifecycleEvaluator (EOL | SUPPORTED | UNKNOWN)
+     SupportAssessment (EOL | SUPPORTED | UNKNOWN)
+        |
+     ConfiguredEOLEvaluator (EOL | SUPPORTED | NO_EOL_DETECTED | UNKNOWN)
         |
         +-> NoticeEvaluator (EOL_SOON)
         +-> Diagnostics / IncompleteTracker
@@ -174,7 +191,7 @@ SBOM JSON
 | `identity` | Normalize PURLs, establish identity, and resolve release series. | Avoid incorrect matches from simple string prefixes. |
 | `verification` | Verify that an exact version is registered. | An API 404 does not prove that the software does not exist. |
 | `provider` | Collect evidence, signals, and diagnostics. | Do not make final lifecycle decisions. |
-| `policy` | Evaluate scope, tier, conflicts, dates, and notices. | Do not automatically promote deprecation to EOL. |
+| `policy` | Evaluate support evidence and configured EOL rules. | Promote maintenance facts only when a configured rule matches; preserve the distinct support assessment. |
 | `transport` | Handle HTTP, per-host pacing, cooldowns, retries, concurrency, memoization, and optional disk caching. | Do not fetch arbitrary SBOM-supplied URLs. |
 | `report` | Produce JSON/tables, aggregates, and exit codes. | Do not display unknown results as confirmed success. |
 
@@ -342,7 +359,7 @@ The authoritative endpoint and signal details are in [registry sources](registri
 
 ### 6.6 Future providers and behavior
 
-GitHub archived status, native Go retract, native NuGet deprecation, and other individual registry APIs remain future capabilities. Configuring `github.enabled=true` is a **configuration error (exit 2)**; reject unknown provider settings.
+GitHub archival is implemented through sources.github and exact-version source mappings. Same-host transfers/renames use canonical repository identity or verified numeric IDs. Native Go retraction, native NuGet deprecation, repository inactivity, and additional hosting services remain future adapters. Recognized conditions without a usable adapter stay UNKNOWN; unknown provider settings are configuration errors. See [criteria and acquisition](eol-rules.md).
 
 Future signal types may still be listed in `ci.fail_on_signals`. If no provider can evaluate a requested signal, its status is UNKNOWN and `incomplete=true`.
 
@@ -407,7 +424,7 @@ SignalEvidence {
 }
 ```
 
-`SignalEvaluation`: One evaluation is required for each type in the union of enabled detection types and CI-required types.
+`SignalEvaluation`: One evaluation is required for each type in the union of enabled detection types, applicable EOL-rule inputs, and CI-required types.
 
 ```text
 SignalEvaluation {
@@ -422,7 +439,7 @@ SignalEvaluation {
 
 PRESENT requires corresponding evidence in `signals[]`. ABSENT requires a successful evaluation with sufficient negative information; HTTP success alone is insufficient. UNKNOWN requires a reason.
 
-Aggregate equivalent successful information across providers. Conflicting evaluations produce UNKNOWN/SIGNAL_CONFLICT. Exceptions do not change evaluation status or incompleteness.
+Aggregate equivalent successful information across providers. Conflicting equivalent evaluations produce UNKNOWN/SIGNAL_CONFLICT. Registry archival and source-repository archival have different scopes: either positive satisfies ARCHIVED, while a negative in one scope cannot hide a failed required check in the other. Exceptions do not change evaluation status or incompleteness.
 
 `Notice` is **derived information**, not a provider signal:
 
@@ -437,7 +454,7 @@ Notice {
 
 `Diagnostic` requires `code`, `provider_id|null`, `http_status|null`, `retryable`, and `message`. A LifecycleEvidence `source_url` is the authoritative evidence URL. Do not output retrieval URLs containing authentication parameters.
 
-### 7.2 Evidence tiers and comparison
+### 7.2 Evidence tiers and comparison (formal support assessment)
 
 1. Collect evidence matching the target PURL, exact version, and applicable release series. Retain original data and diagnostics.
 2. Validate expiry, date syntax, support scope, automatic security labels, and generic EOL reviews. Exclude invalid, expired, or unreviewed information from the decision set, but retain it in `evidence[]`. Exclude older material from comparison only when a verified formal withdrawal or update supplies a proof URL and replacement evidence ID.
@@ -469,6 +486,7 @@ Example: Official security end dates of 2026-10-01 and 2026-12-01 produce UNKNOW
 | `R-010` | Apply exceptions and the CI gate without changing lifecycle. |
 | `R-011` | Version unverified, absent from the index, or not yet published: UNKNOWN. |
 | `R-012` | Automatically retrieved, explicitly scoped CURATED_SECURITY_END has elapsed: EOL / MEDIUM. |
+| `R-013` | An applicable configured maintenance rule matches verified package facts: EOL / MEDIUM. |
 
 ### 7.4 Required algorithm: Pseudocode
 
@@ -476,9 +494,11 @@ Example: Official security end dates of 2026-10-01 and 2026-12-01 produce UNKNOW
 run_started_at = utc_now_once()
 run_date = utc_date(run_started_at)
 required_signal_types = ci.fail_on_signals
-requested_signal_types = enabled_signal_types union required_signal_types
 
 for component in normalized_sbom:
+  applicable_rules = scoped_rules_for_component(policy.decision.eol_rules, component)
+  requested_signal_types = enabled_signal_types union required_signal_types
+                           union conditions(applicable_rules)
   initialize lifecycle=UNKNOWN, confidence=null, chosen=[], reasons=[]
   initialize evidence=[], signals=[], diagnostics=[], signal_evaluations=[]
   if invalid_identity_or_version:
@@ -516,16 +536,22 @@ for component in normalized_sbom:
                                 if e.type in required_signal_types)
   incomplete = required_lookup_unavailable_without_equivalent_success(component)
                or required_signal_unknown
-  ci_failure = evaluate_component_ci(lifecycle, confidence, signal_evaluations, exceptions)
+  support_assessment = preserve_date_evaluator_result()
+  result = evaluate_configured_eol_rules_with_three_valued_logic(result, policy)
+  apply_exception_and_ci_gate_to_final_policy_classification()
   emit result with all evidence, verification, evaluations, diagnostics, incomplete
 
 report.ci_gate = aggregate_component_failures_unknown_ratio_incomplete()
 exit_code = apply_exit_precedence(report.ci_gate)
 ```
 
-### 7.5 UNKNOWN reasons and scan incompleteness
+### 7.5 Configured EOL rules
 
-Lifecycle reason codes: `MISSING_PURL`, `INVALID_PURL`, `VERSION_UNRESOLVED`, `VERSION_CONFLICT`, `VERSION_NOT_FOUND_IN_INDEX`, `VERSION_UNVERIFIED`, `NOT_RELEASED_AS_OF`, `PUBLICATION_IN_FUTURE`, `PRIVATE_SOURCE_UNSUPPORTED`, `UNSUPPORTED_ECOSYSTEM`, `AMBIGUOUS_IDENTITY`, `AMBIGUOUS_CYCLE`, `GENERAL_EOL_ONLY`, `GENERAL_EOL_UNREVIEWED`, `SECURITY_END_ONLY`, `SECURITY_SCOPE_UNCONFIRMED`, `NO_LIFECYCLE_EVIDENCE`, `STALE_EVIDENCE`, `CONFLICT`, `SOURCE_ERROR`.
+After deriving the support assessment, evaluate applicable decision.eol_rules against aggregated signal facts. Rules are ORed; a rule chooses any_of (OR) or all_of (AND). A true OR dominates unknown inputs; a false AND resolves the rule despite unknown inputs. Verify exact version existence/publication before any EOL classification. Retain the support assessment and every rule evaluation. A rule match produces EOL/MEDIUM with eol_basis=POLICY_RULE and a null end date; an enabled support-date match keeps its original confidence and eol_basis=SUPPORT_DATE. Unresolved outcomes remain UNKNOWN/incomplete. Completed unmatched maintenance-policy checks can produce NO_EOL_DETECTED. See [the rule contract](eol-rules.md).
+
+### 7.6 UNKNOWN reasons and scan incompleteness
+
+Lifecycle reason codes: `MISSING_PURL`, `INVALID_PURL`, `VERSION_UNRESOLVED`, `VERSION_CONFLICT`, `VERSION_NOT_FOUND_IN_INDEX`, `VERSION_UNVERIFIED`, `NOT_RELEASED_AS_OF`, `PUBLICATION_IN_FUTURE`, `PRIVATE_SOURCE_UNSUPPORTED`, `UNSUPPORTED_ECOSYSTEM`, `AMBIGUOUS_IDENTITY`, `AMBIGUOUS_CYCLE`, `GENERAL_EOL_ONLY`, `GENERAL_EOL_UNREVIEWED`, `SECURITY_END_ONLY`, `SECURITY_SCOPE_UNCONFIRMED`, `NO_LIFECYCLE_EVIDENCE`, `STALE_EVIDENCE`, `CONFLICT`, `SOURCE_ERROR`, `EOL_RULE_UNRESOLVED`, `SUPPORT_DATES_DISABLED`.
 
 - Set `incomplete=true` if required version verification, publication time, or highest-tier evidence retrieval fails because of an error or missing data, without an equivalent or better valid fallback.
 - An index miss, index 404, unreviewed generic EOL, NOT_RELEASED_AS_OF, or ordinary lack of evidence does not alone make a scan incomplete.
@@ -541,13 +567,14 @@ Lifecycle reason codes: `MISSING_PURL`, `INVALID_PURL`, `VERSION_UNRESOLVED`, `V
 - Precedence is `CLI flags > YAML > built-in defaults`. Policy YAML requires `schema_version: 2`; all other fields may be supplied as **partial overrides**. Validate unknown keys and types against the input schema, recursively merge into defaults, then validate the effective policy. Resolve relative paths from the policy file's directory.
 - Unknown configuration keys, type mismatches, enabling unimplemented capabilities, or contradictory values produce `exit 2` in both `policy validate` and `scan`.
 - **Removed keys:** `decision.unknown_on_same_tier_conflict` and `decision.excluded_general_eol_products`. Same-tier conflicts always yield UNKNOWN; generic EOL requires valid reviews. Reject the old keys as unknown configuration.
-- `version_verification.mode` is fixed to `required`. `decision.support_scope` is fixed to `upstream_security`. Configuration cannot change lifecycle semantics.
-- Configurable areas are query providers, notice thresholds, caching, networking, the CI gate, local catalogs and reviews, and exceptions.
+- `version_verification.mode` is fixed to `required`. `decision.support_scope` describes formal evidence and is fixed to `upstream_security`. The final EOL definition is configurable through decision.eol_rules and decision.use_support_dates.
+- Configurable areas include EOL criteria (AND/OR, inactivity thresholds, ecosystem/exact-PURL scopes), query providers, notices, caching, networking, CI conditions, local catalogs, reviews, and exceptions.
 - This document and `policy.schema.json` define the policy contract. Compute `policy_hash` as SHA-256 of the normalized `{policy, catalog, exceptions}` object containing the effective policy and referenced catalog and exception content. Use UTF-8 JSON, sorted keys, and no extra whitespace. Unused catalogs or exceptions are null. Relative paths retain their literal configuration values in the hash; actual file resolution uses the policy directory. Exclude secret values.
 
 ### 8.2 Default: Report-first
 
 ```yaml
+# Built-in policy; support dates and configured maintenance rules can establish EOL.
 schema_version: 2
 input:
   include_component_types:
@@ -569,6 +596,10 @@ sources:
   rubygems:
     enabled: true
     base_url: "https://rubygems.org"
+  github:
+    enabled: true
+    base_url: "https://api.github.com"
+    token_env: "EOLSCAN_GITHUB_TOKEN"
   official_catalog:
     enabled: false
     path: null
@@ -597,6 +628,13 @@ notices:
 decision:
   support_scope: "upstream_security"
   max_evidence_age_days: 30
+  use_support_dates: true
+  eol_rules:
+    - id: deprecated
+      any_of: [DEPRECATED]
+      ecosystems: [npm, pypi, nuget]
+    - id: archived
+      any_of: [ARCHIVED]
 network:
   allowed_hosts:
     - "endoflife.date"
@@ -604,6 +642,7 @@ network:
     - "registry.npmjs.org"
     - "pypi.org"
     - "rubygems.org"
+    - "api.github.com"
   timeout_seconds: 8
   retries: 2
   max_concurrency: 6
@@ -629,7 +668,7 @@ output:
   include_evidence: true
 ```
 
-**Required user-facing explanation:** Online scans retrieve current lifecycle mappings and dates. Only explicit security phase labels automatically establish scope, at MEDIUM confidence; linked official pages do not raise confidence. No fixed product dates ship in the binary. Generic EOL reviews and local version assertions remain optional. Version existence still requires independent verification. Future end-only claims, ambiguous labels, and identities outside source coverage remain UNKNOWN. The default HIGH CI threshold reports automatic EOL/MEDIUM; `eol-policy.auto-eol.yaml` lowers it to MEDIUM to fail on these results.
+**Required user-facing explanation:** Users configure what counts as EOL; matched maintenance rules produce warnings without requiring a product date-catalog match. Preserve formal support status separately. Online scans retrieve current lifecycle mappings and dates. Only explicit security phase labels automatically establish scope, at MEDIUM confidence; linked official pages do not raise confidence. No fixed product dates ship in the binary. Generic EOL reviews and local version assertions remain optional. Version existence still requires independent verification. Future end-only claims, ambiguous labels, and identities outside source coverage remain UNKNOWN. The default HIGH CI threshold reports automatic EOL/MEDIUM; `eol-policy.auto-eol.yaml` lowers it to MEDIUM to fail on these results.
 
 A catalog containing only generic EOL meaning reviews can yield EOL/MEDIUM. That result alone does not fail CI at the default HIGH threshold. API-related incompleteness also does not fail default CI. Report-first prioritizes reporting and inventory.
 
@@ -690,7 +729,7 @@ Cancellation takes precedence over scan outcomes. Otherwise precedence is `2/4` 
 
 The parser and scanner check context cancellation; the dispatch loop stops submitting jobs and active workers finish cancellation. The CLI does not serialize an interrupted scan as a successful report and leaves an existing report file intact when cancellation occurs during input or provider work. The process entry point allows a bounded shutdown interval for blocked I/O. Exit 130 applies even when `ci.fail_on_incomplete_scan=false`.
 
-## 10. JSON report 2.3 contract
+## 10. JSON report 2.4 contract
 
 Keep `../schemas/report.schema.json` consistent with this specification, and maintain `../examples/report.example.json` as a complete valid example. Schemas validate structure; additional semantic validation checks date comparisons, reference IDs, and aggregate values.
 
@@ -698,9 +737,9 @@ Keep `../schemas/report.schema.json` consistent with this specification, and mai
 
 ```text
 Report {
-  schema_version: "2.3", tool_version, as_of, projection, generated_at,
+  schema_version: "2.4", tool_version, as_of, projection, generated_at,
   input_sha256, policy_hash,
-  summary: {in_scope, excluded, eol, supported, unknown,
+  summary: {in_scope, excluded, eol, supported, no_eol_detected, unknown,
             assessment_coverage, provider_error_count, ci_failure_count},
   ci_gate: {passed, violation_codes, incomplete},
   results: ComponentResult[]
@@ -708,7 +747,10 @@ Report {
 ComponentResult {
   source_ref, purl, name, version,
   version_verification: VersionVerification,  # Required
-  lifecycle: EOL | SUPPORTED | UNKNOWN,
+  lifecycle: EOL | SUPPORTED | NO_EOL_DETECTED | UNKNOWN,
+  support_assessment: {lifecycle, confidence, eol_effective_date, matched_cycle, selected_evidence_ids, unknown_reasons},
+  eol_basis: SUPPORT_DATE | POLICY_RULE | null,
+  eol_rule_evaluations: {rule_id, status, matched_signals, unknown_signals, reason_code}[],
   confidence: HIGH | MEDIUM | null,
   eol_effective_date: date | null,
   matched_cycle: string | null,
@@ -728,10 +770,10 @@ ComponentResult {
 
 ### 10.2 Invariants
 
-1. `in_scope == eol + supported + unknown`.
-2. `assessment_coverage == (eol + supported) / in_scope`, or zero when there are no components in scope.
+1. `in_scope == eol + supported + no_eol_detected + unknown`.
+2. `assessment_coverage == (eol + supported + no_eol_detected) / in_scope`, or zero when there are no components in scope.
 3. `lifecycle=UNKNOWN` requires `confidence=null`, `eol_effective_date=null`, and at least one `unknown_reasons` entry.
-4. `lifecycle!=UNKNOWN` requires `version_verification.status=VERIFIED`, `confidence in [HIGH,MEDIUM]`, an `eol_effective_date`, and at least one selected evidence item.
+4. Every definitive classification requires VERIFIED version/publication proof. SUPPORT_DATE EOL and SUPPORTED require selected date evidence. POLICY_RULE EOL requires a true configured rule, matching signal evidence, MEDIUM confidence, and null date/cycle. NO_EOL_DETECTED has null confidence/date/cycle and no selected date evidence; it does not certify security support.
 5. SUPPORTED requires selected official upstream_security window evidence containing the evaluation date. EOL derived from generic EOL requires a review matching product, PURL, series, and scope, valid on the execution date. VERIFIED requires a publication timestamp.
 6. `notices[].type=EOL_SOON` exists only for SUPPORTED. `Notice.evidence_id` references an existing LifecycleEvidence `id`.
 7. Output every field of each `evidence[]` item. Required nullable properties must be present with a null value rather than omitted.
@@ -742,7 +784,7 @@ ComponentResult {
 12. `selected_evidence_ids` and `Notice.evidence_id` must exist in output evidence. Selected IDs must pass expiry, tier, and conflict checks. UNKNOWN requires an empty selected ID array.
 13. UNKNOWN for a CI-required signal requires `result.incomplete=true`. PRESENT requires corresponding evidence of the same type in `signals[]`.
 14. Report `generated_at` equals `run_started_at`. Use that time for expiry checks and publication validation against execution time. Write completion time to logs if needed.
-15. `policy_hash` includes the selected catalog contents, including embedded data. A local catalog replaces the embedded snapshot rather than merging it silently.
+15. `policy_hash` includes the effective EOL rules, source settings, and optional local catalog/exception contents. No product dates are embedded. Token values are excluded.
 
 ### 10.3 Required evidence JSON fields
 
@@ -864,13 +906,17 @@ Release 0.2.0 additionally verifies package sharing across versions, native sele
 
 **Release 0.3.0 — Scan correctness and bundled evidence:** nested metadata components, mandatory NO_COMPONENTS failure, cancellation and bounded shutdown, recent-release negative proof with incomplete older history, legacy PyPI eggs, informative unavailable-signal reasons, five real reviewed support windows, catalog override, and report 2.2.
 
+**Release 0.5.0 — Configurable EOL criteria:** add custom AND/OR rules and scopes, mandatory condition inputs, automatic GitHub archival, separate support assessments, NO_EOL_DETECTED, explicit warnings, report 2.4, and API quota handling.
+
 **Release 0.4.0 — Automatic lifecycle data:** remove fixed product dates, enable explicit security-phase scope from current API metadata, emit CURATED_SECURITY_END/MEDIUM and source_label in report 2.3, retain unknown future end-only claims, test response changes and cache expiry, and provide the automatic-EOL CI policy.
 
 Definition of done:
 
 - All 45 acceptance cases pass.
 - Every SUPPORTED result has security window evidence.
-- Every definitive lifecycle decision has a VERIFIED version.
+- Every definitive policy classification has a VERIFIED version.
+- Each policy EOL has a matched configured rule and signal evidence; changing criteria changes the classification and policy hash.
+- Unresolved necessary conditions are never reported as absent, and completed nonmatches can be distinguished from UNKNOWN.
 - Reports conform to the bundled schemas.
 - Incomplete scans carry diagnostics.
 - Network restrictions, SSRF prevention, and secret redaction have been checked.

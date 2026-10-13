@@ -841,6 +841,210 @@
         "message"
       ],
       "additionalProperties": false
+    },
+    "eol_rule": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.-]{0,63}$"
+        },
+        "any_of": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": [
+              "DEPRECATED",
+              "ARCHIVED",
+              "RETRACTED",
+              "QUARANTINED",
+              "STALE_RELEASE",
+              "STALE_REPOSITORY",
+              "YANKED"
+            ]
+          },
+          "minItems": 1,
+          "maxItems": 7,
+          "uniqueItems": true
+        },
+        "all_of": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": [
+              "DEPRECATED",
+              "ARCHIVED",
+              "RETRACTED",
+              "QUARANTINED",
+              "STALE_RELEASE",
+              "STALE_REPOSITORY",
+              "YANKED"
+            ]
+          },
+          "minItems": 1,
+          "maxItems": 7,
+          "uniqueItems": true
+        },
+        "ecosystems": {
+          "type": "array",
+          "items": {
+            "enum": [
+              "gem",
+              "npm",
+              "pypi",
+              "maven",
+              "golang",
+              "cargo",
+              "nuget"
+            ]
+          },
+          "minItems": 1,
+          "uniqueItems": true
+        },
+        "packages": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^pkg:"
+          },
+          "minItems": 1,
+          "maxItems": 10000,
+          "uniqueItems": true
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "additionalProperties": false,
+      "oneOf": [
+        {
+          "required": [
+            "any_of"
+          ],
+          "not": {
+            "required": [
+              "all_of"
+            ]
+          }
+        },
+        {
+          "required": [
+            "all_of"
+          ],
+          "not": {
+            "required": [
+              "any_of"
+            ]
+          }
+        }
+      ]
+    },
+    "eol_rule_evaluation": {
+      "type": "object",
+      "properties": {
+        "rule_id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.-]{0,63}$"
+        },
+        "status": {
+          "enum": [
+            "PRESENT",
+            "ABSENT",
+            "UNKNOWN"
+          ]
+        },
+        "matched_signals": {
+          "type": "array",
+          "items": {
+            "enum": [
+              "DEPRECATED",
+              "ARCHIVED",
+              "RETRACTED",
+              "QUARANTINED",
+              "STALE_RELEASE",
+              "STALE_REPOSITORY",
+              "YANKED"
+            ]
+          },
+          "uniqueItems": true
+        },
+        "unknown_signals": {
+          "type": "array",
+          "items": {
+            "enum": [
+              "DEPRECATED",
+              "ARCHIVED",
+              "RETRACTED",
+              "QUARANTINED",
+              "STALE_RELEASE",
+              "STALE_REPOSITORY",
+              "YANKED"
+            ]
+          },
+          "uniqueItems": true
+        },
+        "reason_code": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "rule_id",
+        "status",
+        "matched_signals",
+        "unknown_signals",
+        "reason_code"
+      ],
+      "additionalProperties": false,
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "status": {
+                "const": "UNKNOWN"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "reason_code": {
+                "type": "string",
+                "minLength": 1
+              }
+            }
+          },
+          "else": {
+            "properties": {
+              "reason_code": {
+                "type": "null"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "status": {
+                "const": "PRESENT"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "matched_signals": {
+                "minItems": 1
+              }
+            }
+          }
+        }
+      ]
     }
   }
 }

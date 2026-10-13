@@ -12,13 +12,14 @@ import (
 )
 
 func (r *registry) npm(ctx context.Context, id identity.Identity) (packageSnapshot, error) {
-	s := packageSnapshot{Provider: "npm", URL: config.CleanBase(r.t.Policy().Sources.NPM.BaseURL) + "/" + url.PathEscape(id.Name), Versions: map[string][]release{}, Complete: true}
+	s := packageSnapshot{Provider: "npm", URL: config.CleanBase(r.t.Policy().Sources.NPM.BaseURL) + "/" + url.PathEscape(id.Name), Versions: map[string][]release{}, Repositories: map[string][]repositoryRef{}, Complete: true}
 	var doc struct {
 		Name     string `json:"name"`
 		Versions map[string]struct {
-			Name       string  `json:"name"`
-			Version    string  `json:"version"`
-			Deprecated *string `json:"deprecated"`
+			Name       string          `json:"name"`
+			Version    string          `json:"version"`
+			Deprecated *string         `json:"deprecated"`
+			Repository json.RawMessage `json:"repository"`
 		} `json:"versions"`
 		Time map[string]json.RawMessage `json:"time"`
 	}
@@ -46,6 +47,7 @@ func (r *registry) npm(ctx context.Context, id identity.Identity) (packageSnapsh
 			reason = *v.Deprecated
 		}
 		s.Versions[version] = []release{{PublishedAt: published, Deprecated: model.Ptr(strings.TrimSpace(reason) != ""), Reason: reason}}
+		s.Repositories[version] = repositoryMetadata(v.Repository, s.URL)
 	}
 	// The package timestamp map may retain publication dates for removed
 	// versions. Omitting them could falsely report prolonged inactivity.

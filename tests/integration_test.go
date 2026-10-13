@@ -55,6 +55,15 @@ func TestRuntimeFixtureManifest(t *testing.T) {
 					t.Fatal(reason)
 				}
 				stub.Bodies[strings.TrimPrefix(identity.VersionURL(config.Default().Sources.DepsDev.BaseURL, id), "https://")] = testutil.VersionBody(id.Name, id.Version, model.Text(row.VersionVerification.PublishedAt))
+				if model.Text(row.VersionVerification.ProviderID) == "npm" {
+					deprecations := map[string]string{}
+					for _, signal := range row.Signals {
+						if signal.Type == "DEPRECATED" {
+							deprecations[id.Version], _ = signal.Details["deprecated_reason"].(string)
+						}
+					}
+					npmPackage(t, stub, id.Name, map[string]string{id.Version: model.Text(row.VersionVerification.PublishedAt)}, deprecations)
+				}
 				for _, e := range row.Evidence {
 					if e.ProviderID != "endoflife_date" {
 						continue

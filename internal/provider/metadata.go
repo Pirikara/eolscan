@@ -34,7 +34,9 @@ func registrySignal(kind, ecosystem string) bool {
 		return ecosystem == "npm" || ecosystem == "pypi"
 	case "YANKED":
 		return ecosystem == "pypi" || ecosystem == "gem"
-	case "ARCHIVED", "QUARANTINED":
+	case "ARCHIVED":
+		return ecosystem == "npm" || ecosystem == "pypi" || ecosystem == "gem"
+	case "QUARANTINED":
 		return ecosystem == "pypi"
 	}
 	return false
@@ -56,6 +58,7 @@ func (m *MetadataResolver) Resolve(ctx context.Context, id identity.Identity, as
 		needsNativeSignals = needsNativeSignals || registrySignal(kind, id.Type)
 	}
 	primary := map[string]model.SignalEvaluation{}
+	refs := []repositoryRef{}
 	for _, kind := range requested {
 		primary[kind] = UnknownSignal(kind, "NO_CAPABILITY")
 	}
@@ -69,7 +72,8 @@ func (m *MetadataResolver) Resolve(ctx context.Context, id identity.Identity, as
 		var detail packageSnapshot
 		var detailErr error
 		hasDetail := id.Type == "gem" && id.Platform == "" && err == nil &&
-			(needsNativeVersion && len(pkg.records(id)) == 0 || model.Contains(requested, "YANKED") && missingYankStatus(pkg.records(id)))
+			(needsNativeVersion && len(pkg.records(id)) == 0 || model.Contains(requested, "YANKED") && missingYankStatus(pkg.records(id)) ||
+				p.Sources.GitHub.Enabled && model.Contains(requested, "ARCHIVED"))
 		if hasDetail {
 			detail, detailErr = m.registry.gemVersion(ctx, id)
 			out.Diagnostics = append(out.Diagnostics, ProviderDiagnostics("rubygems", detail.Data.Diagnostics)...)
@@ -83,6 +87,20 @@ func (m *MetadataResolver) Resolve(ctx context.Context, id identity.Identity, as
 		if needsNativeVersion {
 			out.Version = versionPkg.verify(id, asOf, m.t.Now(), versionErr)
 			out.Diagnostics = append(out.Diagnostics, PublicationDiagnostic(versionPkg.Provider, out.Version)...)
+		}
+		if err == nil && pkg.Data.Status == 200 && len(pkg.records(id)) > 0 {
+			refs = append(refs, pkg.Repositories[id.Version]...)
+			if hasDetail && detailErr == nil && detail.Data.Status == 200 {
+				refs = append(refs, detail.Repositories[id.Version]...)
+			}
+			if id.Type == "pypi" && p.Sources.GitHub.Enabled && model.Contains(requested, "ARCHIVED") && pkg.ProjectStatus != "archived" {
+				found, data, repoErr := m.registry.pypiRepositories(ctx, id)
+				refs = append(refs, found...)
+				out.Diagnostics = append(out.Diagnostics, ProviderDiagnostics("pypi", data.Diagnostics)...)
+				if repoErr != nil {
+					out.Diagnostics = append(out.Diagnostics, transport.ErrorDiagnostic("pypi", repoErr))
+				}
+			}
 		}
 		for _, kind := range requested {
 			if !registrySignal(kind, id.Type) {
@@ -102,7 +120,9 @@ func (m *MetadataResolver) Resolve(ctx context.Context, id identity.Identity, as
 	// deps.dev certifies a gem version, but not an exact platform artifact.
 	needsDepsVersion := !terminalVersion(out.Version) && model.Contains(p.VersionVerification.Sources, "deps_dev") && !(id.Type == "gem" && id.Platform != "")
 	needsDepsDeprecated := model.Contains(requested, "DEPRECATED") && primary["DEPRECATED"].Status == "UNKNOWN"
-	if p.Sources.DepsDev.Enabled && (needsDepsVersion || needsDepsDeprecated) {
+	needsDepsRepository := p.Sources.GitHub.Enabled && model.Contains(requested, "ARCHIVED") &&
+		len(refs) == 0 && primary["ARCHIVED"].Status != "PRESENT"
+	if p.Sources.DepsDev.Enabled && (needsDepsVersion || needsDepsDeprecated || needsDepsRepository) {
 		v, data, err := FetchVersion(ctx, m.t, id)
 		out.Diagnostics = append(out.Diagnostics, ProviderDiagnostics("deps_dev", data.Diagnostics)...)
 		if err != nil {
@@ -111,12 +131,23 @@ func (m *MetadataResolver) Resolve(ctx context.Context, id identity.Identity, as
 		if needsDepsVersion {
 			out.Version = VerifyVersion(m.t, id, v, data, err, asOf)
 		}
+		if err == nil && data.Status == 200 {
+			refs = append(refs, v.repositories(identity.VersionURL(p.Sources.DepsDev.BaseURL, id))...)
+		}
 		if model.Contains(requested, "DEPRECATED") {
 			e, evidence := Deprecation(m.t, id, v, data, err)
 			out.Evaluations = append(out.Evaluations, e)
 			if evidence != nil {
 				out.Signals = append(out.Signals, *evidence)
 			}
+		}
+	}
+	if p.Sources.GitHub.Enabled && model.Contains(requested, "ARCHIVED") && primary["ARCHIVED"].Status != "PRESENT" {
+		e, evidence, ds := repositoryArchival(ctx, m.t, refs)
+		out.Evaluations = append(out.Evaluations, e)
+		out.Diagnostics = append(out.Diagnostics, ds...)
+		if evidence != nil {
+			out.Signals = append(out.Signals, *evidence)
 		}
 	}
 	if p.Sources.DepsDev.Enabled && model.Contains(requested, "STALE_RELEASE") && primary["STALE_RELEASE"].Status == "UNKNOWN" {

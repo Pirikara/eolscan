@@ -1,4 +1,4 @@
-# Built-in policy; lifecycle dates are retrieved automatically during online scans.
+# Built-in policy; support dates and configured maintenance rules can establish EOL.
 schema_version: 2
 input:
   include_component_types:
@@ -20,6 +20,10 @@ sources:
   rubygems:
     enabled: true
     base_url: "https://rubygems.org"
+  github:
+    enabled: true
+    base_url: "https://api.github.com"
+    token_env: "EOLSCAN_GITHUB_TOKEN"
   official_catalog:
     enabled: false
     path: null
@@ -48,6 +52,13 @@ notices:
 decision:
   support_scope: "upstream_security"
   max_evidence_age_days: 30
+  use_support_dates: true
+  eol_rules:
+    - id: deprecated
+      any_of: [DEPRECATED]
+      ecosystems: [npm, pypi, nuget]
+    - id: archived
+      any_of: [ARCHIVED]
 network:
   allowed_hosts:
     - "endoflife.date"
@@ -55,6 +66,7 @@ network:
     - "registry.npmjs.org"
     - "pypi.org"
     - "rubygems.org"
+    - "api.github.com"
   timeout_seconds: 8
   retries: 2
   max_concurrency: 6

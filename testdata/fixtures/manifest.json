@@ -16,7 +16,7 @@
   {
     "name": "unreviewed-general-eol",
     "report": "testdata/fixtures/report.unreviewed-general-eol.json",
-    "policy": "examples/eol-policy.example.yaml",
+    "policy": "examples/eol-policy.dates-only.yaml",
     "input": "testdata/fixtures/unreviewed-general-eol.cdx.json",
     "expected_exit": 0
   },
@@ -72,22 +72,36 @@
   {
     "name": "no-components",
     "report": "testdata/fixtures/report.no-components.json",
-    "policy": "examples/eol-policy.example.yaml",
+    "policy": "examples/eol-policy.dates-only.yaml",
     "input": "testdata/fixtures/empty.cdx.json",
     "expected_exit": 3
   },
   {
     "name": "automatic-security-eol",
     "report": "testdata/fixtures/report.automatic-security-eol.json",
-    "policy": "examples/eol-policy.auto-eol.yaml",
+    "policy": "testdata/fixtures/policy.automatic-dates.yaml",
     "input": "testdata/fixtures/reviewed-general-eol.cdx.json",
     "expected_exit": 1
   },
   {
     "name": "automatic-security-future",
     "report": "testdata/fixtures/report.automatic-security-future.json",
-    "policy": "examples/eol-policy.auto-eol.yaml",
+    "policy": "testdata/fixtures/policy.automatic-dates.yaml",
     "input": "testdata/fixtures/future-general-eol.cdx.json",
+    "expected_exit": 0
+  },
+  {
+    "name": "policy-deprecated",
+    "report": "testdata/fixtures/report.policy-deprecated.json",
+    "policy": "testdata/fixtures/policy.eol-rules.yaml",
+    "input": "testdata/fixtures/transitive-leaf.cdx.json",
+    "expected_exit": 1
+  },
+  {
+    "name": "policy-no-eol",
+    "report": "testdata/fixtures/report.policy-no-eol.json",
+    "policy": "testdata/fixtures/policy.eol-rules.yaml",
+    "input": "testdata/fixtures/transitive-leaf.cdx.json",
     "expected_exit": 0
   }
 ]

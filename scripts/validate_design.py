@@ -101,7 +101,7 @@ def policy_hash(policy, catalog, exceptions):
 
 def validate_policy(policy):
     validate_schema(policy, "policy")
-    for provider in ("endoflife_date", "deps_dev", "npm", "pypi", "rubygems"):
+    for provider in ("endoflife_date", "deps_dev", "npm", "pypi", "rubygems", "github"):
         url = urlsplit(policy["sources"][provider]["base_url"])
         ensure(
             url.scheme == "https"
@@ -124,6 +124,13 @@ def validate_policy(policy):
         "STALE_RELEASE" not in policy["ci"]["fail_on_signals"]
         or policy["signals"]["stale_release_days"] is not None,
         "required STALE_RELEASE needs a threshold",
+    )
+    rules = policy["decision"]["eol_rules"]
+    unique([rule["id"] for rule in rules], "EOL rule IDs")
+    ensure(
+        policy["signals"]["stale_release_days"] is not None
+        or not any("STALE_RELEASE" in rule.get("any_of", rule.get("all_of", [])) for rule in rules),
+        "EOL inactivity rules need a threshold",
     )
 
 
@@ -320,6 +327,47 @@ def expected_lifecycle(component, policy, catalog, run_at, as_of):
     return "UNKNOWN", top, conflict
 
 
+def applicable_rules(row, policy):
+    purl = row["purl"] or ""
+    ecosystem = purl.removeprefix("pkg:").split("/", 1)[0]
+    base = purl.rsplit("@", 1)[0] if "@" in purl else purl
+    for rule in policy["decision"]["eol_rules"]:
+        if rule.get("ecosystems") and ecosystem not in rule["ecosystems"]:
+            continue
+        if rule.get("packages") and not any(target in (purl, base) for target in rule["packages"]):
+            continue
+        yield rule
+
+
+def expected_eol_rules(row, policy, run_at, as_of):
+    signals = {evaluation["type"]: evaluation["status"] for evaluation in row["signal_evaluations"]}
+    results = []
+    for rule in applicable_rules(row, policy):
+        matched, unknown = [], []
+        absent = False
+        for kind in rule.get("any_of", rule.get("all_of", [])):
+            status = signals.get(kind, "UNKNOWN")
+            if kind != "STALE_RELEASE" and as_of != run_at.date():
+                status = "UNKNOWN"
+            if status == "PRESENT":
+                matched.append(kind)
+            elif status == "ABSENT":
+                absent = True
+            else:
+                unknown.append(kind)
+        if "any_of" in rule:
+            status = "PRESENT" if matched else "UNKNOWN" if unknown else "ABSENT"
+        else:
+            status = "ABSENT" if absent else "UNKNOWN" if unknown else "PRESENT"
+        reason = None
+        if row["version_verification"]["status"] != "VERIFIED":
+            status, reason = "UNKNOWN", "VERSION_UNVERIFIED"
+        elif status == "UNKNOWN":
+            reason = "STATUS_TIME_UNAVAILABLE" if as_of != run_at.date() else "CONDITION_UNAVAILABLE"
+        results.append(dict(rule_id=rule["id"], status=status, matched_signals=matched, unknown_signals=unknown, reason_code=reason))
+    return results
+
+
 def validate_report(report, policy, catalog, exceptions, input_path):
     validate_schema(report, "report")
     run_at = instant(report["generated_at"])
@@ -341,7 +389,7 @@ def validate_report(report, policy, catalog, exceptions, input_path):
             requested.add(flag.upper())
     if policy["signals"]["stale_release_days"] is not None:
         requested.add("STALE_RELEASE")
-    counts = {"EOL": 0, "SUPPORTED": 0, "UNKNOWN": 0}
+    counts = {"EOL": 0, "SUPPORTED": 0, "NO_EOL_DETECTED": 0, "UNKNOWN": 0}
     failures = 0
     rows = report["results"]
     ensure(
@@ -374,10 +422,32 @@ def validate_report(report, policy, catalog, exceptions, input_path):
                 "NOT_RELEASED_AS_OF must be justified by publication date",
             )
         unique([e["id"] for e in row["evidence"]], "report evidence IDs")
-        expected, top, conflict = expected_lifecycle(row, policy, catalog, run_at, as_of)
-        ensure(row["lifecycle"] == expected, "Lifecycle contradicts eligible highest-tier evidence")
+        support, top, conflict = expected_lifecycle(row, policy, catalog, run_at, as_of)
+        ensure(row["support_assessment"]["lifecycle"] == support, "Support assessment contradicts highest-tier evidence")
+        rule_evaluations = expected_eol_rules(row, policy, run_at, as_of)
+        ensure(row["eol_rule_evaluations"] == rule_evaluations, "EOL rule evaluations contradict their configured conditions")
+        matched_rule = any(item["status"] == "PRESENT" for item in rule_evaluations)
+        unknown_rule = any(item["status"] == "UNKNOWN" for item in rule_evaluations)
+        expected, basis = support, None
+        if support == "EOL" and policy["decision"]["use_support_dates"]:
+            basis = "SUPPORT_DATE"
+        elif matched_rule:
+            expected, basis = "EOL", "POLICY_RULE"
+        elif support == "EOL" or unknown_rule:
+            expected = "UNKNOWN"
+        date_unavailable = policy["decision"]["use_support_dates"] and any(
+            reason in {"SOURCE_ERROR", "CONFLICT", "STALE_EVIDENCE", "AMBIGUOUS_IDENTITY", "AMBIGUOUS_CYCLE"}
+            for reason in row["support_assessment"]["unknown_reasons"]
+        )
+        if expected == "UNKNOWN" and verification["status"] == "VERIFIED" and not unknown_rule and not date_unavailable and (
+            policy["decision"]["eol_rules"] or not policy["decision"]["use_support_dates"]
+        ):
+            expected = "NO_EOL_DETECTED"
+        ensure(row["lifecycle"] == expected and row["eol_basis"] == basis, "Lifecycle contradicts the configured EOL policy")
+        if unknown_rule and basis is None:
+            ensure(row["incomplete"], "unavailable EOL conditions must mark incomplete")
         if conflict and verification["status"] == "VERIFIED":
-            ensure("CONFLICT" in row["unknown_reasons"], "conflict reason is required")
+            ensure("CONFLICT" in row["support_assessment"]["unknown_reasons"], "support conflict reason is required")
         selected = [
             e for e in row["evidence"] if e["id"] in row["selected_evidence_ids"]
         ]
@@ -385,7 +455,7 @@ def validate_report(report, policy, catalog, exceptions, input_path):
             len(selected) == len(row["selected_evidence_ids"]),
             "selected evidence ID does not exist",
         )
-        if expected != "UNKNOWN":
+        if expected in ("EOL", "SUPPORTED") and basis != "POLICY_RULE":
             ensure(all(e in top for e in selected), "selected evidence must belong to top tier")
             ensure(
                 all(e["eol_effective_date"] == row["eol_effective_date"] for e in selected),
@@ -416,8 +486,11 @@ def validate_report(report, policy, catalog, exceptions, input_path):
                 "notice date or threshold is inconsistent",
             )
         evaluations = row["signal_evaluations"]
+        component_requested = requested.copy()
+        for rule in applicable_rules(row, policy):
+            component_requested.update(rule.get("any_of", rule.get("all_of", [])))
         unique([item["type"] for item in evaluations], "signal evaluation types")
-        ensure({item["type"] for item in evaluations} == requested, "requested signal evaluation is missing")
+        ensure({item["type"] for item in evaluations} == component_requested, "requested signal evaluation is missing")
         for evaluation in evaluations:
             present = any(e["type"] == evaluation["type"] for e in row["signals"])
             if evaluation["status"] == "PRESENT":
@@ -453,9 +526,9 @@ def validate_report(report, policy, catalog, exceptions, input_path):
         failures += row["ci_failure"]
     summary = report["summary"]
     ensure(summary["in_scope"] == len(rows), "in_scope must count result components")
-    for status, key in (("EOL", "eol"), ("SUPPORTED", "supported"), ("UNKNOWN", "unknown")):
+    for status, key in (("EOL", "eol"), ("SUPPORTED", "supported"), ("NO_EOL_DETECTED", "no_eol_detected"), ("UNKNOWN", "unknown")):
         ensure(summary[key] == counts[status], f"{key} count is inconsistent")
-    coverage = (counts["EOL"] + counts["SUPPORTED"]) / len(rows) if rows else 0
+    coverage = (counts["EOL"] + counts["SUPPORTED"] + counts["NO_EOL_DETECTED"]) / len(rows) if rows else 0
     ensure(math.isclose(summary["assessment_coverage"], coverage), "coverage is inconsistent")
     ensure(summary["ci_failure_count"] == failures, "CI failure count is inconsistent")
     incomplete = not rows or any(row["incomplete"] for row in rows)
@@ -599,6 +672,26 @@ def run():
     rejected(
         "empty scan cannot pass CI",
         lambda: change_report("no-components", lambda r: r["ci_gate"].update(passed=True, incomplete=False, violation_codes=[])),
+    )
+    rejected(
+        "policy EOL cannot fabricate a support end date",
+        lambda: change_report("policy-deprecated", lambda r: r["results"][0].update(eol_effective_date="2026-10-01")),
+    )
+    rejected(
+        "policy EOL requires a matched rule",
+        lambda: change_report("policy-deprecated", lambda r: r["results"][0]["eol_rule_evaluations"][0].update(status="ABSENT")),
+    )
+    rejected(
+        "rule inputs cannot be omitted",
+        lambda: change_report("policy-deprecated", lambda r: r["results"][0].update(signal_evaluations=[])),
+    )
+    rejected(
+        "completed nonmatch cannot hide positive evidence",
+        lambda: change_report("policy-deprecated", lambda r: r["results"][0].update(lifecycle="NO_EOL_DETECTED", confidence=None, eol_basis=None)),
+    )
+    rejected(
+        "completed nonmatch requires publication proof",
+        lambda: change_report("policy-no-eol", lambda r: r["results"][0]["version_verification"].update(published_at=None)),
     )
 
     for label, modify in (

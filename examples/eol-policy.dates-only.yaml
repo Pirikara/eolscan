@@ -1,0 +1,5 @@
+# Use support dates as the only EOL criterion.
+schema_version: 2
+decision:
+  use_support_dates: true
+  eol_rules: []

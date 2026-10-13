@@ -99,6 +99,7 @@ func Validate(p model.Policy) error {
 	for _, source := range []model.RegistryPolicy{
 		{Enabled: p.Sources.EndoflifeDate.Enabled, BaseURL: p.Sources.EndoflifeDate.BaseURL},
 		{Enabled: p.Sources.DepsDev.Enabled, BaseURL: p.Sources.DepsDev.BaseURL},
+		{Enabled: p.Sources.GitHub.Enabled, BaseURL: p.Sources.GitHub.BaseURL},
 		p.Sources.NPM, p.Sources.PyPI, p.Sources.RubyGems,
 	} {
 		raw := source.BaseURL
@@ -120,6 +121,24 @@ func Validate(p model.Policy) error {
 	}
 	if model.Contains(p.CI.FailOnSignals, "STALE_RELEASE") && p.Signals.StaleReleaseDays == nil {
 		return fmt.Errorf("CI requires STALE_RELEASE but stale_release_days is null")
+	}
+	ids := map[string]bool{}
+	for _, rule := range p.Decision.EOLRules {
+		if ids[rule.ID] {
+			return fmt.Errorf("decision.eol_rules requires unique rule IDs")
+		}
+		ids[rule.ID] = true
+		if model.Contains(rule.Conditions(), "STALE_RELEASE") && p.Signals.StaleReleaseDays == nil {
+			return fmt.Errorf("EOL rule %s requires a non-null stale_release_days", rule.ID)
+		}
+		for _, raw := range rule.Packages {
+			if _, err := identity.Base(raw); err == nil {
+				continue
+			}
+			if _, reason := identity.Resolve(model.Component{PURL: raw}); reason != "" {
+				return fmt.Errorf("EOL rule %s requires exact public package PURLs", rule.ID)
+			}
+		}
 	}
 	// Bound arithmetic, channel sizes and retries even for a hand-edited policy.
 	if p.Network.MaxConcurrency > 256 || p.Network.Retries > 10 || p.Network.TimeoutSeconds > 3600 ||
@@ -211,6 +230,40 @@ func LoadBundle(p model.Policy, configPath string) (model.PolicyBundle, error) {
 func safeEvidenceIdentity(id identity.Identity) bool { return id.PURL != "" && id.System != "" }
 
 func RequestedSignals(p model.Policy) []string {
+	return requestedSignals(p, p.Decision.EOLRules)
+}
+
+// EOL rules require their inputs even when an optional report signal is off.
+// Package scopes avoid querying conditions that cannot affect this component.
+func RequestedSignalsForPackage(p model.Policy, id identity.Identity) []string {
+	return requestedSignals(p, ApplicableEOLRules(p, id))
+}
+
+func ApplicableEOLRules(p model.Policy, id identity.Identity) []model.EOLRule {
+	out := []model.EOLRule{}
+	for _, rule := range p.Decision.EOLRules {
+		if len(rule.Ecosystems) > 0 && !model.Contains(rule.Ecosystems, id.Type) {
+			continue
+		}
+		if len(rule.Packages) > 0 {
+			matched := false
+			for _, raw := range rule.Packages {
+				if base, err := identity.Base(raw); err == nil {
+					matched = matched || base == id.BasePURL
+				} else if target, reason := identity.Resolve(model.Component{PURL: raw}); reason == "" {
+					matched = matched || target.PURL == id.PURL
+				}
+			}
+			if !matched {
+				continue
+			}
+		}
+		out = append(out, rule)
+	}
+	return out
+}
+
+func requestedSignals(p model.Policy, rules []model.EOLRule) []string {
 	out := append([]string{}, p.CI.FailOnSignals...)
 	if p.Signals.Deprecated {
 		out = model.AddUnique(out, "DEPRECATED")
@@ -227,6 +280,11 @@ func RequestedSignals(p model.Policy) []string {
 	}
 	if p.Signals.StaleReleaseDays != nil {
 		out = model.AddUnique(out, "STALE_RELEASE")
+	}
+	for _, rule := range rules {
+		for _, kind := range rule.Conditions() {
+			out = model.AddUnique(out, kind)
+		}
 	}
 	// Stable order independent of configuration order.
 	return model.SortedStrings(out)

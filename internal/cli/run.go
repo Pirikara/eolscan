@@ -31,12 +31,15 @@ eolscan policy validate --config policy.yaml
 eolscan providers list
 eolscan version
 
-CycloneDX JSON 1.4–1.7 / SPDX 2.3; config 2 / report 2.3.
+CycloneDX JSON 1.4–1.7 / SPDX 2.3; config 2 / report 2.4.
 Online scans send public package identities to configured registries,
-endoflife.date, and deps.dev.
+endoflife.date, deps.dev, and GitHub for publisher-declared source repositories.
 --offline makes no HTTP requests. Disk cache is disabled by default.
 Default CI fails on EOL/HIGH; UNKNOWN and incomplete remain visible.
-Security end dates explicitly labelled by endoflife.date establish EOL/MEDIUM.
+EOL is determined by support dates and decision.eol_rules (any_of / all_of).
+Default maintenance rules classify DEPRECATED or ARCHIVED as EOL/MEDIUM.
+Rules require their inputs even when optional signal collection is disabled.
+NO_EOL_DETECTED means completed checks did not match the configured criteria.
 Lifecycle data is fetched automatically; no fixed product catalog is bundled.
 Generic EOL dates alone do not confirm EOL. Empty scans exit 3;
 interrupted scans exit 130. Cancellation during input or provider work
@@ -265,6 +268,9 @@ func Run(ctx context.Context, args []string, stdin io.Reader, stdout, stderr io.
 	}
 	if code := contextExit(ctx, stderr); code != 0 {
 		return code
+	}
+	if report.Summary.EOL > 0 {
+		fmt.Fprintf(stderr, "WARNING: %d component(s) classified as EOL under the configured policy; see eol_basis and matched rules in the report.\n", report.Summary.EOL)
 	}
 	return reporting.ExitCode(report)
 }

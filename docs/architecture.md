@@ -11,8 +11,8 @@ eolscan is a single-binary Go CLI. The entry point is `cmd/eolscan/main.go`; imp
 | `internal/scanner` | Coordinate providers, evaluate each component, apply exceptions and CI conditions, and aggregate results. |
 | `internal/sbom` | Parse supported SBOM formats with size, depth, and component limits. |
 | `internal/identity` | Normalize exact PURLs and resolve release series. |
-| `internal/lifecycle` | Evaluate evidence tiers, conflicts, support dates, notices, and signal aggregation without network or file access. |
-| `internal/provider` | Convert catalogs, native registries, deps.dev, and endoflife.date data into evidence, version proofs, and signals; resolve metadata fallback. |
+| `internal/lifecycle` | Evaluate evidence tiers, conflicts, support dates, configurable EOL rules, notices, and signal aggregation without network or file access. |
+| `internal/provider` | Convert catalogs, native registries, deps.dev, GitHub, and endoflife.date data into evidence, version proofs, and signals; resolve metadata fallback. |
 | `internal/transport` | Enforce HTTPS and allowed hosts; handle concurrency, host rate budgets, shared cooldowns, retries, memoization, and optional disk caching. |
 | `internal/config` | Load and validate policies, catalogs, reviews, and exceptions. |
 | `internal/contract` | Validate embedded JSON schemas; decode YAML safely; produce canonical JSON and hashes. |
@@ -43,6 +43,9 @@ flowchart TD
     sbom --> contract
     report --> contract
     report --> config
+    report --> lifecycle
+    lifecycle --> config
+    lifecycle --> provider
     transport --> contract
     transport --> fileio
     cli --> fileio
@@ -51,7 +54,7 @@ flowchart TD
 
 Application packages share types through `model`. The entry point owns process signals and exit; the CLI receives a context, I/O streams, HTTP client, and execution timestamp. Tests can inject these dependencies without changing global state.
 
-Providers collect and normalize data. Lifecycle evaluation decides support status. The scanner combines results and applies CI policy. Provider errors remain evidence or diagnostics rather than silently becoming negative evaluations.
+Providers collect and normalize data. Lifecycle evaluation first derives formal support status, then applies the configured EOL criteria to maintenance facts. The scanner aggregates the policy classification and applies CI conditions. Provider errors remain evidence or diagnostics rather than silently becoming negative evaluations.
 
 The parser excludes only the metadata subject when configured to do so; nested components are independently filtered. Zero components in scope produce a validated failed report with `NO_COMPONENTS`. Scanner job dispatch and workers observe cancellation, and cancelled scans return no report. The CLI interrupts blocked stdin reads; the process entry point bounds shutdown even if file or output I/O is blocked. Interruptions exit 130.
 
@@ -65,9 +68,15 @@ The endoflife.date adapter loads an exact PURL index, then matched product detai
 
 The native registry loader shares an immutable parsed package snapshot across all SBOM versions and platforms of that package. It filters RubyGems publication proof by an explicit platform qualifier. Providers produce maintenance facts independently of lifecycle evidence. See [registry sources](registries.md) for the supported negative-evidence rules.
 
+### EOL rule evaluation
+
+`lifecycle.EvaluateEOLRules` preserves the formal conclusion in `support_assessment`, evaluates scoped AND/OR rules using three-valued logic, and classifies a matching dependency as EOL. Policy-derived EOL has MEDIUM confidence and no fabricated end date. Completed unmatched evaluations can produce NO_EOL_DETECTED; unresolved required conditions remain UNKNOWN and incomplete. The report validator recomputes rule outcomes from the retained facts. See [EOL criteria](eol-rules.md).
+
+GitHub discovery uses native exact-version source links or deps.dev SOURCE_REPO mappings. The provider verifies the API response identity, including stable-ID redirects for renamed repositories, and retains mapping provenance. Registry archival and source-repository archival are separate scopes whose positive findings both satisfy ARCHIVED.
+
 ### Request scheduling
 
-One shared transport owns a semaphore and token buckets keyed by hostname. It acquires a token after acquiring an HTTP slot, so requests cannot accumulate reservations and start in a burst when slots become free. Redirects and retries also consume tokens. HTTP 429/503 extends a shared host cooldown; an excessive wait returns a diagnostic instead of retrying early.
+One shared transport owns a semaphore and token buckets keyed by hostname. It acquires a token after acquiring an HTTP slot, so requests cannot accumulate reservations and start in a burst when slots become free. Redirects and retries also consume tokens. HTTP 429/503 and GitHub quota-related 403 responses extend a shared host cooldown; an excessive wait returns a diagnostic instead of retrying early.
 
 The run timestamp is fixed for evidence, cache age, and expiry. A separate live clock schedules rate limits and parses HTTP-date `Retry-After` values. Tests inject a clock, cancellable wait, and retry jitter. Memoization and disk keys distinguish the ordinary JSON representation from PyPI's vendor JSON media type.
 

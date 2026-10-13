@@ -143,6 +143,25 @@ type Diagnostic struct {
 	Message    string  `json:"message"`
 }
 
+// The support conclusion is retained even when an organization elects to
+// classify a maintenance finding as EOL through its policy.
+type SupportAssessment struct {
+	Lifecycle           string   `json:"lifecycle"`
+	Confidence          *string  `json:"confidence"`
+	EOLEffectiveDate    *string  `json:"eol_effective_date"`
+	MatchedCycle        *string  `json:"matched_cycle"`
+	SelectedEvidenceIDs []string `json:"selected_evidence_ids"`
+	UnknownReasons      []string `json:"unknown_reasons"`
+}
+
+type EOLRuleEvaluation struct {
+	RuleID         string   `json:"rule_id"`
+	Status         string   `json:"status"`
+	MatchedSignals []string `json:"matched_signals"`
+	UnknownSignals []string `json:"unknown_signals"`
+	ReasonCode     *string  `json:"reason_code"`
+}
+
 type ComponentResult struct {
 	SourceRef           string              `json:"source_ref"`
 	PURL                *string             `json:"purl"`
@@ -150,6 +169,9 @@ type ComponentResult struct {
 	Version             *string             `json:"version"`
 	VersionVerification VersionVerification `json:"version_verification"`
 	Lifecycle           string              `json:"lifecycle"`
+	SupportAssessment   SupportAssessment   `json:"support_assessment"`
+	EOLBasis            *string             `json:"eol_basis"`
+	EOLRuleEvaluations  []EOLRuleEvaluation `json:"eol_rule_evaluations"`
 	Confidence          *string             `json:"confidence"`
 	EOLEffectiveDate    *string             `json:"eol_effective_date"`
 	MatchedCycle        *string             `json:"matched_cycle"`
@@ -172,6 +194,7 @@ type Summary struct {
 	EOL                int     `json:"eol"`
 	Supported          int     `json:"supported"`
 	Unknown            int     `json:"unknown"`
+	NoEOLDetected      int     `json:"no_eol_detected"`
 	AssessmentCoverage float64 `json:"assessment_coverage"`
 	ProviderErrorCount int     `json:"provider_error_count"`
 	CIFailureCount     int     `json:"ci_failure_count"`

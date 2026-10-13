@@ -107,7 +107,7 @@ func TestPyPIProjectStatusAndMissingInformation(t *testing.T) {
 		{"deprecated", "PRESENT", "ABSENT", "ABSENT", false},
 		{"archived", "ABSENT", "PRESENT", "ABSENT", false},
 		{"quarantined", "ABSENT", "ABSENT", "PRESENT", false},
-		{"", "UNKNOWN", "UNKNOWN", "UNKNOWN", true},
+		{"", "ABSENT", "ABSENT", "ABSENT", false},
 		{"future-status", "UNKNOWN", "UNKNOWN", "UNKNOWN", true},
 	} {
 		t.Run(tc.status, func(t *testing.T) {

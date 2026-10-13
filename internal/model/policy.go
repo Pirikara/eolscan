@@ -13,15 +13,37 @@ type RegistryPolicy struct {
 	BaseURL string `json:"base_url"`
 }
 
+// EOLRule combines positive maintenance findings. Rules are ORed together;
+// exactly one of AnyOf and AllOf is configured within each rule.
+type EOLRule struct {
+	ID         string   `json:"id"`
+	AnyOf      []string `json:"any_of,omitempty"`
+	AllOf      []string `json:"all_of,omitempty"`
+	Ecosystems []string `json:"ecosystems,omitempty"`
+	Packages   []string `json:"packages,omitempty"`
+}
+
+func (r EOLRule) Conditions() []string {
+	if len(r.AnyOf) > 0 {
+		return r.AnyOf
+	}
+	return r.AllOf
+}
+
 type RateLimit struct {
 	RequestsPerSecond float64 `json:"requests_per_second"`
 	Burst             int     `json:"burst"`
 }
 
 type SourcePolicy struct {
-	NPM             RegistryPolicy `json:"npm"`
-	PyPI            RegistryPolicy `json:"pypi"`
-	RubyGems        RegistryPolicy `json:"rubygems"`
+	NPM      RegistryPolicy `json:"npm"`
+	PyPI     RegistryPolicy `json:"pypi"`
+	RubyGems RegistryPolicy `json:"rubygems"`
+	GitHub   struct {
+		Enabled  bool   `json:"enabled"`
+		BaseURL  string `json:"base_url"`
+		TokenEnv string `json:"token_env"`
+	} `json:"github"`
 	OfficialCatalog struct {
 		Enabled bool    `json:"enabled"`
 		Path    *string `json:"path"`
@@ -57,8 +79,10 @@ type Policy struct {
 		EOLSoonDays int `json:"eol_soon_days"`
 	} `json:"notices"`
 	Decision struct {
-		SupportScope       string `json:"support_scope"`
-		MaxEvidenceAgeDays int    `json:"max_evidence_age_days"`
+		SupportScope       string    `json:"support_scope"`
+		MaxEvidenceAgeDays int       `json:"max_evidence_age_days"`
+		UseSupportDates    bool      `json:"use_support_dates"`
+		EOLRules           []EOLRule `json:"eol_rules"`
 	} `json:"decision"`
 	Network struct {
 		AllowedHosts      []string             `json:"allowed_hosts"`

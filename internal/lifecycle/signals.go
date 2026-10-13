@@ -38,6 +38,20 @@ func AggregateSignals(requested []string, evaluations []model.SignalEvaluation, 
 			}
 		}
 		switch {
+		// Registry project markers and source-repository archival are different
+		// scopes. A positive in either scope satisfies the ARCHIVED condition.
+		// A negative in one scope cannot hide an unavailable check in the other.
+		case kind == "ARCHIVED" && len(positive) > 0:
+			out = append(out, positive[0])
+		case kind == "ARCHIVED" && len(negative) > 0:
+			chosen := negative[0]
+			for _, unavailable := range unknown {
+				if model.Text(unavailable.ReasonCode) != "NO_CAPABILITY" {
+					chosen = unavailable
+					break
+				}
+			}
+			out = append(out, chosen)
 		case len(positive) > 0 && len(negative) > 0:
 			out = append(out, provider.UnknownSignal(kind, "SIGNAL_CONFLICT"))
 			ds = append(ds, model.NewDiagnostic("SIGNAL_CONFLICT", "", "Equivalent providers disagree on signal "+kind))

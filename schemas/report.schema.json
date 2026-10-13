@@ -4,7 +4,7 @@
   "type": "object",
   "properties": {
     "schema_version": {
-      "const": "2.3"
+      "const": "2.4"
     },
     "tool_version": {
       "type": "string",
@@ -64,6 +64,10 @@
         "ci_failure_count": {
           "type": "integer",
           "minimum": 0
+        },
+        "no_eol_detected": {
+          "type": "integer",
+          "minimum": 0
         }
       },
       "required": [
@@ -74,7 +78,8 @@
         "unknown",
         "assessment_coverage",
         "provider_error_count",
-        "ci_failure_count"
+        "ci_failure_count",
+        "no_eol_detected"
       ],
       "additionalProperties": false
     },
@@ -176,7 +181,8 @@
             "enum": [
               "EOL",
               "SUPPORTED",
-              "UNKNOWN"
+              "UNKNOWN",
+              "NO_EOL_DETECTED"
             ]
           },
           "confidence": {
@@ -265,7 +271,9 @@
                 "CONFLICT",
                 "SOURCE_ERROR",
                 "SECURITY_END_ONLY",
-                "SECURITY_SCOPE_UNCONFIRMED"
+                "SECURITY_SCOPE_UNCONFIRMED",
+                "EOL_RULE_UNRESOLVED",
+                "SUPPORT_DATES_DISABLED"
               ]
             },
             "uniqueItems": true
@@ -298,6 +306,191 @@
           },
           "exception_applied": {
             "type": "boolean"
+          },
+          "support_assessment": {
+            "type": "object",
+            "properties": {
+              "lifecycle": {
+                "type": "string",
+                "enum": [
+                  "EOL",
+                  "SUPPORTED",
+                  "UNKNOWN"
+                ]
+              },
+              "confidence": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "enum": [
+                      "HIGH",
+                      "MEDIUM"
+                    ]
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "eol_effective_date": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "format": "date"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "matched_cycle": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "selected_evidence_ids": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "uniqueItems": true
+              },
+              "unknown_reasons": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "enum": [
+                    "MISSING_PURL",
+                    "INVALID_PURL",
+                    "VERSION_UNRESOLVED",
+                    "VERSION_CONFLICT",
+                    "VERSION_NOT_FOUND_IN_INDEX",
+                    "VERSION_UNVERIFIED",
+                    "NOT_RELEASED_AS_OF",
+                    "PUBLICATION_IN_FUTURE",
+                    "PRIVATE_SOURCE_UNSUPPORTED",
+                    "UNSUPPORTED_ECOSYSTEM",
+                    "AMBIGUOUS_IDENTITY",
+                    "AMBIGUOUS_CYCLE",
+                    "GENERAL_EOL_ONLY",
+                    "GENERAL_EOL_UNREVIEWED",
+                    "NO_LIFECYCLE_EVIDENCE",
+                    "STALE_EVIDENCE",
+                    "CONFLICT",
+                    "SOURCE_ERROR",
+                    "SECURITY_END_ONLY",
+                    "SECURITY_SCOPE_UNCONFIRMED",
+                    "EOL_RULE_UNRESOLVED",
+                    "SUPPORT_DATES_DISABLED"
+                  ]
+                },
+                "uniqueItems": true
+              }
+            },
+            "required": [
+              "lifecycle",
+              "confidence",
+              "eol_effective_date",
+              "matched_cycle",
+              "selected_evidence_ids",
+              "unknown_reasons"
+            ],
+            "additionalProperties": false,
+            "allOf": [
+              {
+                "if": {
+                  "properties": {
+                    "lifecycle": {
+                      "const": "UNKNOWN"
+                    }
+                  }
+                },
+                "then": {
+                  "properties": {
+                    "confidence": {
+                      "type": "null"
+                    },
+                    "eol_effective_date": {
+                      "type": "null"
+                    },
+                    "matched_cycle": {
+                      "type": "null"
+                    },
+                    "unknown_reasons": {
+                      "minItems": 1
+                    },
+                    "selected_evidence_ids": {
+                      "maxItems": 0
+                    }
+                  }
+                },
+                "else": {
+                  "properties": {
+                    "confidence": {
+                      "type": "string",
+                      "enum": [
+                        "HIGH",
+                        "MEDIUM"
+                      ]
+                    },
+                    "eol_effective_date": {
+                      "type": "string",
+                      "format": "date"
+                    },
+                    "matched_cycle": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "unknown_reasons": {
+                      "maxItems": 0
+                    },
+                    "selected_evidence_ids": {
+                      "minItems": 1
+                    }
+                  }
+                }
+              },
+              {
+                "if": {
+                  "properties": {
+                    "lifecycle": {
+                      "const": "SUPPORTED"
+                    }
+                  }
+                },
+                "then": {
+                  "properties": {
+                    "confidence": {
+                      "const": "HIGH"
+                    }
+                  }
+                },
+                "else": {
+                  "properties": {}
+                }
+              }
+            ]
+          },
+          "eol_basis": {
+            "enum": [
+              "SUPPORT_DATE",
+              "POLICY_RULE",
+              null
+            ]
+          },
+          "eol_rule_evaluations": {
+            "type": "array",
+            "items": {
+              "$ref": "urn:eolscan:schema:2:common#/$defs/eol_rule_evaluation"
+            },
+            "maxItems": 128
           }
         },
         "required": [
@@ -320,7 +513,10 @@
           "diagnostics",
           "incomplete",
           "ci_failure",
-          "exception_applied"
+          "exception_applied",
+          "support_assessment",
+          "eol_basis",
+          "eol_rule_evaluations"
         ],
         "additionalProperties": false,
         "allOf": [
@@ -328,7 +524,10 @@
             "if": {
               "properties": {
                 "lifecycle": {
-                  "const": "UNKNOWN"
+                  "enum": [
+                    "UNKNOWN",
+                    "NO_EOL_DETECTED"
+                  ]
                 }
               }
             },
@@ -342,9 +541,6 @@
                 },
                 "matched_cycle": {
                   "type": "null"
-                },
-                "unknown_reasons": {
-                  "minItems": 1
                 },
                 "selected_evidence_ids": {
                   "maxItems": 0
@@ -371,22 +567,8 @@
                     "MEDIUM"
                   ]
                 },
-                "eol_effective_date": {
-                  "type": "string",
-                  "format": "date"
-                },
-                "matched_cycle": {
-                  "type": "string",
-                  "minLength": 1
-                },
                 "unknown_reasons": {
                   "maxItems": 0
-                },
-                "selected_evidence_ids": {
-                  "minItems": 1
-                },
-                "evidence": {
-                  "minItems": 1
                 },
                 "version_verification": {
                   "properties": {
@@ -417,6 +599,146 @@
               "properties": {
                 "notices": {
                   "maxItems": 0
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "eol_basis": {
+                  "const": "POLICY_RULE"
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "lifecycle": {
+                  "const": "EOL"
+                },
+                "confidence": {
+                  "const": "MEDIUM"
+                },
+                "eol_effective_date": {
+                  "type": "null"
+                },
+                "matched_cycle": {
+                  "type": "null"
+                },
+                "selected_evidence_ids": {
+                  "maxItems": 0
+                },
+                "eol_rule_evaluations": {
+                  "contains": {
+                    "properties": {
+                      "status": {
+                        "const": "PRESENT"
+                      }
+                    },
+                    "required": [
+                      "status"
+                    ]
+                  },
+                  "minContains": 1
+                }
+              }
+            },
+            "else": {
+              "if": {
+                "properties": {
+                  "lifecycle": {
+                    "enum": [
+                      "EOL",
+                      "SUPPORTED"
+                    ]
+                  }
+                }
+              },
+              "then": {
+                "properties": {
+                  "eol_effective_date": {
+                    "type": "string",
+                    "format": "date"
+                  },
+                  "matched_cycle": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "selected_evidence_ids": {
+                    "minItems": 1
+                  },
+                  "evidence": {
+                    "minItems": 1
+                  }
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "lifecycle": {
+                  "const": "EOL"
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "eol_basis": {
+                  "enum": [
+                    "SUPPORT_DATE",
+                    "POLICY_RULE"
+                  ]
+                }
+              }
+            },
+            "else": {
+              "properties": {
+                "eol_basis": {
+                  "type": "null"
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "lifecycle": {
+                  "const": "UNKNOWN"
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "unknown_reasons": {
+                  "minItems": 1
+                }
+              }
+            },
+            "else": {
+              "properties": {
+                "unknown_reasons": {
+                  "maxItems": 0
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "lifecycle": {
+                  "const": "NO_EOL_DETECTED"
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "version_verification": {
+                  "properties": {
+                    "status": {
+                      "const": "VERIFIED"
+                    }
+                  }
                 }
               }
             }

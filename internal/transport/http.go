@@ -13,6 +13,7 @@ import (
 	"net/url"
 	"os"
 	"path/filepath"
+	"strconv"
 	"strings"
 	"sync"
 	"sync/atomic"
@@ -31,6 +32,7 @@ type HTTPData struct {
 	Body        []byte
 	ObservedAt  string
 	ETag        string
+	ResolvedURL string
 	Diagnostics []model.Diagnostic
 }
 
@@ -74,22 +76,24 @@ type diskRecord struct {
 	BodyHash      string `json:"body_hash"`
 	ObservedAt    string `json:"observed_at"`
 	ETag          string `json:"etag"`
+	ResolvedURL   string `json:"resolved_url,omitempty"`
 }
 
 type Transport struct {
-	client    *http.Client
-	p         model.Policy
-	now       time.Time
-	offline   bool
-	cacheDir  string
-	sem       chan struct{}
-	mu        sync.Mutex
-	memo      map[string]*requestMemo
-	wait      func(context.Context, time.Duration) error
-	clock     func() time.Time
-	jitter    func(time.Duration) time.Duration
-	hosts     map[string]*hostBudget
-	cacheHits atomic.Int64
+	client      *http.Client
+	p           model.Policy
+	now         time.Time
+	offline     bool
+	cacheDir    string
+	sem         chan struct{}
+	mu          sync.Mutex
+	memo        map[string]*requestMemo
+	wait        func(context.Context, time.Duration) error
+	clock       func() time.Time
+	jitter      func(time.Duration) time.Duration
+	hosts       map[string]*hostBudget
+	cacheHits   atomic.Int64
+	githubToken string
 }
 
 func New(client *http.Client, p model.Policy, now time.Time, offline bool, options ...TransportOption) *Transport {
@@ -101,6 +105,11 @@ func New(client *http.Client, p model.Policy, now time.Time, offline bool, optio
 	for _, option := range options {
 		option(t)
 	}
+	// Authentication is opt-in through a named environment variable. Never
+	// send that value to a custom mirror or include it in policy/cache data.
+	if p.Sources.GitHub.Enabled && strings.TrimRight(p.Sources.GitHub.BaseURL, "/") == "https://api.github.com" {
+		t.githubToken = os.Getenv(p.Sources.GitHub.TokenEnv)
+	}
 	previous := c.CheckRedirect
 	c.CheckRedirect = func(req *http.Request, via []*http.Request) error {
 		if len(via) >= 5 {
@@ -108,7 +117,7 @@ func New(client *http.Client, p model.Policy, now time.Time, offline bool, optio
 		}
 		first := via[0].URL
 		if !AllowedURL(req.URL, p) || req.URL.Host != first.Host || req.URL.Scheme != first.Scheme ||
-			!strings.HasPrefix(req.URL.Path, redirectPrefix(first.Path)) {
+			!allowedRedirectPath(first.Path, req.URL.Path) {
 			return &LookupError{Code: "UNSAFE_PROVIDER_URL"}
 		}
 		if previous != nil {
@@ -121,7 +130,27 @@ func New(client *http.Client, p model.Policy, now time.Time, offline bool, optio
 	return t
 }
 
+func allowedRedirectPath(first, target string) bool {
+	if i := strings.Index(first, "/repos/"); i >= 0 {
+		prefix := first[:i]
+		if strings.HasPrefix(target, prefix+"/repos/") {
+			return true
+		}
+		// GitHub redirects transferred/renamed repositories to their stable
+		// numeric ID endpoint. The provider verifies this ID against the body.
+		if suffix, ok := strings.CutPrefix(target, prefix+"/repositories/"); ok {
+			id, err := strconv.ParseUint(suffix, 10, 63)
+			return err == nil && id > 0
+		}
+		return false
+	}
+	return strings.HasPrefix(target, redirectPrefix(first))
+}
+
 func redirectPrefix(path string) string {
+	if strings.HasPrefix(path, "/repos/") {
+		return "/repos/"
+	}
 	if i := strings.Index(path, "/products/"); i >= 0 {
 		return path[:i] + "/products/"
 	}
@@ -236,7 +265,7 @@ func (t *Transport) cached(raw string) (HTTPData, bool, bool) {
 		return HTTPData{}, false, false
 	}
 	age := t.now.Sub(at).Hours()
-	data := HTTPData{Status: record.Status, Body: record.Body, ObservedAt: record.ObservedAt, ETag: record.ETag, Diagnostics: []model.Diagnostic{}}
+	data := HTTPData{Status: record.Status, Body: record.Body, ObservedAt: record.ObservedAt, ETag: record.ETag, ResolvedURL: record.ResolvedURL, Diagnostics: []model.Diagnostic{}}
 	if age/24 > float64(t.p.Decision.MaxEvidenceAgeDays) {
 		data.Diagnostics = append(data.Diagnostics, model.NewDiagnostic("STALE_EVIDENCE", "", "Disk cache exceeds maximum evidence age"))
 		return data, false, false
@@ -273,7 +302,7 @@ func (t *Transport) save(raw string, data HTTPData) error {
 	if err := os.Chmod(filepath.Dir(path), 0700); err != nil {
 		return err
 	}
-	record := diskRecord{SchemaVersion: "2.0", URL: raw, Status: data.Status, Body: data.Body, BodyHash: contract.Digest(data.Body), ObservedAt: data.ObservedAt, ETag: data.ETag}
+	record := diskRecord{SchemaVersion: "2.0", URL: raw, Status: data.Status, Body: data.Body, BodyHash: contract.Digest(data.Body), ObservedAt: data.ObservedAt, ETag: data.ETag, ResolvedURL: data.ResolvedURL}
 	b, err := json.Marshal(record)
 	if err != nil {
 		return err
@@ -325,6 +354,13 @@ func (t *Transport) fetch(ctx context.Context, raw, key, accept string) (HTTPDat
 		}
 		req.Header.Set("Accept", accept)
 		req.Header.Set("User-Agent", "eolscan/"+version.Current)
+		github := u.Scheme == "https" && u.Host == "api.github.com" && strings.HasPrefix(u.Path, "/repos/")
+		if github {
+			req.Header.Set("X-GitHub-Api-Version", "2026-03-10")
+			if t.githubToken != "" {
+				req.Header.Set("Authorization", "Bearer "+t.githubToken)
+			}
+		}
 		if exists && cached.ETag != "" {
 			req.Header.Set("If-None-Match", cached.ETag)
 		}
@@ -356,7 +392,19 @@ func (t *Transport) fetch(ctx context.Context, raw, key, accept string) (HTTPDat
 			if resp.StatusCode == 429 || resp.StatusCode == 503 {
 				t.coolDown(u.Hostname(), delay, resp.StatusCode)
 			}
-			data = HTTPData{Status: resp.StatusCode, ObservedAt: model.Timestamp(t.now), ETag: resp.Header.Get("ETag"), Diagnostics: []model.Diagnostic{}}
+			githubLimited := github && resp.StatusCode == 403 &&
+				(resp.Header.Get("X-RateLimit-Remaining") == "0" || resp.Header.Get("Retry-After") != "")
+			if githubLimited {
+				if reset, parseErr := strconv.ParseInt(resp.Header.Get("X-RateLimit-Reset"), 10, 64); parseErr == nil {
+					delay = max(delay, time.Unix(reset, 0).Sub(t.clock()))
+				}
+				t.coolDown(u.Hostname(), delay, 429)
+			}
+			resolved := raw
+			if resp.Request != nil && resp.Request.URL != nil {
+				resolved = resp.Request.URL.String()
+			}
+			data = HTTPData{Status: resp.StatusCode, ObservedAt: model.Timestamp(t.now), ETag: resp.Header.Get("ETag"), ResolvedURL: resolved, Diagnostics: []model.Diagnostic{}}
 			data.Body, err = io.ReadAll(io.LimitReader(resp.Body, maxResponseBytes+1))
 			resp.Body.Close()
 			<-t.sem
@@ -381,9 +429,9 @@ func (t *Transport) fetch(ctx context.Context, raw, key, accept string) (HTTPDat
 				}
 				return data, nil
 			} else {
-				retry = resp.StatusCode == 429 || resp.StatusCode >= 500
+				retry = resp.StatusCode == 429 || resp.StatusCode >= 500 || githubLimited
 				last = &LookupError{Code: "SOURCE_ERROR", Status: resp.StatusCode, Retryable: retry}
-				if resp.StatusCode == 429 {
+				if resp.StatusCode == 429 || githubLimited {
 					last = &LookupError{Code: "RATE_LIMITED", Status: resp.StatusCode, Retryable: true}
 				}
 			}

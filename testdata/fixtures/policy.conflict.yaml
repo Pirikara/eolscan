@@ -19,6 +19,10 @@ sources:
   rubygems:
     enabled: true
     base_url: "https://rubygems.org"
+  github:
+    enabled: false
+    base_url: "https://api.github.com"
+    token_env: "EOLSCAN_GITHUB_TOKEN"
   official_catalog:
     enabled: true
     path: "./catalog.conflict.yaml"
@@ -46,6 +50,8 @@ notices:
 decision:
   support_scope: "upstream_security"
   max_evidence_age_days: 30
+  use_support_dates: true
+  eol_rules: []
 network:
   allowed_hosts:
     - "endoflife.date"

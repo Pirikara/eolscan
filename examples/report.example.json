@@ -1,11 +1,11 @@
 {
-  "schema_version": "2.3",
-  "tool_version": "0.4.0",
+  "schema_version": "2.4",
+  "tool_version": "0.5.0",
   "as_of": "2026-10-11",
   "projection": false,
   "generated_at": "2026-10-11T00:00:00Z",
   "input_sha256": "432833ae712c4cfe1914581f56635f6a9dda9a5c94f13608681390381fe44799",
-  "policy_hash": "4203eb9898508c0bbe322ae7a7b59414a24bc458527f0c54f18914e7b3225e79",
+  "policy_hash": "9c9aef9229346130a45117c8907a8ed817bc990faab690d8f0bde3de84e9bc96",
   "summary": {
     "in_scope": 1,
     "excluded": 0,
@@ -14,7 +14,8 @@
     "unknown": 0,
     "assessment_coverage": 1.0,
     "provider_error_count": 0,
-    "ci_failure_count": 0
+    "ci_failure_count": 0,
+    "no_eol_detected": 0
   },
   "ci_gate": {
     "passed": true,
@@ -104,7 +105,19 @@
       "diagnostics": [],
       "incomplete": false,
       "ci_failure": false,
-      "exception_applied": false
+      "exception_applied": false,
+      "support_assessment": {
+        "lifecycle": "SUPPORTED",
+        "confidence": "HIGH",
+        "eol_effective_date": "2026-12-01",
+        "matched_cycle": "2.4",
+        "selected_evidence_ids": [
+          "example-security-2.4"
+        ],
+        "unknown_reasons": []
+      },
+      "eol_basis": null,
+      "eol_rule_evaluations": []
     }
   ]
 }

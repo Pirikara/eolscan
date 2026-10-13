@@ -60,6 +60,10 @@ func offlinePolicy() model.Policy {
 	p.Sources.NPM.Enabled = false
 	p.Sources.PyPI.Enabled = false
 	p.Sources.RubyGems.Enabled = false
+	p.Sources.GitHub.Enabled = false
+	// These tests isolate support-date semantics. Policy-based classification
+	// has separate acceptance tests with automatically collected registry facts.
+	p.Decision.EOLRules = []model.EOLRule{}
 	return p
 }
 

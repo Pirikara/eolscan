@@ -30,6 +30,7 @@ type packageSnapshot struct {
 	Versions                     map[string][]release
 	Complete                     bool
 	UnassignedArtifacts          bool
+	Repositories                 map[string][]repositoryRef
 }
 
 type registry struct {

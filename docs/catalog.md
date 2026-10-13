@@ -1,6 +1,8 @@
 # Automatic lifecycle data and optional catalogs
 
-eolscan 0.4.0 retrieves lifecycle dates during normal online scans. It does not embed product support dates. No database, separately maintained date file, or binary rebuild is needed to use new API products and release series that match the supported identities.
+eolscan 0.5.0 retrieves lifecycle dates during normal online scans. It does not embed product support dates. No database, separately maintained date file, or binary rebuild is needed to use new API products and release series that match the supported identities.
+
+Support dates are one configurable EOL criterion. Registry/repository rules can classify dependencies without a date-catalog match; see [EOL criteria](eol-rules.md). This page describes the formal support assessment.
 
 ## Retrieval and identity matching
 
@@ -11,7 +13,7 @@ eolscan 0.4.0 retrieves lifecycle dates during normal online scans. It does not 
 5. Verify the exact package version and its publication time independently through a registry, deps.dev, or a reviewed local assertion.
 6. Use eligible support evidence to derive lifecycle and the configured CI result.
 
-Coverage follows the API's PURL index, available release dates and scope metadata, and the seven registry ecosystems that eolscan can verify. Unmapped packages and unsupported runtimes/OS PURLs remain UNKNOWN. Additional framework modules are included only when the API provides their exact PURLs; namespaces and similar names do not create mappings.
+Support-date coverage follows the API's PURL index, available release dates and scope metadata, and the seven registry ecosystems that eolscan can verify. Unmapped packages have an UNKNOWN formal support assessment; registry/repository criteria can still classify their final result as EOL or NO_EOL_DETECTED. Unsupported runtimes/OS PURLs remain UNKNOWN because their identities cannot be verified. Additional framework modules receive date evidence only when the API provides their exact PURLs; namespaces and similar names do not create mappings.
 
 ## Security scope and confidence
 
@@ -27,7 +29,7 @@ The automatic scope rule accepts exactly `Security Support` and `Maintenance & S
 | Missing date or unmatched release series | UNKNOWN |
 | Reviewed official support window | SUPPORTED / HIGH or EOL / HIGH, according to its dates |
 
-Commercial/extended-support dates and `isMaintained` do not replace upstream security end dates. Registry deprecation, yanking, and inactivity remain separate signals. An API error is a diagnostic and can make the scan incomplete; it is never evidence that a package is supported.
+Commercial/extended-support dates and `isMaintained` do not replace upstream security end dates. Registry deprecation, yanking, and inactivity are separate from date evidence and can drive configured EOL rules. An API error is a diagnostic and can make the scan incomplete; it is never evidence that a package is supported.
 
 To require the earlier manual meaning-review path for all endoflife.date dates, disable the automatic label rule:
 
@@ -78,4 +80,4 @@ Local official evidence takes precedence over automatically retrieved curated ev
 
 The five fixed Angular/Rails windows and the reserved `builtin:upstream-security` selection have been removed. Disable that old official-catalog selection or set a local path. `--catalog builtin` now returns an explanatory configuration error. Automatic security dates have MEDIUM confidence and do not create official SUPPORTED windows.
 
-Report schema 2.3 adds `source_label`, `CURATED_SECURITY_END`, and the security-specific UNKNOWN reasons. Configuration remains version 2; partial policies inherit `sources.endoflife_date.use_security_support_label: true`.
+Release 0.4 introduced report schema 2.3 with `source_label`, `CURATED_SECURITY_END`, and security-specific UNKNOWN reasons. The current report schema is 2.4; see [the configurable criteria](eol-rules.md) for its additional fields and states. Configuration remains version 2; partial policies inherit `sources.endoflife_date.use_security_support_label: true` and the current EOL-rule defaults.

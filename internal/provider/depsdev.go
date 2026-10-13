@@ -22,6 +22,34 @@ type DepsVersion struct {
 	PublishedAt      string  `json:"publishedAt"`
 	IsDeprecated     *bool   `json:"isDeprecated"`
 	DeprecatedReason string  `json:"deprecatedReason"`
+	RelatedProjects  []struct {
+		Key struct {
+			ID string `json:"id"`
+		} `json:"projectKey"`
+		Provenance string `json:"relationProvenance"`
+		Type       string `json:"relationType"`
+	} `json:"relatedProjects"`
+	Links []struct {
+		Label string `json:"label"`
+		URL   string `json:"url"`
+	} `json:"links"`
+}
+
+func (v DepsVersion) repositories(mappingURL string) []repositoryRef {
+	refs := []repositoryRef{}
+	for _, project := range v.RelatedProjects {
+		if project.Type == "SOURCE_REPO" {
+			refs = append(refs, repositoryRef{ProjectID: project.Key.ID, MappingURL: mappingURL, Provenance: project.Provenance})
+		}
+	}
+	if len(refs) == 0 {
+		for _, link := range v.Links {
+			if link.Label == "SOURCE_REPO" {
+				refs = append(refs, repositoryRef{ProjectID: githubProject(link.URL), MappingURL: mappingURL, Provenance: "UNVERIFIED_METADATA"})
+			}
+		}
+	}
+	return refs
 }
 
 type depsPackage struct {
@@ -89,7 +117,8 @@ func Deprecation(t *transport.Transport, id identity.Identity, v DepsVersion, da
 	e.CheckedAt = model.Ptr(data.ObservedAt)
 	// deps.dev's shared boolean does not guarantee collection of a registry's
 	// negative status in every ecosystem. Explicit true is positive evidence;
-	// a negative evaluation is enabled only for npm with an explicit boolean.
+	// a negative evaluation is enabled for npm and NuGet with an explicit
+	// boolean, whose registries supply version deprecation markers.
 	if v.IsDeprecated != nil && *v.IsDeprecated {
 		e.Status = "PRESENT"
 		e.ReasonCode = nil
@@ -97,10 +126,10 @@ func Deprecation(t *transport.Transport, id identity.Identity, v DepsVersion, da
 			Details: map[string]any{"deprecated_reason": v.DeprecatedReason}}
 		return e, &s
 	}
-	if id.Type == "npm" && v.IsDeprecated != nil {
+	if (id.Type == "npm" || id.Type == "nuget") && v.IsDeprecated != nil {
 		e.Status = "ABSENT"
 		e.ReasonCode = nil
-	} else if id.Type == "npm" {
+	} else if id.Type == "npm" || id.Type == "nuget" {
 		e.ReasonCode = model.Ptr("MISSING_DEPRECATION_STATUS")
 	}
 	return e, nil
