@@ -1,0 +1,360 @@
+{
+  "observations": [
+    {
+      "case_id": "npm-request",
+      "url": "https://registry.npmjs.org/request/2.88.2",
+      "observed_at": "2026-10-14T17:20:03.007801+00:00",
+      "http_status": 200,
+      "raw_sha256": "ff7792bf3b4b293e07479a935fd38f547839fcbb1f22ace53f100789dc2deb2a",
+      "identity": {
+        "name": "request",
+        "version": "2.88.2"
+      },
+      "deprecated": "request has been deprecated, see https://github.com/request/request/issues/3142",
+      "repository": {
+        "url": "git+https://github.com/request/request.git",
+        "type": "git"
+      }
+    },
+    {
+      "case_id": "npm-node-sass",
+      "url": "https://registry.npmjs.org/node-sass/9.0.0",
+      "observed_at": "2026-10-14T17:20:03.710869+00:00",
+      "http_status": 200,
+      "raw_sha256": "ca436dc87e9f67a0cd21da78c2dba3abdba5495b3c5d6f5f101576409a6ff86d",
+      "identity": {
+        "name": "node-sass",
+        "version": "9.0.0"
+      },
+      "deprecated": "Node Sass is no longer supported. Please use `sass` or `sass-embedded` instead.",
+      "repository": {
+        "url": "git+https://github.com/sass/node-sass.git",
+        "type": "git"
+      }
+    },
+    {
+      "case_id": "npm-har-validator",
+      "url": "https://registry.npmjs.org/har-validator/5.1.5",
+      "observed_at": "2026-10-14T17:20:04.426275+00:00",
+      "http_status": 200,
+      "raw_sha256": "3d958ee166b0d25028e2eecd18cfa026892ec3ba83dc86361f85321511f9b7eb",
+      "identity": {
+        "name": "har-validator",
+        "version": "5.1.5"
+      },
+      "deprecated": "this library is no longer supported",
+      "repository": {
+        "url": "git+https://github.com/ahmadnassri/node-har-validator.git",
+        "type": "git"
+      }
+    },
+    {
+      "case_id": "npm-istanbul",
+      "url": "https://registry.npmjs.org/istanbul/0.4.5",
+      "observed_at": "2026-10-14T17:20:05.369773+00:00",
+      "http_status": 200,
+      "raw_sha256": "d3c296060cb50f3834e700f2186415575b8f0b103389b1eded58a723aa385890",
+      "identity": {
+        "name": "istanbul",
+        "version": "0.4.5"
+      },
+      "deprecated": "This module is no longer maintained, try this instead:\n  npm i nyc\nVisit https://istanbul.js.org/integrations for other alternatives.",
+      "repository": {
+        "url": "git://github.com/gotwarlost/istanbul.git",
+        "type": "git"
+      }
+    },
+    {
+      "case_id": "npm-glob",
+      "url": "https://registry.npmjs.org/glob/7.2.3",
+      "observed_at": "2026-10-14T17:20:06.105558+00:00",
+      "http_status": 200,
+      "raw_sha256": "298af95df6fd66d98855d872ec6e17b039627c2f1bf56ffa1e5f3312a6f27c63",
+      "identity": {
+        "name": "glob",
+        "version": "7.2.3"
+      },
+      "deprecated": "Old versions of glob are not supported, and contain widely publicized security vulnerabilities, which have been fixed in the current version. Please update. Support for old versions may be purchased (at exorbitant rates) by contacting i@izs.me",
+      "repository": {
+        "url": "git://github.com/isaacs/node-glob.git",
+        "type": "git"
+      }
+    },
+    {
+      "case_id": "npm-rimraf",
+      "url": "https://registry.npmjs.org/rimraf/3.0.2",
+      "observed_at": "2026-10-14T17:20:06.815655+00:00",
+      "http_status": 200,
+      "raw_sha256": "c0cbe8f4b512ce473b2314839cd17abd653a320f788e2208213c32f18d04f827",
+      "identity": {
+        "name": "rimraf",
+        "version": "3.0.2"
+      },
+      "deprecated": "Rimraf versions prior to v4 are no longer supported",
+      "repository": {
+        "url": "git://github.com/isaacs/rimraf.git",
+        "type": "git"
+      }
+    },
+    {
+      "case_id": "npm-left-pad",
+      "url": "https://registry.npmjs.org/left-pad/1.3.0",
+      "observed_at": "2026-10-14T17:20:07.517718+00:00",
+      "http_status": 200,
+      "raw_sha256": "dbc2770a1039acd66cd5f87ebafcd212b367a0baecbcfe1ee7d43960b7aafc25",
+      "identity": {
+        "name": "left-pad",
+        "version": "1.3.0"
+      },
+      "deprecated": "use String.prototype.padStart()",
+      "repository": {
+        "url": "git+ssh://git@github.com/stevemao/left-pad.git",
+        "type": "git"
+      }
+    },
+    {
+      "case_id": "npm-uuid",
+      "url": "https://registry.npmjs.org/uuid/3.4.0",
+      "observed_at": "2026-10-14T17:20:08.208601+00:00",
+      "http_status": 200,
+      "raw_sha256": "64ce3abbf7fd47d9ab8a4a1e71eb2c1b5791afd0e3ac5e876741d98bb95180b1",
+      "identity": {
+        "name": "uuid",
+        "version": "3.4.0"
+      },
+      "deprecated": "uuid@10 and below is no longer supported.  For ESM codebases, update to uuid@latest.  For CommonJS codebases, use uuid@11 (but be aware this version will likely be deprecated in 2028).",
+      "repository": {
+        "url": "git+https://github.com/uuidjs/uuid.git",
+        "type": "git"
+      }
+    },
+    {
+      "case_id": "npm-picocolors",
+      "url": "https://registry.npmjs.org/picocolors/1.1.1",
+      "observed_at": "2026-10-14T17:20:08.903969+00:00",
+      "http_status": 200,
+      "raw_sha256": "469edbe4663b07f19026f60ec43744bad678caa89a6be7bf6c4692e2967ddf9d",
+      "identity": {
+        "name": "picocolors",
+        "version": "1.1.1"
+      },
+      "deprecated": null,
+      "repository": {
+        "url": "git+https://github.com/alexeyraspopov/picocolors.git",
+        "type": "git"
+      }
+    },
+    {
+      "case_id": "npm-is-number",
+      "url": "https://registry.npmjs.org/is-number/7.0.0",
+      "observed_at": "2026-10-14T17:20:09.595635+00:00",
+      "http_status": 200,
+      "raw_sha256": "42288c4971286c252ea16450b0777e67a710a698446faa99e2d8d2344a087c25",
+      "identity": {
+        "name": "is-number",
+        "version": "7.0.0"
+      },
+      "deprecated": null,
+      "repository": {
+        "url": "git+https://github.com/jonschlinkert/is-number.git",
+        "type": "git"
+      }
+    },
+    {
+      "case_id": "gem-therubyracer",
+      "url": "https://rubygems.org/api/v2/rubygems/therubyracer/versions/0.12.3.json",
+      "observed_at": "2026-10-14T17:20:10.149880+00:00",
+      "http_status": 200,
+      "raw_sha256": "23cd89f18a6db2f6accb86bca05b2d4081d8774134911af0135e50a8eddf1cd0",
+      "identity": {
+        "name": "therubyracer",
+        "version": "0.12.3"
+      },
+      "published_at": "2017-01-05T03:25:08.974Z",
+      "source_code_uri": "http://github.com/cowboyd/therubyracer",
+      "metadata": {}
+    },
+    {
+      "case_id": "gem-sass",
+      "url": "https://rubygems.org/api/v2/rubygems/sass/versions/3.7.4.json",
+      "observed_at": "2026-10-14T17:20:10.828889+00:00",
+      "http_status": 200,
+      "raw_sha256": "41599345b9e0de63d42d1dcfd081e9f9b684317b183d2d04bf87edd62e8a6da8",
+      "identity": {
+        "name": "sass",
+        "version": "3.7.4"
+      },
+      "published_at": "2019-04-04T00:50:00.426Z",
+      "source_code_uri": "https://github.com/sass/ruby-sass",
+      "metadata": {
+        "source_code_uri": "https://github.com/sass/ruby-sass"
+      }
+    },
+    {
+      "case_id": "gem-thread-safe",
+      "url": "https://rubygems.org/api/v2/rubygems/thread_safe/versions/0.3.6.json",
+      "observed_at": "2026-10-14T17:20:11.892800+00:00",
+      "http_status": 200,
+      "raw_sha256": "1cb1f0d640178c33befd0e687bd68e94474f563c0630f9393c7dab2610ffa183",
+      "identity": {
+        "name": "thread_safe",
+        "version": "0.3.6"
+      },
+      "published_at": "2017-02-22T19:51:15.835Z",
+      "source_code_uri": "https://github.com/ruby-concurrency/thread_safe",
+      "metadata": {}
+    },
+    {
+      "case_id": "gem-rails",
+      "url": "https://rubygems.org/api/v2/rubygems/rails/versions/6.1.7.10.json",
+      "observed_at": "2026-10-14T17:20:12.558639+00:00",
+      "http_status": 200,
+      "raw_sha256": "8945a04bf51f1ad1b54e79c65a81c8e5c23608dadd1acbba4cb3da11e9346766",
+      "identity": {
+        "name": "rails",
+        "version": "6.1.7.10"
+      },
+      "published_at": "2024-10-23T21:59:09.257Z",
+      "source_code_uri": "https://github.com/rails/rails/tree/v6.1.7.10",
+      "metadata": {
+        "changelog_uri": "https://github.com/rails/rails/releases/tag/v6.1.7.10",
+        "bug_tracker_uri": "https://github.com/rails/rails/issues",
+        "source_code_uri": "https://github.com/rails/rails/tree/v6.1.7.10",
+        "mailing_list_uri": "https://discuss.rubyonrails.org/c/rubyonrails-talk",
+        "documentation_uri": "https://api.rubyonrails.org/v6.1.7.10/",
+        "rubygems_mfa_required": "true"
+      }
+    },
+    {
+      "case_id": "gem-concurrent-ruby",
+      "url": "https://rubygems.org/api/v2/rubygems/concurrent-ruby/versions/1.3.5.json",
+      "observed_at": "2026-10-14T17:20:13.585556+00:00",
+      "http_status": 200,
+      "raw_sha256": "2ce617b2b9f3ca209674dbd68db48351abe8f97741ad3b8ef5eccf24c1062058",
+      "identity": {
+        "name": "concurrent-ruby",
+        "version": "1.3.5"
+      },
+      "published_at": "2025-01-15T21:35:44.564Z",
+      "source_code_uri": "https://github.com/ruby-concurrency/concurrent-ruby",
+      "metadata": {
+        "changelog_uri": "https://github.com/ruby-concurrency/concurrent-ruby/blob/master/CHANGELOG.md",
+        "source_code_uri": "https://github.com/ruby-concurrency/concurrent-ruby"
+      }
+    },
+    {
+      "case_id": "pypi-pycrypto",
+      "url": "https://pypi.org/pypi/pycrypto/2.6.1/json",
+      "observed_at": "2026-10-14T17:20:14.266164+00:00",
+      "http_status": 200,
+      "raw_sha256": "e0a3044de041b87271de9e5c0dca292bce533a39774e1ab875e63ddb0ae87241",
+      "identity": {
+        "name": "pycrypto",
+        "version": "2.6.1"
+      },
+      "project_urls": {
+        "Homepage": "http://www.pycrypto.org/"
+      },
+      "classifiers": [
+        "Development Status :: 5 - Production/Stable"
+      ],
+      "first_file_upload": "2014-06-20T08:10:20.813938Z"
+    },
+    {
+      "case_id": "pypi-nose",
+      "url": "https://pypi.org/pypi/nose/1.3.7/json",
+      "observed_at": "2026-10-14T17:20:14.809840+00:00",
+      "http_status": 200,
+      "raw_sha256": "8b01e599a14a1573643810fbfd2ebbf0cb0de3524ec9dea9c0f0458a42f1c55b",
+      "identity": {
+        "name": "nose",
+        "version": "1.3.7"
+      },
+      "project_urls": {
+        "Homepage": "http://readthedocs.org/docs/nose/"
+      },
+      "classifiers": [
+        "Development Status :: 5 - Production/Stable"
+      ],
+      "first_file_upload": "2015-06-02T09:12:32.961855Z"
+    },
+    {
+      "case_id": "pypi-django-rest-swagger",
+      "url": "https://pypi.org/pypi/django-rest-swagger/2.2.0/json",
+      "observed_at": "2026-10-14T17:20:15.501002+00:00",
+      "http_status": 200,
+      "raw_sha256": "fc20ab000887579590cde2b1fbd9b96a0dd5fbd68f511ed39e6be0b11a92b867",
+      "identity": {
+        "name": "django-rest-swagger",
+        "version": "2.2.0"
+      },
+      "project_urls": {
+        "Homepage": "https://github.com/marcgibbons/django-rest-swagger"
+      },
+      "classifiers": [],
+      "first_file_upload": "2018-04-30T19:59:57.896473Z"
+    },
+    {
+      "case_id": "pypi-pep8",
+      "url": "https://pypi.org/pypi/pep8/1.7.1/json",
+      "observed_at": "2026-10-14T17:20:16.206500+00:00",
+      "http_status": 200,
+      "raw_sha256": "7b9be032dce577cd03c095dc9992d41ee13075082636b710ab669667815ab8c6",
+      "identity": {
+        "name": "pep8",
+        "version": "1.7.1"
+      },
+      "project_urls": {
+        "Homepage": "http://pep8.readthedocs.org/"
+      },
+      "classifiers": [
+        "Development Status :: 5 - Production/Stable"
+      ],
+      "first_file_upload": "2017-10-24T14:39:11.465365Z"
+    },
+    {
+      "case_id": "pypi-django",
+      "url": "https://pypi.org/pypi/django/2.2.28/json",
+      "observed_at": "2026-10-14T17:20:16.913679+00:00",
+      "http_status": 200,
+      "raw_sha256": "69f7e783d2ade0e5a768befc698dfdaf354610a46940397b668986cda2ce657a",
+      "identity": {
+        "name": "Django",
+        "version": "2.2.28"
+      },
+      "project_urls": {
+        "Documentation": "https://docs.djangoproject.com/",
+        "Funding": "https://www.djangoproject.com/fundraising/",
+        "Homepage": "https://www.djangoproject.com/",
+        "Source": "https://github.com/django/django",
+        "Tracker": "https://code.djangoproject.com/"
+      },
+      "classifiers": [
+        "Development Status :: 5 - Production/Stable"
+      ],
+      "first_file_upload": "2022-04-11T07:52:52.782601Z"
+    },
+    {
+      "case_id": "pypi-attrs",
+      "url": "https://pypi.org/pypi/attrs/25.3.0/json",
+      "observed_at": "2026-10-14T17:20:17.447719+00:00",
+      "http_status": 200,
+      "raw_sha256": "ad151c5dee1509ad54cb49911a801ef06629556beaf3a18c49c8077b2af5c5bb",
+      "identity": {
+        "name": "attrs",
+        "version": "25.3.0"
+      },
+      "project_urls": {
+        "Changelog": "https://www.attrs.org/en/stable/changelog.html",
+        "Documentation": "https://www.attrs.org/",
+        "Funding": "https://github.com/sponsors/hynek",
+        "GitHub": "https://github.com/python-attrs/attrs",
+        "Tidelift": "https://tidelift.com/subscription/pkg/pypi-attrs?utm_source=pypi-attrs&utm_medium=pypi"
+      },
+      "classifiers": [
+        "Development Status :: 5 - Production/Stable"
+      ],
+      "first_file_upload": "2025-03-13T11:10:21.140999Z"
+    }
+  ]
+}

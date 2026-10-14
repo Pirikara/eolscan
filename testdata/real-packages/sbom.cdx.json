@@ -1,0 +1,280 @@
+{
+  "bomFormat": "CycloneDX",
+  "specVersion": "1.6",
+  "version": 1,
+  "components": [
+    {
+      "type": "library",
+      "bom-ref": "npm-request",
+      "name": "request",
+      "version": "2.88.2",
+      "purl": "pkg:npm/request@2.88.2"
+    },
+    {
+      "type": "library",
+      "bom-ref": "npm-node-sass",
+      "name": "node-sass",
+      "version": "9.0.0",
+      "purl": "pkg:npm/node-sass@9.0.0"
+    },
+    {
+      "type": "library",
+      "bom-ref": "npm-har-validator",
+      "name": "har-validator",
+      "version": "5.1.5",
+      "purl": "pkg:npm/har-validator@5.1.5"
+    },
+    {
+      "type": "library",
+      "bom-ref": "npm-istanbul",
+      "name": "istanbul",
+      "version": "0.4.5",
+      "purl": "pkg:npm/istanbul@0.4.5"
+    },
+    {
+      "type": "library",
+      "bom-ref": "npm-glob",
+      "name": "glob",
+      "version": "7.2.3",
+      "purl": "pkg:npm/glob@7.2.3"
+    },
+    {
+      "type": "library",
+      "bom-ref": "npm-rimraf",
+      "name": "rimraf",
+      "version": "3.0.2",
+      "purl": "pkg:npm/rimraf@3.0.2"
+    },
+    {
+      "type": "library",
+      "bom-ref": "npm-left-pad",
+      "name": "left-pad",
+      "version": "1.3.0",
+      "purl": "pkg:npm/left-pad@1.3.0"
+    },
+    {
+      "type": "library",
+      "bom-ref": "npm-uuid",
+      "name": "uuid",
+      "version": "3.4.0",
+      "purl": "pkg:npm/uuid@3.4.0"
+    },
+    {
+      "type": "library",
+      "bom-ref": "npm-picocolors",
+      "name": "picocolors",
+      "version": "1.1.1",
+      "purl": "pkg:npm/picocolors@1.1.1"
+    },
+    {
+      "type": "library",
+      "bom-ref": "npm-is-number",
+      "name": "is-number",
+      "version": "7.0.0",
+      "purl": "pkg:npm/is-number@7.0.0"
+    },
+    {
+      "type": "library",
+      "bom-ref": "gem-therubyracer",
+      "name": "therubyracer",
+      "version": "0.12.3",
+      "purl": "pkg:gem/therubyracer@0.12.3"
+    },
+    {
+      "type": "library",
+      "bom-ref": "gem-sass",
+      "name": "sass",
+      "version": "3.7.4",
+      "purl": "pkg:gem/sass@3.7.4"
+    },
+    {
+      "type": "library",
+      "bom-ref": "gem-thread-safe",
+      "name": "thread_safe",
+      "version": "0.3.6",
+      "purl": "pkg:gem/thread_safe@0.3.6"
+    },
+    {
+      "type": "library",
+      "bom-ref": "gem-rails",
+      "name": "rails",
+      "version": "6.1.7.10",
+      "purl": "pkg:gem/rails@6.1.7.10"
+    },
+    {
+      "type": "library",
+      "bom-ref": "gem-concurrent-ruby",
+      "name": "concurrent-ruby",
+      "version": "1.3.5",
+      "purl": "pkg:gem/concurrent-ruby@1.3.5"
+    },
+    {
+      "type": "library",
+      "bom-ref": "pypi-pycrypto",
+      "name": "pycrypto",
+      "version": "2.6.1",
+      "purl": "pkg:pypi/pycrypto@2.6.1"
+    },
+    {
+      "type": "library",
+      "bom-ref": "pypi-nose",
+      "name": "nose",
+      "version": "1.3.7",
+      "purl": "pkg:pypi/nose@1.3.7"
+    },
+    {
+      "type": "library",
+      "bom-ref": "pypi-django-rest-swagger",
+      "name": "django-rest-swagger",
+      "version": "2.2.0",
+      "purl": "pkg:pypi/django-rest-swagger@2.2.0"
+    },
+    {
+      "type": "library",
+      "bom-ref": "pypi-pep8",
+      "name": "pep8",
+      "version": "1.7.1",
+      "purl": "pkg:pypi/pep8@1.7.1"
+    },
+    {
+      "type": "library",
+      "bom-ref": "pypi-django",
+      "name": "django",
+      "version": "2.2.28",
+      "purl": "pkg:pypi/django@2.2.28"
+    },
+    {
+      "type": "library",
+      "bom-ref": "pypi-attrs",
+      "name": "attrs",
+      "version": "25.3.0",
+      "purl": "pkg:pypi/attrs@25.3.0"
+    },
+    {
+      "type": "library",
+      "bom-ref": "go-jwt",
+      "name": "github.com/dgrijalva/jwt-go",
+      "version": "v3.2.0+incompatible",
+      "purl": "pkg:golang/github.com/dgrijalva/jwt-go@v3.2.0+incompatible"
+    },
+    {
+      "type": "library",
+      "bom-ref": "go-mapstructure",
+      "name": "github.com/mitchellh/mapstructure",
+      "version": "v1.5.0",
+      "purl": "pkg:golang/github.com/mitchellh/mapstructure@v1.5.0"
+    },
+    {
+      "type": "library",
+      "bom-ref": "go-bolt",
+      "name": "github.com/boltdb/bolt",
+      "version": "v1.3.1",
+      "purl": "pkg:golang/github.com/boltdb/bolt@v1.3.1"
+    },
+    {
+      "type": "library",
+      "bom-ref": "go-testify",
+      "name": "github.com/stretchr/testify",
+      "version": "v1.10.0",
+      "purl": "pkg:golang/github.com/stretchr/testify@v1.10.0"
+    },
+    {
+      "type": "library",
+      "bom-ref": "cargo-failure",
+      "name": "failure",
+      "version": "0.1.8",
+      "purl": "pkg:cargo/failure@0.1.8"
+    },
+    {
+      "type": "library",
+      "bom-ref": "cargo-rustc-serialize",
+      "name": "rustc-serialize",
+      "version": "0.3.25",
+      "purl": "pkg:cargo/rustc-serialize@0.3.25"
+    },
+    {
+      "type": "library",
+      "bom-ref": "cargo-serde-yaml",
+      "name": "serde_yaml",
+      "version": "0.9.34+deprecated",
+      "purl": "pkg:cargo/serde_yaml@0.9.34+deprecated"
+    },
+    {
+      "type": "library",
+      "bom-ref": "cargo-serde",
+      "name": "serde",
+      "version": "1.0.228",
+      "purl": "pkg:cargo/serde@1.0.228"
+    },
+    {
+      "type": "library",
+      "bom-ref": "maven-log4j",
+      "name": "log4j/log4j",
+      "version": "1.2.17",
+      "purl": "pkg:maven/log4j/log4j@1.2.17"
+    },
+    {
+      "type": "library",
+      "bom-ref": "maven-struts",
+      "name": "org.apache.struts/struts2-core",
+      "version": "2.3.37",
+      "purl": "pkg:maven/org.apache.struts/struts2-core@2.3.37"
+    },
+    {
+      "type": "library",
+      "bom-ref": "maven-spring",
+      "name": "org.springframework/spring-core",
+      "version": "4.3.30.RELEASE",
+      "purl": "pkg:maven/org.springframework/spring-core@4.3.30.RELEASE"
+    },
+    {
+      "type": "library",
+      "bom-ref": "maven-httpclient",
+      "name": "commons-httpclient/commons-httpclient",
+      "version": "3.1",
+      "purl": "pkg:maven/commons-httpclient/commons-httpclient@3.1"
+    },
+    {
+      "type": "library",
+      "bom-ref": "maven-guava",
+      "name": "com.google.guava/guava",
+      "version": "33.4.8-jre",
+      "purl": "pkg:maven/com.google.guava/guava@33.4.8-jre"
+    },
+    {
+      "type": "library",
+      "bom-ref": "nuget-keyvault",
+      "name": "Microsoft.Azure.KeyVault",
+      "version": "3.0.5",
+      "purl": "pkg:nuget/Microsoft.Azure.KeyVault@3.0.5"
+    },
+    {
+      "type": "library",
+      "bom-ref": "nuget-documentdb",
+      "name": "Microsoft.Azure.DocumentDB",
+      "version": "2.22.0",
+      "purl": "pkg:nuget/Microsoft.Azure.DocumentDB@2.22.0"
+    },
+    {
+      "type": "library",
+      "bom-ref": "nuget-storage",
+      "name": "WindowsAzure.Storage",
+      "version": "9.3.3",
+      "purl": "pkg:nuget/WindowsAzure.Storage@9.3.3"
+    },
+    {
+      "type": "library",
+      "bom-ref": "nuget-fluent",
+      "name": "Microsoft.Azure.Management.Fluent",
+      "version": "1.38.1",
+      "purl": "pkg:nuget/Microsoft.Azure.Management.Fluent@1.38.1"
+    },
+    {
+      "type": "library",
+      "bom-ref": "nuget-newtonsoft",
+      "name": "Newtonsoft.Json",
+      "version": "13.0.3",
+      "purl": "pkg:nuget/Newtonsoft.Json@13.0.3"
+    }
+  ]
+}

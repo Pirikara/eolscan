@@ -1,0 +1,1060 @@
+{
+  "schema_version": "2.4",
+  "tool_version": "0.5.0",
+  "as_of": "2026-10-14",
+  "projection": false,
+  "generated_at": "2026-10-14T17:21:42.984274Z",
+  "input_sha256": "b0c87f1701d201cb7e516acf115967f766a635127044e18bbcf12377014a521e",
+  "policy_hash": "878d97be282ee129a31db3eb7ee4e54cd383d1ab1c8137f7231009398e3ca798",
+  "summary": {
+    "in_scope": 10,
+    "excluded": 0,
+    "eol": 6,
+    "supported": 0,
+    "unknown": 0,
+    "no_eol_detected": 4,
+    "assessment_coverage": 1,
+    "provider_error_count": 0,
+    "ci_failure_count": 6
+  },
+  "ci_gate": {
+    "passed": false,
+    "violation_codes": [
+      "COMPONENT_POLICY_VIOLATION"
+    ],
+    "incomplete": false
+  },
+  "results": [
+    {
+      "source_ref": "maven-guava",
+      "purl": "pkg:maven/com.google.guava/guava@33.4.8-jre",
+      "name": "com.google.guava/guava",
+      "version": "33.4.8-jre",
+      "version_verification": {
+        "status": "VERIFIED",
+        "provider_id": "deps_dev",
+        "source_url": "https://api.deps.dev/v3/systems/maven/packages/com.google.guava:guava/versions/33.4.8-jre",
+        "checked_at": "2026-10-14T17:21:42.984274Z",
+        "published_at": "2025-04-14T17:25:22Z",
+        "reason_code": null
+      },
+      "lifecycle": "NO_EOL_DETECTED",
+      "support_assessment": {
+        "lifecycle": "UNKNOWN",
+        "confidence": null,
+        "eol_effective_date": null,
+        "matched_cycle": null,
+        "selected_evidence_ids": [],
+        "unknown_reasons": [
+          "NO_LIFECYCLE_EVIDENCE"
+        ]
+      },
+      "eol_basis": null,
+      "eol_rule_evaluations": [
+        {
+          "rule_id": "archived",
+          "status": "ABSENT",
+          "matched_signals": [],
+          "unknown_signals": [],
+          "reason_code": null
+        },
+        {
+          "rule_id": "inactive-two-years",
+          "status": "ABSENT",
+          "matched_signals": [],
+          "unknown_signals": [],
+          "reason_code": null
+        }
+      ],
+      "confidence": null,
+      "eol_effective_date": null,
+      "matched_cycle": null,
+      "signals": [],
+      "signal_evaluations": [
+        {
+          "type": "ARCHIVED",
+          "status": "ABSENT",
+          "provider_id": "github",
+          "source_url": "https://api.github.com/repos/google/guava",
+          "checked_at": "2026-10-14T17:21:42.984274Z",
+          "reason_code": null
+        },
+        {
+          "type": "DEPRECATED",
+          "status": "UNKNOWN",
+          "provider_id": null,
+          "source_url": null,
+          "checked_at": null,
+          "reason_code": "NO_CAPABILITY"
+        },
+        {
+          "type": "STALE_RELEASE",
+          "status": "ABSENT",
+          "provider_id": "deps_dev",
+          "source_url": "https://api.deps.dev/v3/systems/maven/packages/com.google.guava:guava",
+          "checked_at": "2026-10-14T17:21:42.984274Z",
+          "reason_code": null
+        }
+      ],
+      "selected_evidence_ids": [],
+      "notices": [],
+      "unknown_reasons": [],
+      "rule_ids": [
+        "R-006"
+      ],
+      "evidence": [],
+      "diagnostics": [],
+      "incomplete": false,
+      "ci_failure": false,
+      "exception_applied": false
+    },
+    {
+      "source_ref": "maven-httpclient",
+      "purl": "pkg:maven/commons-httpclient/commons-httpclient@3.1",
+      "name": "commons-httpclient/commons-httpclient",
+      "version": "3.1",
+      "version_verification": {
+        "status": "VERIFIED",
+        "provider_id": "deps_dev",
+        "source_url": "https://api.deps.dev/v3/systems/maven/packages/commons-httpclient:commons-httpclient/versions/3.1",
+        "checked_at": "2026-10-14T17:21:42.984274Z",
+        "published_at": "2007-08-21T13:44:07Z",
+        "reason_code": null
+      },
+      "lifecycle": "EOL",
+      "support_assessment": {
+        "lifecycle": "UNKNOWN",
+        "confidence": null,
+        "eol_effective_date": null,
+        "matched_cycle": null,
+        "selected_evidence_ids": [],
+        "unknown_reasons": [
+          "NO_LIFECYCLE_EVIDENCE"
+        ]
+      },
+      "eol_basis": "POLICY_RULE",
+      "eol_rule_evaluations": [
+        {
+          "rule_id": "archived",
+          "status": "UNKNOWN",
+          "matched_signals": [],
+          "unknown_signals": [
+            "ARCHIVED"
+          ],
+          "reason_code": "CONDITION_UNAVAILABLE"
+        },
+        {
+          "rule_id": "inactive-two-years",
+          "status": "PRESENT",
+          "matched_signals": [
+            "STALE_RELEASE"
+          ],
+          "unknown_signals": [],
+          "reason_code": null
+        }
+      ],
+      "confidence": "MEDIUM",
+      "eol_effective_date": null,
+      "matched_cycle": null,
+      "signals": [
+        {
+          "type": "STALE_RELEASE",
+          "provider_id": "deps_dev",
+          "source_url": "https://api.deps.dev/v3/systems/maven/packages/commons-httpclient:commons-httpclient",
+          "observed_at": "2026-10-14T17:21:42.984274Z",
+          "details": {
+            "days_since_latest_release": 1856,
+            "latest_published_at": "2021-09-14T10:35:21Z",
+            "threshold_days": 730
+          }
+        }
+      ],
+      "signal_evaluations": [
+        {
+          "type": "ARCHIVED",
+          "status": "UNKNOWN",
+          "provider_id": "github",
+          "source_url": null,
+          "checked_at": null,
+          "reason_code": "NO_GITHUB_SOURCE_REPOSITORY"
+        },
+        {
+          "type": "DEPRECATED",
+          "status": "UNKNOWN",
+          "provider_id": null,
+          "source_url": null,
+          "checked_at": null,
+          "reason_code": "NO_CAPABILITY"
+        },
+        {
+          "type": "STALE_RELEASE",
+          "status": "PRESENT",
+          "provider_id": "deps_dev",
+          "source_url": "https://api.deps.dev/v3/systems/maven/packages/commons-httpclient:commons-httpclient",
+          "checked_at": "2026-10-14T17:21:42.984274Z",
+          "reason_code": null
+        }
+      ],
+      "selected_evidence_ids": [],
+      "notices": [],
+      "unknown_reasons": [],
+      "rule_ids": [
+        "R-005",
+        "R-006",
+        "R-013"
+      ],
+      "evidence": [],
+      "diagnostics": [],
+      "incomplete": false,
+      "ci_failure": true,
+      "exception_applied": false
+    },
+    {
+      "source_ref": "maven-log4j",
+      "purl": "pkg:maven/log4j/log4j@1.2.17",
+      "name": "log4j/log4j",
+      "version": "1.2.17",
+      "version_verification": {
+        "status": "VERIFIED",
+        "provider_id": "deps_dev",
+        "source_url": "https://api.deps.dev/v3/systems/maven/packages/log4j:log4j/versions/1.2.17",
+        "checked_at": "2026-10-14T17:21:42.984274Z",
+        "published_at": "2012-05-26T09:43:39Z",
+        "reason_code": null
+      },
+      "lifecycle": "EOL",
+      "support_assessment": {
+        "lifecycle": "UNKNOWN",
+        "confidence": null,
+        "eol_effective_date": null,
+        "matched_cycle": null,
+        "selected_evidence_ids": [],
+        "unknown_reasons": [
+          "GENERAL_EOL_UNREVIEWED"
+        ]
+      },
+      "eol_basis": "POLICY_RULE",
+      "eol_rule_evaluations": [
+        {
+          "rule_id": "archived",
+          "status": "UNKNOWN",
+          "matched_signals": [],
+          "unknown_signals": [
+            "ARCHIVED"
+          ],
+          "reason_code": "CONDITION_UNAVAILABLE"
+        },
+        {
+          "rule_id": "inactive-two-years",
+          "status": "PRESENT",
+          "matched_signals": [
+            "STALE_RELEASE"
+          ],
+          "unknown_signals": [],
+          "reason_code": null
+        }
+      ],
+      "confidence": "MEDIUM",
+      "eol_effective_date": null,
+      "matched_cycle": null,
+      "signals": [
+        {
+          "type": "STALE_RELEASE",
+          "provider_id": "deps_dev",
+          "source_url": "https://api.deps.dev/v3/systems/maven/packages/log4j:log4j",
+          "observed_at": "2026-10-14T17:21:42.984274Z",
+          "details": {
+            "days_since_latest_release": 5254,
+            "latest_published_at": "2012-05-26T09:43:39Z",
+            "threshold_days": 730
+          }
+        }
+      ],
+      "signal_evaluations": [
+        {
+          "type": "ARCHIVED",
+          "status": "UNKNOWN",
+          "provider_id": "github",
+          "source_url": null,
+          "checked_at": null,
+          "reason_code": "NO_GITHUB_SOURCE_REPOSITORY"
+        },
+        {
+          "type": "DEPRECATED",
+          "status": "UNKNOWN",
+          "provider_id": null,
+          "source_url": null,
+          "checked_at": null,
+          "reason_code": "NO_CAPABILITY"
+        },
+        {
+          "type": "STALE_RELEASE",
+          "status": "PRESENT",
+          "provider_id": "deps_dev",
+          "source_url": "https://api.deps.dev/v3/systems/maven/packages/log4j:log4j",
+          "checked_at": "2026-10-14T17:21:42.984274Z",
+          "reason_code": null
+        }
+      ],
+      "selected_evidence_ids": [],
+      "notices": [],
+      "unknown_reasons": [],
+      "rule_ids": [
+        "R-005",
+        "R-006",
+        "R-013"
+      ],
+      "evidence": [
+        {
+          "id": "endoflife_date:log4j:1",
+          "provider_id": "endoflife_date",
+          "source_class": "CURATED_DATABASE",
+          "claim": "GENERAL_EOL_END",
+          "package_purl": "pkg:maven/log4j/log4j",
+          "product_slug": "log4j",
+          "matched_cycle": "1",
+          "support_scope": "general_eol",
+          "support_start_date": null,
+          "eol_effective_date": "2015-10-15",
+          "source_url": "https://endoflife.date/log4j",
+          "source_field": "releases[].eolFrom",
+          "source_label": "Supported",
+          "observed_at": "2026-10-14T17:21:42.984274Z",
+          "source_updated_at": "2026-09-24T07:44:41Z",
+          "reviewed_at": null,
+          "valid_until": null,
+          "raw_payload_hash": "1c51210907c62ca93a4adeee0a8eddba0ca61bc4d93d647841355180204c9796",
+          "confidence": "MEDIUM",
+          "rule_id": "R-003",
+          "general_eol_review": null,
+          "superseded_by": null,
+          "supersession_source_url": null
+        }
+      ],
+      "diagnostics": [],
+      "incomplete": false,
+      "ci_failure": true,
+      "exception_applied": false
+    },
+    {
+      "source_ref": "maven-struts",
+      "purl": "pkg:maven/org.apache.struts/struts2-core@2.3.37",
+      "name": "org.apache.struts/struts2-core",
+      "version": "2.3.37",
+      "version_verification": {
+        "status": "VERIFIED",
+        "provider_id": "deps_dev",
+        "source_url": "https://api.deps.dev/v3/systems/maven/packages/org.apache.struts:struts2-core/versions/2.3.37",
+        "checked_at": "2026-10-14T17:21:42.984274Z",
+        "published_at": "2018-12-30T13:32:57Z",
+        "reason_code": null
+      },
+      "lifecycle": "NO_EOL_DETECTED",
+      "support_assessment": {
+        "lifecycle": "UNKNOWN",
+        "confidence": null,
+        "eol_effective_date": null,
+        "matched_cycle": null,
+        "selected_evidence_ids": [],
+        "unknown_reasons": [
+          "GENERAL_EOL_UNREVIEWED"
+        ]
+      },
+      "eol_basis": null,
+      "eol_rule_evaluations": [
+        {
+          "rule_id": "archived",
+          "status": "ABSENT",
+          "matched_signals": [],
+          "unknown_signals": [],
+          "reason_code": null
+        },
+        {
+          "rule_id": "inactive-two-years",
+          "status": "ABSENT",
+          "matched_signals": [],
+          "unknown_signals": [],
+          "reason_code": null
+        }
+      ],
+      "confidence": null,
+      "eol_effective_date": null,
+      "matched_cycle": null,
+      "signals": [],
+      "signal_evaluations": [
+        {
+          "type": "ARCHIVED",
+          "status": "ABSENT",
+          "provider_id": "github",
+          "source_url": "https://api.github.com/repos/apache/struts",
+          "checked_at": "2026-10-14T17:21:42.984274Z",
+          "reason_code": null
+        },
+        {
+          "type": "DEPRECATED",
+          "status": "UNKNOWN",
+          "provider_id": null,
+          "source_url": null,
+          "checked_at": null,
+          "reason_code": "NO_CAPABILITY"
+        },
+        {
+          "type": "STALE_RELEASE",
+          "status": "ABSENT",
+          "provider_id": "deps_dev",
+          "source_url": "https://api.deps.dev/v3/systems/maven/packages/org.apache.struts:struts2-core",
+          "checked_at": "2026-10-14T17:21:42.984274Z",
+          "reason_code": null
+        }
+      ],
+      "selected_evidence_ids": [],
+      "notices": [],
+      "unknown_reasons": [],
+      "rule_ids": [
+        "R-006"
+      ],
+      "evidence": [
+        {
+          "id": "endoflife_date:apache-struts:2.3",
+          "provider_id": "endoflife_date",
+          "source_class": "CURATED_DATABASE",
+          "claim": "GENERAL_EOL_END",
+          "package_purl": "pkg:maven/org.apache.struts/struts2-core",
+          "product_slug": "apache-struts",
+          "matched_cycle": "2.3",
+          "support_scope": "general_eol",
+          "support_start_date": null,
+          "eol_effective_date": "2019-05-14",
+          "source_url": "https://endoflife.date/apache-struts",
+          "source_field": "releases[].eolFrom",
+          "source_label": "Support",
+          "observed_at": "2026-10-14T17:21:42.984274Z",
+          "source_updated_at": "2026-09-18T00:08:07Z",
+          "reviewed_at": null,
+          "valid_until": null,
+          "raw_payload_hash": "7cfa59398e69416aa1b090e50f257db9fd304323f69e35c5edc6c08b19dabe02",
+          "confidence": "MEDIUM",
+          "rule_id": "R-003",
+          "general_eol_review": null,
+          "superseded_by": null,
+          "supersession_source_url": null
+        }
+      ],
+      "diagnostics": [
+        {
+          "code": "SUPPORT_SCOPE_DIFFERENCE",
+          "provider_id": "endoflife_date",
+          "http_status": null,
+          "retryable": false,
+          "message": "isMaintained may include extended support; upstream EOL date is retained"
+        }
+      ],
+      "incomplete": false,
+      "ci_failure": false,
+      "exception_applied": false
+    },
+    {
+      "source_ref": "maven-spring",
+      "purl": "pkg:maven/org.springframework/spring-core@4.3.30.RELEASE",
+      "name": "org.springframework/spring-core",
+      "version": "4.3.30.RELEASE",
+      "version_verification": {
+        "status": "VERIFIED",
+        "provider_id": "deps_dev",
+        "source_url": "https://api.deps.dev/v3/systems/maven/packages/org.springframework:spring-core/versions/4.3.30.RELEASE",
+        "checked_at": "2026-10-14T17:21:42.984274Z",
+        "published_at": "2020-12-09T08:59:32Z",
+        "reason_code": null
+      },
+      "lifecycle": "NO_EOL_DETECTED",
+      "support_assessment": {
+        "lifecycle": "UNKNOWN",
+        "confidence": null,
+        "eol_effective_date": null,
+        "matched_cycle": null,
+        "selected_evidence_ids": [],
+        "unknown_reasons": [
+          "NO_LIFECYCLE_EVIDENCE"
+        ]
+      },
+      "eol_basis": null,
+      "eol_rule_evaluations": [
+        {
+          "rule_id": "archived",
+          "status": "ABSENT",
+          "matched_signals": [],
+          "unknown_signals": [],
+          "reason_code": null
+        },
+        {
+          "rule_id": "inactive-two-years",
+          "status": "ABSENT",
+          "matched_signals": [],
+          "unknown_signals": [],
+          "reason_code": null
+        }
+      ],
+      "confidence": null,
+      "eol_effective_date": null,
+      "matched_cycle": null,
+      "signals": [],
+      "signal_evaluations": [
+        {
+          "type": "ARCHIVED",
+          "status": "ABSENT",
+          "provider_id": "github",
+          "source_url": "https://api.github.com/repos/spring-projects/spring-framework",
+          "checked_at": "2026-10-14T17:21:42.984274Z",
+          "reason_code": null
+        },
+        {
+          "type": "DEPRECATED",
+          "status": "UNKNOWN",
+          "provider_id": null,
+          "source_url": null,
+          "checked_at": null,
+          "reason_code": "NO_CAPABILITY"
+        },
+        {
+          "type": "STALE_RELEASE",
+          "status": "ABSENT",
+          "provider_id": "deps_dev",
+          "source_url": "https://api.deps.dev/v3/systems/maven/packages/org.springframework:spring-core",
+          "checked_at": "2026-10-14T17:21:42.984274Z",
+          "reason_code": null
+        }
+      ],
+      "selected_evidence_ids": [],
+      "notices": [],
+      "unknown_reasons": [],
+      "rule_ids": [
+        "R-006"
+      ],
+      "evidence": [],
+      "diagnostics": [],
+      "incomplete": false,
+      "ci_failure": false,
+      "exception_applied": false
+    },
+    {
+      "source_ref": "npm-is-number",
+      "purl": "pkg:npm/is-number@7.0.0",
+      "name": "is-number",
+      "version": "7.0.0",
+      "version_verification": {
+        "status": "VERIFIED",
+        "provider_id": "npm",
+        "source_url": "https://registry.npmjs.org/is-number",
+        "checked_at": "2026-10-14T17:21:42.984274Z",
+        "published_at": "2018-07-04T15:08:58.238Z",
+        "reason_code": null
+      },
+      "lifecycle": "EOL",
+      "support_assessment": {
+        "lifecycle": "UNKNOWN",
+        "confidence": null,
+        "eol_effective_date": null,
+        "matched_cycle": null,
+        "selected_evidence_ids": [],
+        "unknown_reasons": [
+          "NO_LIFECYCLE_EVIDENCE"
+        ]
+      },
+      "eol_basis": "POLICY_RULE",
+      "eol_rule_evaluations": [
+        {
+          "rule_id": "deprecated",
+          "status": "ABSENT",
+          "matched_signals": [],
+          "unknown_signals": [],
+          "reason_code": null
+        },
+        {
+          "rule_id": "archived",
+          "status": "ABSENT",
+          "matched_signals": [],
+          "unknown_signals": [],
+          "reason_code": null
+        },
+        {
+          "rule_id": "inactive-two-years",
+          "status": "PRESENT",
+          "matched_signals": [
+            "STALE_RELEASE"
+          ],
+          "unknown_signals": [],
+          "reason_code": null
+        }
+      ],
+      "confidence": "MEDIUM",
+      "eol_effective_date": null,
+      "matched_cycle": null,
+      "signals": [
+        {
+          "type": "STALE_RELEASE",
+          "provider_id": "npm",
+          "source_url": "https://registry.npmjs.org/is-number",
+          "observed_at": "2026-10-14T17:21:42.984274Z",
+          "details": {
+            "days_since_latest_release": 3024,
+            "latest_published_at": "2018-07-04T15:08:58.238Z",
+            "threshold_days": 730
+          }
+        }
+      ],
+      "signal_evaluations": [
+        {
+          "type": "ARCHIVED",
+          "status": "ABSENT",
+          "provider_id": "github",
+          "source_url": "https://api.github.com/repos/jonschlinkert/is-number",
+          "checked_at": "2026-10-14T17:21:42.984274Z",
+          "reason_code": null
+        },
+        {
+          "type": "DEPRECATED",
+          "status": "ABSENT",
+          "provider_id": "npm",
+          "source_url": "https://registry.npmjs.org/is-number",
+          "checked_at": "2026-10-14T17:21:42.984274Z",
+          "reason_code": null
+        },
+        {
+          "type": "STALE_RELEASE",
+          "status": "PRESENT",
+          "provider_id": "npm",
+          "source_url": "https://registry.npmjs.org/is-number",
+          "checked_at": "2026-10-14T17:21:42.984274Z",
+          "reason_code": null
+        }
+      ],
+      "selected_evidence_ids": [],
+      "notices": [],
+      "unknown_reasons": [],
+      "rule_ids": [
+        "R-005",
+        "R-006",
+        "R-013"
+      ],
+      "evidence": [],
+      "diagnostics": [],
+      "incomplete": false,
+      "ci_failure": true,
+      "exception_applied": false
+    },
+    {
+      "source_ref": "pypi-attrs",
+      "purl": "pkg:pypi/attrs@25.3.0",
+      "name": "attrs",
+      "version": "25.3.0",
+      "version_verification": {
+        "status": "VERIFIED",
+        "provider_id": "pypi",
+        "source_url": "https://pypi.org/simple/attrs/",
+        "checked_at": "2026-10-14T17:21:42.984274Z",
+        "published_at": "2025-03-13T11:10:21.140999Z",
+        "reason_code": null
+      },
+      "lifecycle": "NO_EOL_DETECTED",
+      "support_assessment": {
+        "lifecycle": "UNKNOWN",
+        "confidence": null,
+        "eol_effective_date": null,
+        "matched_cycle": null,
+        "selected_evidence_ids": [],
+        "unknown_reasons": [
+          "NO_LIFECYCLE_EVIDENCE"
+        ]
+      },
+      "eol_basis": null,
+      "eol_rule_evaluations": [
+        {
+          "rule_id": "deprecated",
+          "status": "ABSENT",
+          "matched_signals": [],
+          "unknown_signals": [],
+          "reason_code": null
+        },
+        {
+          "rule_id": "archived",
+          "status": "ABSENT",
+          "matched_signals": [],
+          "unknown_signals": [],
+          "reason_code": null
+        },
+        {
+          "rule_id": "inactive-two-years",
+          "status": "ABSENT",
+          "matched_signals": [],
+          "unknown_signals": [],
+          "reason_code": null
+        }
+      ],
+      "confidence": null,
+      "eol_effective_date": null,
+      "matched_cycle": null,
+      "signals": [],
+      "signal_evaluations": [
+        {
+          "type": "ARCHIVED",
+          "status": "ABSENT",
+          "provider_id": "github",
+          "source_url": "https://api.github.com/repos/python-attrs/attrs",
+          "checked_at": "2026-10-14T17:21:42.984274Z",
+          "reason_code": null
+        },
+        {
+          "type": "DEPRECATED",
+          "status": "ABSENT",
+          "provider_id": "pypi",
+          "source_url": "https://pypi.org/simple/attrs/",
+          "checked_at": "2026-10-14T17:21:42.984274Z",
+          "reason_code": null
+        },
+        {
+          "type": "STALE_RELEASE",
+          "status": "ABSENT",
+          "provider_id": "pypi",
+          "source_url": "https://pypi.org/simple/attrs/",
+          "checked_at": "2026-10-14T17:21:42.984274Z",
+          "reason_code": null
+        }
+      ],
+      "selected_evidence_ids": [],
+      "notices": [],
+      "unknown_reasons": [],
+      "rule_ids": [
+        "R-006"
+      ],
+      "evidence": [],
+      "diagnostics": [],
+      "incomplete": false,
+      "ci_failure": false,
+      "exception_applied": false
+    },
+    {
+      "source_ref": "pypi-nose",
+      "purl": "pkg:pypi/nose@1.3.7",
+      "name": "nose",
+      "version": "1.3.7",
+      "version_verification": {
+        "status": "VERIFIED",
+        "provider_id": "pypi",
+        "source_url": "https://pypi.org/simple/nose/",
+        "checked_at": "2026-10-14T17:21:42.984274Z",
+        "published_at": "2015-06-02T09:12:32.961855Z",
+        "reason_code": null
+      },
+      "lifecycle": "EOL",
+      "support_assessment": {
+        "lifecycle": "UNKNOWN",
+        "confidence": null,
+        "eol_effective_date": null,
+        "matched_cycle": null,
+        "selected_evidence_ids": [],
+        "unknown_reasons": [
+          "NO_LIFECYCLE_EVIDENCE"
+        ]
+      },
+      "eol_basis": "POLICY_RULE",
+      "eol_rule_evaluations": [
+        {
+          "rule_id": "deprecated",
+          "status": "ABSENT",
+          "matched_signals": [],
+          "unknown_signals": [],
+          "reason_code": null
+        },
+        {
+          "rule_id": "archived",
+          "status": "UNKNOWN",
+          "matched_signals": [],
+          "unknown_signals": [
+            "ARCHIVED"
+          ],
+          "reason_code": "CONDITION_UNAVAILABLE"
+        },
+        {
+          "rule_id": "inactive-two-years",
+          "status": "PRESENT",
+          "matched_signals": [
+            "STALE_RELEASE"
+          ],
+          "unknown_signals": [],
+          "reason_code": null
+        }
+      ],
+      "confidence": "MEDIUM",
+      "eol_effective_date": null,
+      "matched_cycle": null,
+      "signals": [
+        {
+          "type": "STALE_RELEASE",
+          "provider_id": "pypi",
+          "source_url": "https://pypi.org/simple/nose/",
+          "observed_at": "2026-10-14T17:21:42.984274Z",
+          "details": {
+            "days_since_latest_release": 4152,
+            "latest_published_at": "2015-06-02T09:12:32.961855Z",
+            "threshold_days": 730
+          }
+        }
+      ],
+      "signal_evaluations": [
+        {
+          "type": "ARCHIVED",
+          "status": "UNKNOWN",
+          "provider_id": "github",
+          "source_url": null,
+          "checked_at": null,
+          "reason_code": "NO_GITHUB_SOURCE_REPOSITORY"
+        },
+        {
+          "type": "DEPRECATED",
+          "status": "ABSENT",
+          "provider_id": "pypi",
+          "source_url": "https://pypi.org/simple/nose/",
+          "checked_at": "2026-10-14T17:21:42.984274Z",
+          "reason_code": null
+        },
+        {
+          "type": "STALE_RELEASE",
+          "status": "PRESENT",
+          "provider_id": "pypi",
+          "source_url": "https://pypi.org/simple/nose/",
+          "checked_at": "2026-10-14T17:21:42.984274Z",
+          "reason_code": null
+        }
+      ],
+      "selected_evidence_ids": [],
+      "notices": [],
+      "unknown_reasons": [],
+      "rule_ids": [
+        "R-005",
+        "R-006",
+        "R-013"
+      ],
+      "evidence": [],
+      "diagnostics": [],
+      "incomplete": false,
+      "ci_failure": true,
+      "exception_applied": false
+    },
+    {
+      "source_ref": "pypi-pep8",
+      "purl": "pkg:pypi/pep8@1.7.1",
+      "name": "pep8",
+      "version": "1.7.1",
+      "version_verification": {
+        "status": "VERIFIED",
+        "provider_id": "pypi",
+        "source_url": "https://pypi.org/simple/pep8/",
+        "checked_at": "2026-10-14T17:21:42.984274Z",
+        "published_at": "2017-10-24T14:39:11.465365Z",
+        "reason_code": null
+      },
+      "lifecycle": "EOL",
+      "support_assessment": {
+        "lifecycle": "UNKNOWN",
+        "confidence": null,
+        "eol_effective_date": null,
+        "matched_cycle": null,
+        "selected_evidence_ids": [],
+        "unknown_reasons": [
+          "NO_LIFECYCLE_EVIDENCE"
+        ]
+      },
+      "eol_basis": "POLICY_RULE",
+      "eol_rule_evaluations": [
+        {
+          "rule_id": "deprecated",
+          "status": "ABSENT",
+          "matched_signals": [],
+          "unknown_signals": [],
+          "reason_code": null
+        },
+        {
+          "rule_id": "archived",
+          "status": "UNKNOWN",
+          "matched_signals": [],
+          "unknown_signals": [
+            "ARCHIVED"
+          ],
+          "reason_code": "CONDITION_UNAVAILABLE"
+        },
+        {
+          "rule_id": "inactive-two-years",
+          "status": "PRESENT",
+          "matched_signals": [
+            "STALE_RELEASE"
+          ],
+          "unknown_signals": [],
+          "reason_code": null
+        }
+      ],
+      "confidence": "MEDIUM",
+      "eol_effective_date": null,
+      "matched_cycle": null,
+      "signals": [
+        {
+          "type": "STALE_RELEASE",
+          "provider_id": "pypi",
+          "source_url": "https://pypi.org/simple/pep8/",
+          "observed_at": "2026-10-14T17:21:42.984274Z",
+          "details": {
+            "days_since_latest_release": 3277,
+            "latest_published_at": "2017-10-24T14:39:11.465365Z",
+            "threshold_days": 730
+          }
+        }
+      ],
+      "signal_evaluations": [
+        {
+          "type": "ARCHIVED",
+          "status": "UNKNOWN",
+          "provider_id": "github",
+          "source_url": null,
+          "checked_at": null,
+          "reason_code": "NO_GITHUB_SOURCE_REPOSITORY"
+        },
+        {
+          "type": "DEPRECATED",
+          "status": "ABSENT",
+          "provider_id": "pypi",
+          "source_url": "https://pypi.org/simple/pep8/",
+          "checked_at": "2026-10-14T17:21:42.984274Z",
+          "reason_code": null
+        },
+        {
+          "type": "STALE_RELEASE",
+          "status": "PRESENT",
+          "provider_id": "pypi",
+          "source_url": "https://pypi.org/simple/pep8/",
+          "checked_at": "2026-10-14T17:21:42.984274Z",
+          "reason_code": null
+        }
+      ],
+      "selected_evidence_ids": [],
+      "notices": [],
+      "unknown_reasons": [],
+      "rule_ids": [
+        "R-005",
+        "R-006",
+        "R-013"
+      ],
+      "evidence": [],
+      "diagnostics": [],
+      "incomplete": false,
+      "ci_failure": true,
+      "exception_applied": false
+    },
+    {
+      "source_ref": "pypi-pycrypto",
+      "purl": "pkg:pypi/pycrypto@2.6.1",
+      "name": "pycrypto",
+      "version": "2.6.1",
+      "version_verification": {
+        "status": "VERIFIED",
+        "provider_id": "pypi",
+        "source_url": "https://pypi.org/simple/pycrypto/",
+        "checked_at": "2026-10-14T17:21:42.984274Z",
+        "published_at": "2014-06-20T08:10:20.813938Z",
+        "reason_code": null
+      },
+      "lifecycle": "EOL",
+      "support_assessment": {
+        "lifecycle": "UNKNOWN",
+        "confidence": null,
+        "eol_effective_date": null,
+        "matched_cycle": null,
+        "selected_evidence_ids": [],
+        "unknown_reasons": [
+          "NO_LIFECYCLE_EVIDENCE"
+        ]
+      },
+      "eol_basis": "POLICY_RULE",
+      "eol_rule_evaluations": [
+        {
+          "rule_id": "deprecated",
+          "status": "ABSENT",
+          "matched_signals": [],
+          "unknown_signals": [],
+          "reason_code": null
+        },
+        {
+          "rule_id": "archived",
+          "status": "UNKNOWN",
+          "matched_signals": [],
+          "unknown_signals": [
+            "ARCHIVED"
+          ],
+          "reason_code": "CONDITION_UNAVAILABLE"
+        },
+        {
+          "rule_id": "inactive-two-years",
+          "status": "PRESENT",
+          "matched_signals": [
+            "STALE_RELEASE"
+          ],
+          "unknown_signals": [],
+          "reason_code": null
+        }
+      ],
+      "confidence": "MEDIUM",
+      "eol_effective_date": null,
+      "matched_cycle": null,
+      "signals": [
+        {
+          "type": "STALE_RELEASE",
+          "provider_id": "pypi",
+          "source_url": "https://pypi.org/simple/pycrypto/",
+          "observed_at": "2026-10-14T17:21:42.984274Z",
+          "details": {
+            "days_since_latest_release": 4499,
+            "latest_published_at": "2014-06-20T08:10:20.813938Z",
+            "threshold_days": 730
+          }
+        }
+      ],
+      "signal_evaluations": [
+        {
+          "type": "ARCHIVED",
+          "status": "UNKNOWN",
+          "provider_id": "github",
+          "source_url": null,
+          "checked_at": null,
+          "reason_code": "NO_GITHUB_SOURCE_REPOSITORY"
+        },
+        {
+          "type": "DEPRECATED",
+          "status": "ABSENT",
+          "provider_id": "pypi",
+          "source_url": "https://pypi.org/simple/pycrypto/",
+          "checked_at": "2026-10-14T17:21:42.984274Z",
+          "reason_code": null
+        },
+        {
+          "type": "STALE_RELEASE",
+          "status": "PRESENT",
+          "provider_id": "pypi",
+          "source_url": "https://pypi.org/simple/pycrypto/",
+          "checked_at": "2026-10-14T17:21:42.984274Z",
+          "reason_code": null
+        }
+      ],
+      "selected_evidence_ids": [],
+      "notices": [],
+      "unknown_reasons": [],
+      "rule_ids": [
+        "R-005",
+        "R-006",
+        "R-013"
+      ],
+      "evidence": [],
+      "diagnostics": [],
+      "incomplete": false,
+      "ci_failure": true,
+      "exception_applied": false
+    }
+  ]
+}

@@ -1,0 +1,14 @@
+schema_version: 2
+signals:
+  stale_release_days: 730
+decision:
+  eol_rules:
+    - id: deprecated
+      any_of: [DEPRECATED]
+      ecosystems: [npm, pypi, nuget]
+    - id: archived
+      any_of: [ARCHIVED]
+    - id: inactive-two-years
+      any_of: [STALE_RELEASE]
+ci:
+  min_confidence: MEDIUM

@@ -40,6 +40,16 @@ Inspect both uncovered code and expected outcomes. Statement coverage is not bra
 
 Fixed responses verify behavior under known API shapes and failure modes. They do not verify current public API availability, every package's metadata, or the completeness of upstream support information.
 
+## Detection on actual packages
+
+[Real package validation](real-package-validation.md) covers 39 public package versions across all seven supported ecosystems: 30 retirement/deprecation targets, one inactivity candidate, and eight controls. It records real CLI output and independently reviewed upstream sources. The default scan detected 24 of the 30 targets; a separate inactivity profile recovered four misses. Two ended Maven release series remained undetected. These are actual coverage gaps, not successful acceptance cases.
+
+```sh
+make validate-real-packages
+```
+
+This makes public API requests and exits nonzero for unmet detection goals. It is intentionally separate from deterministic CI. CI checks the recorded reports' contracts, hashes, and CLI gate outcomes without contacting public services; it does not assert that all real-world targets were detected.
+
 ## Regressions found while expanding coverage
 
 - Exact RubyGems version details could verify a version but their source URL was discarded when the package-wide version list lacked it. Repository discovery now uses validated exact-version details independently of that list.

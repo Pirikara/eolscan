@@ -215,6 +215,7 @@ internal/
 schemas/           Canonical JSON schemas, embedded in the binary
 examples/          User-facing policies, catalogs, and sample SBOM
 testdata/fixtures/  Fixed acceptance inputs, reports, and manifest
+testdata/real-packages/  Reviewed public packages, live-scan inputs, and observations
 tests/             Acceptance and HTTP integration tests
 docs/              Design specification and architecture
 .github/workflows/ CI checks
@@ -233,6 +234,8 @@ go build -o bin/eolscan ./cmd/eolscan
 Go tests cover design acceptance cases UT-01 through UT-45, native registry selection, fallback, signal completeness, offline caching, and host rate control. Regression tests cover nested metadata components, empty scans, cancellation, recent-release proof with incomplete older history, automatic security-scope detection, configurable AND/OR rules, package scopes, unknown conditions, source-repository discovery, date refresh, and offline cache expiry. Fifteen report fixtures run through the actual CLI and verify decisions, exit codes, input hashes, and policy hashes. External APIs are replaced with fixed responses and local HTTPS servers, so tests require no public API access.
 
 The expanded suite covers the full two-input three-valued truth tables, mixed seven-ecosystem CycloneDX/SPDX scans, RubyGems listing/detail disagreements, PyPI source discovery, GitHub malformed responses and quota/redirect behavior, inactivity boundaries, and report/CI consistency. Linux CI also runs the built executable against local HTTPS fixtures. See [test scope, platform behavior, and coverage measurement](docs/testing.md).
+
+[Actual package detection validation](docs/real-package-validation.md) uses 39 public versions across all seven ecosystems. On 2026-10-15 JST, the default CLI detected 24 of 30 reviewed retirement/deprecation targets, with no EOL result among eight controls. Adding a 730-day inactivity rule recovered four misses; Struts 2.3 and Spring 4.3 remained undetected. This selected sample exposes coverage gaps and does not estimate general detection recall. Re-run against public APIs with `make validate-real-packages`; the validator exits nonzero while detection goals remain unmet.
 
 JSON schemas are embedded in the binary to validate configuration and reports. Additional documentation and example validation uses Python, which is not a CLI runtime dependency.
 

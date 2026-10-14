@@ -1,0 +1,3914 @@
+{
+  "schema_version": "2.4",
+  "tool_version": "0.5.0",
+  "as_of": "2026-10-14",
+  "projection": false,
+  "generated_at": "2026-10-14T17:19:22.049106Z",
+  "input_sha256": "cd70732faaa7839671f8ec77369a5084bdf35a2e4944a944421219a3eb54adb9",
+  "policy_hash": "aa227adf840d66b28d33f2d30017a0483035b92ca88c066a35b82b34c61cf5ef",
+  "summary": {
+    "in_scope": 39,
+    "excluded": 0,
+    "eol": 24,
+    "supported": 0,
+    "unknown": 5,
+    "no_eol_detected": 10,
+    "assessment_coverage": 0.8717948717948718,
+    "provider_error_count": 0,
+    "ci_failure_count": 0
+  },
+  "ci_gate": {
+    "passed": true,
+    "violation_codes": [],
+    "incomplete": true
+  },
+  "results": [
+    {
+      "source_ref": "cargo-failure",
+      "purl": "pkg:cargo/failure@0.1.8",
+      "name": "failure",
+      "version": "0.1.8",
+      "version_verification": {
+        "status": "VERIFIED",
+        "provider_id": "deps_dev",
+        "source_url": "https://api.deps.dev/v3/systems/cargo/packages/failure/versions/0.1.8",
+        "checked_at": "2026-10-14T17:19:22.049106Z",
+        "published_at": "2020-05-02T18:13:11Z",
+        "reason_code": null
+      },
+      "lifecycle": "EOL",
+      "support_assessment": {
+        "lifecycle": "UNKNOWN",
+        "confidence": null,
+        "eol_effective_date": null,
+        "matched_cycle": null,
+        "selected_evidence_ids": [],
+        "unknown_reasons": [
+          "NO_LIFECYCLE_EVIDENCE"
+        ]
+      },
+      "eol_basis": "POLICY_RULE",
+      "eol_rule_evaluations": [
+        {
+          "rule_id": "archived",
+          "status": "PRESENT",
+          "matched_signals": [
+            "ARCHIVED"
+          ],
+          "unknown_signals": [],
+          "reason_code": null
+        }
+      ],
+      "confidence": "MEDIUM",
+      "eol_effective_date": null,
+      "matched_cycle": null,
+      "signals": [
+        {
+          "type": "ARCHIVED",
+          "provider_id": "github",
+          "source_url": "https://api.github.com/repos/rust-lang-nursery/failure",
+          "observed_at": "2026-10-14T17:19:22.049106Z",
+          "details": {
+            "mapping_provenance": "UNVERIFIED_METADATA",
+            "mapping_source_url": "https://api.deps.dev/v3/systems/cargo/packages/failure/versions/0.1.8",
+            "raw_payload_hash": "f9ea7fff383787596be7c7ac517408a490c2b18f1b538c2e7f9eb92ce6d4cd96",
+            "repository": "https://github.com/rust-lang-deprecated/failure",
+            "scope": "source_repository"
+          }
+        },
+        {
+          "type": "STALE_RELEASE",
+          "provider_id": "deps_dev",
+          "source_url": "https://api.deps.dev/v3/systems/cargo/packages/failure",
+          "observed_at": "2026-10-14T17:19:22.049106Z",
+          "details": {
+            "days_since_latest_release": 2356,
+            "latest_published_at": "2020-05-02T18:13:11Z",
+            "threshold_days": 730
+          }
+        }
+      ],
+      "signal_evaluations": [
+        {
+          "type": "ARCHIVED",
+          "status": "PRESENT",
+          "provider_id": "github",
+          "source_url": "https://api.github.com/repos/rust-lang-nursery/failure",
+          "checked_at": "2026-10-14T17:19:22.049106Z",
+          "reason_code": null
+        },
+        {
+          "type": "DEPRECATED",
+          "status": "UNKNOWN",
+          "provider_id": null,
+          "source_url": null,
+          "checked_at": null,
+          "reason_code": "NO_CAPABILITY"
+        },
+        {
+          "type": "STALE_RELEASE",
+          "status": "PRESENT",
+          "provider_id": "deps_dev",
+          "source_url": "https://api.deps.dev/v3/systems/cargo/packages/failure",
+          "checked_at": "2026-10-14T17:19:22.049106Z",
+          "reason_code": null
+        }
+      ],
+      "selected_evidence_ids": [],
+      "notices": [],
+      "unknown_reasons": [],
+      "rule_ids": [
+        "R-005",
+        "R-006",
+        "R-013"
+      ],
+      "evidence": [],
+      "diagnostics": [],
+      "incomplete": false,
+      "ci_failure": false,
+      "exception_applied": false
+    },
+    {
+      "source_ref": "cargo-rustc-serialize",
+      "purl": "pkg:cargo/rustc-serialize@0.3.25",
+      "name": "rustc-serialize",
+      "version": "0.3.25",
+      "version_verification": {
+        "status": "VERIFIED",
+        "provider_id": "deps_dev",
+        "source_url": "https://api.deps.dev/v3/systems/cargo/packages/rustc-serialize/versions/0.3.25",
+        "checked_at": "2026-10-14T17:19:22.049106Z",
+        "published_at": "2023-12-01T09:52:20Z",
+        "reason_code": null
+      },
+      "lifecycle": "EOL",
+      "support_assessment": {
+        "lifecycle": "UNKNOWN",
+        "confidence": null,
+        "eol_effective_date": null,
+        "matched_cycle": null,
+        "selected_evidence_ids": [],
+        "unknown_reasons": [
+          "NO_LIFECYCLE_EVIDENCE"
+        ]
+      },
+      "eol_basis": "POLICY_RULE",
+      "eol_rule_evaluations": [
+        {
+          "rule_id": "archived",
+          "status": "PRESENT",
+          "matched_signals": [
+            "ARCHIVED"
+          ],
+          "unknown_signals": [],
+          "reason_code": null
+        }
+      ],
+      "confidence": "MEDIUM",
+      "eol_effective_date": null,
+      "matched_cycle": null,
+      "signals": [
+        {
+          "type": "ARCHIVED",
+          "provider_id": "github",
+          "source_url": "https://api.github.com/repos/rust-lang/rustc-serialize",
+          "observed_at": "2026-10-14T17:19:22.049106Z",
+          "details": {
+            "mapping_provenance": "UNVERIFIED_METADATA",
+            "mapping_source_url": "https://api.deps.dev/v3/systems/cargo/packages/rustc-serialize/versions/0.3.25",
+            "raw_payload_hash": "12a1031538528de5a67dfc12cd9951268d9cc8b558c11277eb7c4c9caeea6dd0",
+            "repository": "https://github.com/rust-lang-deprecated/rustc-serialize",
+            "scope": "source_repository"
+          }
+        },
+        {
+          "type": "STALE_RELEASE",
+          "provider_id": "deps_dev",
+          "source_url": "https://api.deps.dev/v3/systems/cargo/packages/rustc-serialize",
+          "observed_at": "2026-10-14T17:19:22.049106Z",
+          "details": {
+            "days_since_latest_release": 1048,
+            "latest_published_at": "2023-12-01T09:52:20Z",
+            "threshold_days": 730
+          }
+        }
+      ],
+      "signal_evaluations": [
+        {
+          "type": "ARCHIVED",
+          "status": "PRESENT",
+          "provider_id": "github",
+          "source_url": "https://api.github.com/repos/rust-lang/rustc-serialize",
+          "checked_at": "2026-10-14T17:19:22.049106Z",
+          "reason_code": null
+        },
+        {
+          "type": "DEPRECATED",
+          "status": "UNKNOWN",
+          "provider_id": null,
+          "source_url": null,
+          "checked_at": null,
+          "reason_code": "NO_CAPABILITY"
+        },
+        {
+          "type": "STALE_RELEASE",
+          "status": "PRESENT",
+          "provider_id": "deps_dev",
+          "source_url": "https://api.deps.dev/v3/systems/cargo/packages/rustc-serialize",
+          "checked_at": "2026-10-14T17:19:22.049106Z",
+          "reason_code": null
+        }
+      ],
+      "selected_evidence_ids": [],
+      "notices": [],
+      "unknown_reasons": [],
+      "rule_ids": [
+        "R-005",
+        "R-006",
+        "R-013"
+      ],
+      "evidence": [],
+      "diagnostics": [],
+      "incomplete": false,
+      "ci_failure": false,
+      "exception_applied": false
+    },
+    {
+      "source_ref": "cargo-serde",
+      "purl": "pkg:cargo/serde@1.0.228",
+      "name": "serde",
+      "version": "1.0.228",
+      "version_verification": {
+        "status": "VERIFIED",
+        "provider_id": "deps_dev",
+        "source_url": "https://api.deps.dev/v3/systems/cargo/packages/serde/versions/1.0.228",
+        "checked_at": "2026-10-14T17:19:22.049106Z",
+        "published_at": "2025-09-27T16:51:35Z",
+        "reason_code": null
+      },
+      "lifecycle": "NO_EOL_DETECTED",
+      "support_assessment": {
+        "lifecycle": "UNKNOWN",
+        "confidence": null,
+        "eol_effective_date": null,
+        "matched_cycle": null,
+        "selected_evidence_ids": [],
+        "unknown_reasons": [
+          "NO_LIFECYCLE_EVIDENCE"
+        ]
+      },
+      "eol_basis": null,
+      "eol_rule_evaluations": [
+        {
+          "rule_id": "archived",
+          "status": "ABSENT",
+          "matched_signals": [],
+          "unknown_signals": [],
+          "reason_code": null
+        }
+      ],
+      "confidence": null,
+      "eol_effective_date": null,
+      "matched_cycle": null,
+      "signals": [],
+      "signal_evaluations": [
+        {
+          "type": "ARCHIVED",
+          "status": "ABSENT",
+          "provider_id": "github",
+          "source_url": "https://api.github.com/repos/serde-rs/serde",
+          "checked_at": "2026-10-14T17:19:22.049106Z",
+          "reason_code": null
+        },
+        {
+          "type": "DEPRECATED",
+          "status": "UNKNOWN",
+          "provider_id": null,
+          "source_url": null,
+          "checked_at": null,
+          "reason_code": "NO_CAPABILITY"
+        },
+        {
+          "type": "STALE_RELEASE",
+          "status": "ABSENT",
+          "provider_id": "deps_dev",
+          "source_url": "https://api.deps.dev/v3/systems/cargo/packages/serde",
+          "checked_at": "2026-10-14T17:19:22.049106Z",
+          "reason_code": null
+        }
+      ],
+      "selected_evidence_ids": [],
+      "notices": [],
+      "unknown_reasons": [],
+      "rule_ids": [
+        "R-006"
+      ],
+      "evidence": [],
+      "diagnostics": [],
+      "incomplete": false,
+      "ci_failure": false,
+      "exception_applied": false
+    },
+    {
+      "source_ref": "cargo-serde-yaml",
+      "purl": "pkg:cargo/serde_yaml@0.9.34%2Bdeprecated",
+      "name": "serde_yaml",
+      "version": "0.9.34+deprecated",
+      "version_verification": {
+        "status": "VERIFIED",
+        "provider_id": "deps_dev",
+        "source_url": "https://api.deps.dev/v3/systems/cargo/packages/serde_yaml/versions/0.9.34+deprecated",
+        "checked_at": "2026-10-14T17:19:22.049106Z",
+        "published_at": "2024-03-25T00:50:19Z",
+        "reason_code": null
+      },
+      "lifecycle": "EOL",
+      "support_assessment": {
+        "lifecycle": "UNKNOWN",
+        "confidence": null,
+        "eol_effective_date": null,
+        "matched_cycle": null,
+        "selected_evidence_ids": [],
+        "unknown_reasons": [
+          "NO_LIFECYCLE_EVIDENCE"
+        ]
+      },
+      "eol_basis": "POLICY_RULE",
+      "eol_rule_evaluations": [
+        {
+          "rule_id": "archived",
+          "status": "PRESENT",
+          "matched_signals": [
+            "ARCHIVED"
+          ],
+          "unknown_signals": [],
+          "reason_code": null
+        }
+      ],
+      "confidence": "MEDIUM",
+      "eol_effective_date": null,
+      "matched_cycle": null,
+      "signals": [
+        {
+          "type": "ARCHIVED",
+          "provider_id": "github",
+          "source_url": "https://api.github.com/repos/dtolnay/serde-yaml",
+          "observed_at": "2026-10-14T17:19:22.049106Z",
+          "details": {
+            "mapping_provenance": "UNVERIFIED_METADATA",
+            "mapping_source_url": "https://api.deps.dev/v3/systems/cargo/packages/serde_yaml/versions/0.9.34+deprecated",
+            "raw_payload_hash": "06612c92d69e24ddbcf4bd2eb9ddbbe3a078f5c3a33cd960d943590ee9c3e37f",
+            "repository": "https://github.com/dtolnay/serde-yaml",
+            "scope": "source_repository"
+          }
+        },
+        {
+          "type": "STALE_RELEASE",
+          "provider_id": "deps_dev",
+          "source_url": "https://api.deps.dev/v3/systems/cargo/packages/serde_yaml",
+          "observed_at": "2026-10-14T17:19:22.049106Z",
+          "details": {
+            "days_since_latest_release": 933,
+            "latest_published_at": "2024-03-25T00:50:19Z",
+            "threshold_days": 730
+          }
+        }
+      ],
+      "signal_evaluations": [
+        {
+          "type": "ARCHIVED",
+          "status": "PRESENT",
+          "provider_id": "github",
+          "source_url": "https://api.github.com/repos/dtolnay/serde-yaml",
+          "checked_at": "2026-10-14T17:19:22.049106Z",
+          "reason_code": null
+        },
+        {
+          "type": "DEPRECATED",
+          "status": "UNKNOWN",
+          "provider_id": null,
+          "source_url": null,
+          "checked_at": null,
+          "reason_code": "NO_CAPABILITY"
+        },
+        {
+          "type": "STALE_RELEASE",
+          "status": "PRESENT",
+          "provider_id": "deps_dev",
+          "source_url": "https://api.deps.dev/v3/systems/cargo/packages/serde_yaml",
+          "checked_at": "2026-10-14T17:19:22.049106Z",
+          "reason_code": null
+        }
+      ],
+      "selected_evidence_ids": [],
+      "notices": [],
+      "unknown_reasons": [],
+      "rule_ids": [
+        "R-005",
+        "R-006",
+        "R-013"
+      ],
+      "evidence": [],
+      "diagnostics": [],
+      "incomplete": false,
+      "ci_failure": false,
+      "exception_applied": false
+    },
+    {
+      "source_ref": "gem-concurrent-ruby",
+      "purl": "pkg:gem/concurrent-ruby@1.3.5",
+      "name": "concurrent-ruby",
+      "version": "1.3.5",
+      "version_verification": {
+        "status": "VERIFIED",
+        "provider_id": "rubygems",
+        "source_url": "https://rubygems.org/api/v1/versions/concurrent-ruby.json",
+        "checked_at": "2026-10-14T17:19:22.049106Z",
+        "published_at": "2025-01-15T21:35:44.564Z",
+        "reason_code": null
+      },
+      "lifecycle": "NO_EOL_DETECTED",
+      "support_assessment": {
+        "lifecycle": "UNKNOWN",
+        "confidence": null,
+        "eol_effective_date": null,
+        "matched_cycle": null,
+        "selected_evidence_ids": [],
+        "unknown_reasons": [
+          "NO_LIFECYCLE_EVIDENCE"
+        ]
+      },
+      "eol_basis": null,
+      "eol_rule_evaluations": [
+        {
+          "rule_id": "archived",
+          "status": "ABSENT",
+          "matched_signals": [],
+          "unknown_signals": [],
+          "reason_code": null
+        }
+      ],
+      "confidence": null,
+      "eol_effective_date": null,
+      "matched_cycle": null,
+      "signals": [],
+      "signal_evaluations": [
+        {
+          "type": "ARCHIVED",
+          "status": "ABSENT",
+          "provider_id": "github",
+          "source_url": "https://api.github.com/repos/ruby-concurrency/concurrent-ruby",
+          "checked_at": "2026-10-14T17:19:22.049106Z",
+          "reason_code": null
+        },
+        {
+          "type": "DEPRECATED",
+          "status": "UNKNOWN",
+          "provider_id": null,
+          "source_url": null,
+          "checked_at": null,
+          "reason_code": "NO_CAPABILITY"
+        },
+        {
+          "type": "STALE_RELEASE",
+          "status": "ABSENT",
+          "provider_id": "rubygems",
+          "source_url": "https://rubygems.org/api/v1/versions/concurrent-ruby.json",
+          "checked_at": "2026-10-14T17:19:22.049106Z",
+          "reason_code": null
+        }
+      ],
+      "selected_evidence_ids": [],
+      "notices": [],
+      "unknown_reasons": [],
+      "rule_ids": [
+        "R-006"
+      ],
+      "evidence": [],
+      "diagnostics": [],
+      "incomplete": false,
+      "ci_failure": false,
+      "exception_applied": false
+    },
+    {
+      "source_ref": "gem-rails",
+      "purl": "pkg:gem/rails@6.1.7.10",
+      "name": "rails",
+      "version": "6.1.7.10",
+      "version_verification": {
+        "status": "VERIFIED",
+        "provider_id": "rubygems",
+        "source_url": "https://rubygems.org/api/v1/versions/rails.json",
+        "checked_at": "2026-10-14T17:19:22.049106Z",
+        "published_at": "2024-10-23T21:59:09.257Z",
+        "reason_code": null
+      },
+      "lifecycle": "EOL",
+      "support_assessment": {
+        "lifecycle": "EOL",
+        "confidence": "MEDIUM",
+        "eol_effective_date": "2024-10-01",
+        "matched_cycle": "6.1",
+        "selected_evidence_ids": [
+          "endoflife_date:rails:6.1"
+        ],
+        "unknown_reasons": []
+      },
+      "eol_basis": "SUPPORT_DATE",
+      "eol_rule_evaluations": [
+        {
+          "rule_id": "archived",
+          "status": "ABSENT",
+          "matched_signals": [],
+          "unknown_signals": [],
+          "reason_code": null
+        }
+      ],
+      "confidence": "MEDIUM",
+      "eol_effective_date": "2024-10-01",
+      "matched_cycle": "6.1",
+      "signals": [],
+      "signal_evaluations": [
+        {
+          "type": "ARCHIVED",
+          "status": "ABSENT",
+          "provider_id": "github",
+          "source_url": "https://api.github.com/repos/rails/rails",
+          "checked_at": "2026-10-14T17:19:22.049106Z",
+          "reason_code": null
+        },
+        {
+          "type": "DEPRECATED",
+          "status": "UNKNOWN",
+          "provider_id": null,
+          "source_url": null,
+          "checked_at": null,
+          "reason_code": "NO_CAPABILITY"
+        },
+        {
+          "type": "STALE_RELEASE",
+          "status": "ABSENT",
+          "provider_id": "rubygems",
+          "source_url": "https://rubygems.org/api/v1/versions/rails.json",
+          "checked_at": "2026-10-14T17:19:22.049106Z",
+          "reason_code": null
+        }
+      ],
+      "selected_evidence_ids": [
+        "endoflife_date:rails:6.1"
+      ],
+      "notices": [],
+      "unknown_reasons": [],
+      "rule_ids": [
+        "R-012"
+      ],
+      "evidence": [
+        {
+          "id": "endoflife_date:rails:6.1",
+          "provider_id": "endoflife_date",
+          "source_class": "CURATED_DATABASE",
+          "claim": "CURATED_SECURITY_END",
+          "package_purl": "pkg:gem/rails",
+          "product_slug": "rails",
+          "matched_cycle": "6.1",
+          "support_scope": "upstream_security",
+          "support_start_date": null,
+          "eol_effective_date": "2024-10-01",
+          "source_url": "https://endoflife.date/rails",
+          "source_field": "releases[].eolFrom",
+          "source_label": "Security Support",
+          "observed_at": "2026-10-14T17:19:22.049106Z",
+          "source_updated_at": "2026-09-26T00:28:10Z",
+          "reviewed_at": null,
+          "valid_until": null,
+          "raw_payload_hash": "91ea6e1d502e9db21491f697e6574a275f305bbc4c12de31a222c815010b7acd",
+          "confidence": "MEDIUM",
+          "rule_id": "R-012",
+          "general_eol_review": null,
+          "superseded_by": null,
+          "supersession_source_url": null
+        }
+      ],
+      "diagnostics": [],
+      "incomplete": false,
+      "ci_failure": false,
+      "exception_applied": false
+    },
+    {
+      "source_ref": "gem-sass",
+      "purl": "pkg:gem/sass@3.7.4",
+      "name": "sass",
+      "version": "3.7.4",
+      "version_verification": {
+        "status": "VERIFIED",
+        "provider_id": "rubygems",
+        "source_url": "https://rubygems.org/api/v1/versions/sass.json",
+        "checked_at": "2026-10-14T17:19:22.049106Z",
+        "published_at": "2019-04-04T00:50:00.426Z",
+        "reason_code": null
+      },
+      "lifecycle": "EOL",
+      "support_assessment": {
+        "lifecycle": "UNKNOWN",
+        "confidence": null,
+        "eol_effective_date": null,
+        "matched_cycle": null,
+        "selected_evidence_ids": [],
+        "unknown_reasons": [
+          "NO_LIFECYCLE_EVIDENCE"
+        ]
+      },
+      "eol_basis": "POLICY_RULE",
+      "eol_rule_evaluations": [
+        {
+          "rule_id": "archived",
+          "status": "PRESENT",
+          "matched_signals": [
+            "ARCHIVED"
+          ],
+          "unknown_signals": [],
+          "reason_code": null
+        }
+      ],
+      "confidence": "MEDIUM",
+      "eol_effective_date": null,
+      "matched_cycle": null,
+      "signals": [
+        {
+          "type": "ARCHIVED",
+          "provider_id": "github",
+          "source_url": "https://api.github.com/repos/sass/ruby-sass",
+          "observed_at": "2026-10-14T17:19:22.049106Z",
+          "details": {
+            "mapping_provenance": "UNVERIFIED_METADATA",
+            "mapping_source_url": "https://api.deps.dev/v3/systems/rubygems/packages/sass/versions/3.7.4",
+            "raw_payload_hash": "ba154f7cda8d300f095db7c2a1482f593bbe3731ab7073a082098a25d591e5ff",
+            "repository": "https://github.com/sass/ruby-sass",
+            "scope": "source_repository"
+          }
+        },
+        {
+          "type": "STALE_RELEASE",
+          "provider_id": "rubygems",
+          "source_url": "https://rubygems.org/api/v1/versions/sass.json",
+          "observed_at": "2026-10-14T17:19:22.049106Z",
+          "details": {
+            "days_since_latest_release": 2750,
+            "latest_published_at": "2019-04-04T00:50:00.426Z",
+            "threshold_days": 730
+          }
+        }
+      ],
+      "signal_evaluations": [
+        {
+          "type": "ARCHIVED",
+          "status": "PRESENT",
+          "provider_id": "github",
+          "source_url": "https://api.github.com/repos/sass/ruby-sass",
+          "checked_at": "2026-10-14T17:19:22.049106Z",
+          "reason_code": null
+        },
+        {
+          "type": "DEPRECATED",
+          "status": "UNKNOWN",
+          "provider_id": null,
+          "source_url": null,
+          "checked_at": null,
+          "reason_code": "NO_CAPABILITY"
+        },
+        {
+          "type": "STALE_RELEASE",
+          "status": "PRESENT",
+          "provider_id": "rubygems",
+          "source_url": "https://rubygems.org/api/v1/versions/sass.json",
+          "checked_at": "2026-10-14T17:19:22.049106Z",
+          "reason_code": null
+        }
+      ],
+      "selected_evidence_ids": [],
+      "notices": [],
+      "unknown_reasons": [],
+      "rule_ids": [
+        "R-005",
+        "R-006",
+        "R-013"
+      ],
+      "evidence": [],
+      "diagnostics": [],
+      "incomplete": false,
+      "ci_failure": false,
+      "exception_applied": false
+    },
+    {
+      "source_ref": "gem-therubyracer",
+      "purl": "pkg:gem/therubyracer@0.12.3",
+      "name": "therubyracer",
+      "version": "0.12.3",
+      "version_verification": {
+        "status": "VERIFIED",
+        "provider_id": "rubygems",
+        "source_url": "https://rubygems.org/api/v1/versions/therubyracer.json",
+        "checked_at": "2026-10-14T17:19:22.049106Z",
+        "published_at": "2017-01-05T03:25:08.974Z",
+        "reason_code": null
+      },
+      "lifecycle": "EOL",
+      "support_assessment": {
+        "lifecycle": "UNKNOWN",
+        "confidence": null,
+        "eol_effective_date": null,
+        "matched_cycle": null,
+        "selected_evidence_ids": [],
+        "unknown_reasons": [
+          "NO_LIFECYCLE_EVIDENCE"
+        ]
+      },
+      "eol_basis": "POLICY_RULE",
+      "eol_rule_evaluations": [
+        {
+          "rule_id": "archived",
+          "status": "PRESENT",
+          "matched_signals": [
+            "ARCHIVED"
+          ],
+          "unknown_signals": [],
+          "reason_code": null
+        }
+      ],
+      "confidence": "MEDIUM",
+      "eol_effective_date": null,
+      "matched_cycle": null,
+      "signals": [
+        {
+          "type": "ARCHIVED",
+          "provider_id": "github",
+          "source_url": "https://api.github.com/repos/cowboyd/therubyracer",
+          "observed_at": "2026-10-14T17:19:22.049106Z",
+          "details": {
+            "mapping_provenance": "UNVERIFIED_METADATA",
+            "mapping_source_url": "https://api.deps.dev/v3/systems/rubygems/packages/therubyracer/versions/0.12.3",
+            "raw_payload_hash": "8cdfe9b7e7a72e2b6b4cfa016513fc8ba047ae0ddd60cbad496fe64b6938d39e",
+            "repository": "https://github.com/rubyjs/therubyracer",
+            "scope": "source_repository"
+          }
+        },
+        {
+          "type": "STALE_RELEASE",
+          "provider_id": "rubygems",
+          "source_url": "https://rubygems.org/api/v1/versions/therubyracer.json",
+          "observed_at": "2026-10-14T17:19:22.049106Z",
+          "details": {
+            "days_since_latest_release": 3569,
+            "latest_published_at": "2017-01-05T03:25:08.974Z",
+            "threshold_days": 730
+          }
+        }
+      ],
+      "signal_evaluations": [
+        {
+          "type": "ARCHIVED",
+          "status": "PRESENT",
+          "provider_id": "github",
+          "source_url": "https://api.github.com/repos/cowboyd/therubyracer",
+          "checked_at": "2026-10-14T17:19:22.049106Z",
+          "reason_code": null
+        },
+        {
+          "type": "DEPRECATED",
+          "status": "UNKNOWN",
+          "provider_id": null,
+          "source_url": null,
+          "checked_at": null,
+          "reason_code": "NO_CAPABILITY"
+        },
+        {
+          "type": "STALE_RELEASE",
+          "status": "PRESENT",
+          "provider_id": "rubygems",
+          "source_url": "https://rubygems.org/api/v1/versions/therubyracer.json",
+          "checked_at": "2026-10-14T17:19:22.049106Z",
+          "reason_code": null
+        }
+      ],
+      "selected_evidence_ids": [],
+      "notices": [],
+      "unknown_reasons": [],
+      "rule_ids": [
+        "R-005",
+        "R-006",
+        "R-013"
+      ],
+      "evidence": [],
+      "diagnostics": [],
+      "incomplete": false,
+      "ci_failure": false,
+      "exception_applied": false
+    },
+    {
+      "source_ref": "gem-thread-safe",
+      "purl": "pkg:gem/thread_safe@0.3.6",
+      "name": "thread_safe",
+      "version": "0.3.6",
+      "version_verification": {
+        "status": "VERIFIED",
+        "provider_id": "rubygems",
+        "source_url": "https://rubygems.org/api/v1/versions/thread_safe.json",
+        "checked_at": "2026-10-14T17:19:22.049106Z",
+        "published_at": "2017-02-22T19:50:54.397Z",
+        "reason_code": null
+      },
+      "lifecycle": "EOL",
+      "support_assessment": {
+        "lifecycle": "UNKNOWN",
+        "confidence": null,
+        "eol_effective_date": null,
+        "matched_cycle": null,
+        "selected_evidence_ids": [],
+        "unknown_reasons": [
+          "NO_LIFECYCLE_EVIDENCE"
+        ]
+      },
+      "eol_basis": "POLICY_RULE",
+      "eol_rule_evaluations": [
+        {
+          "rule_id": "archived",
+          "status": "PRESENT",
+          "matched_signals": [
+            "ARCHIVED"
+          ],
+          "unknown_signals": [],
+          "reason_code": null
+        }
+      ],
+      "confidence": "MEDIUM",
+      "eol_effective_date": null,
+      "matched_cycle": null,
+      "signals": [
+        {
+          "type": "ARCHIVED",
+          "provider_id": "github",
+          "source_url": "https://api.github.com/repos/ruby-concurrency/thread_safe",
+          "observed_at": "2026-10-14T17:19:22.049106Z",
+          "details": {
+            "mapping_provenance": "UNVERIFIED_METADATA",
+            "mapping_source_url": "https://api.deps.dev/v3/systems/rubygems/packages/thread_safe/versions/0.3.6",
+            "raw_payload_hash": "35ecaba7786e01071d40d4a0f4a12fe7137fcee78bbeded7828b119d961fbeba",
+            "repository": "https://github.com/ruby-concurrency/thread_safe",
+            "scope": "source_repository"
+          }
+        },
+        {
+          "type": "STALE_RELEASE",
+          "provider_id": "rubygems",
+          "source_url": "https://rubygems.org/api/v1/versions/thread_safe.json",
+          "observed_at": "2026-10-14T17:19:22.049106Z",
+          "details": {
+            "days_since_latest_release": 3521,
+            "latest_published_at": "2017-02-22T19:50:54.397Z",
+            "threshold_days": 730
+          }
+        }
+      ],
+      "signal_evaluations": [
+        {
+          "type": "ARCHIVED",
+          "status": "PRESENT",
+          "provider_id": "github",
+          "source_url": "https://api.github.com/repos/ruby-concurrency/thread_safe",
+          "checked_at": "2026-10-14T17:19:22.049106Z",
+          "reason_code": null
+        },
+        {
+          "type": "DEPRECATED",
+          "status": "UNKNOWN",
+          "provider_id": null,
+          "source_url": null,
+          "checked_at": null,
+          "reason_code": "NO_CAPABILITY"
+        },
+        {
+          "type": "STALE_RELEASE",
+          "status": "PRESENT",
+          "provider_id": "rubygems",
+          "source_url": "https://rubygems.org/api/v1/versions/thread_safe.json",
+          "checked_at": "2026-10-14T17:19:22.049106Z",
+          "reason_code": null
+        }
+      ],
+      "selected_evidence_ids": [],
+      "notices": [],
+      "unknown_reasons": [],
+      "rule_ids": [
+        "R-005",
+        "R-006",
+        "R-013"
+      ],
+      "evidence": [],
+      "diagnostics": [],
+      "incomplete": false,
+      "ci_failure": false,
+      "exception_applied": false
+    },
+    {
+      "source_ref": "go-bolt",
+      "purl": "pkg:golang/github.com/boltdb/bolt@v1.3.1",
+      "name": "github.com/boltdb/bolt",
+      "version": "v1.3.1",
+      "version_verification": {
+        "status": "VERIFIED",
+        "provider_id": "deps_dev",
+        "source_url": "https://api.deps.dev/v3/systems/go/packages/github.com%2Fboltdb%2Fbolt/versions/v1.3.1",
+        "checked_at": "2026-10-14T17:19:22.049106Z",
+        "published_at": "2017-07-17T17:11:48Z",
+        "reason_code": null
+      },
+      "lifecycle": "EOL",
+      "support_assessment": {
+        "lifecycle": "UNKNOWN",
+        "confidence": null,
+        "eol_effective_date": null,
+        "matched_cycle": null,
+        "selected_evidence_ids": [],
+        "unknown_reasons": [
+          "NO_LIFECYCLE_EVIDENCE"
+        ]
+      },
+      "eol_basis": "POLICY_RULE",
+      "eol_rule_evaluations": [
+        {
+          "rule_id": "archived",
+          "status": "PRESENT",
+          "matched_signals": [
+            "ARCHIVED"
+          ],
+          "unknown_signals": [],
+          "reason_code": null
+        }
+      ],
+      "confidence": "MEDIUM",
+      "eol_effective_date": null,
+      "matched_cycle": null,
+      "signals": [
+        {
+          "type": "ARCHIVED",
+          "provider_id": "github",
+          "source_url": "https://api.github.com/repos/boltdb/bolt",
+          "observed_at": "2026-10-14T17:19:22.049106Z",
+          "details": {
+            "mapping_provenance": "GO_ORIGIN",
+            "mapping_source_url": "https://api.deps.dev/v3/systems/go/packages/github.com%2Fboltdb%2Fbolt/versions/v1.3.1",
+            "raw_payload_hash": "859abb80e3df7bc7a4a064cd001c24cae5dfd7c67e733a587959bcdcb3c8fb60",
+            "repository": "https://github.com/boltdb/bolt",
+            "scope": "source_repository"
+          }
+        }
+      ],
+      "signal_evaluations": [
+        {
+          "type": "ARCHIVED",
+          "status": "PRESENT",
+          "provider_id": "github",
+          "source_url": "https://api.github.com/repos/boltdb/bolt",
+          "checked_at": "2026-10-14T17:19:22.049106Z",
+          "reason_code": null
+        },
+        {
+          "type": "DEPRECATED",
+          "status": "UNKNOWN",
+          "provider_id": null,
+          "source_url": null,
+          "checked_at": null,
+          "reason_code": "NO_CAPABILITY"
+        },
+        {
+          "type": "STALE_RELEASE",
+          "status": "UNKNOWN",
+          "provider_id": "deps_dev",
+          "source_url": "https://api.deps.dev/v3/systems/go/packages/github.com%2Fboltdb%2Fbolt",
+          "checked_at": "2026-10-14T17:19:22.049106Z",
+          "reason_code": "INCOMPLETE_VERSION_INDEX"
+        }
+      ],
+      "selected_evidence_ids": [],
+      "notices": [],
+      "unknown_reasons": [],
+      "rule_ids": [
+        "R-005",
+        "R-006",
+        "R-013"
+      ],
+      "evidence": [],
+      "diagnostics": [],
+      "incomplete": false,
+      "ci_failure": false,
+      "exception_applied": false
+    },
+    {
+      "source_ref": "go-jwt",
+      "purl": "pkg:golang/github.com/dgrijalva/jwt-go@v3.2.0%2Bincompatible",
+      "name": "github.com/dgrijalva/jwt-go",
+      "version": "v3.2.0+incompatible",
+      "version_verification": {
+        "status": "VERIFIED",
+        "provider_id": "deps_dev",
+        "source_url": "https://api.deps.dev/v3/systems/go/packages/github.com%2Fdgrijalva%2Fjwt-go/versions/v3.2.0+incompatible",
+        "checked_at": "2026-10-14T17:19:22.049106Z",
+        "published_at": "2018-03-08T23:13:08Z",
+        "reason_code": null
+      },
+      "lifecycle": "EOL",
+      "support_assessment": {
+        "lifecycle": "UNKNOWN",
+        "confidence": null,
+        "eol_effective_date": null,
+        "matched_cycle": null,
+        "selected_evidence_ids": [],
+        "unknown_reasons": [
+          "NO_LIFECYCLE_EVIDENCE"
+        ]
+      },
+      "eol_basis": "POLICY_RULE",
+      "eol_rule_evaluations": [
+        {
+          "rule_id": "archived",
+          "status": "PRESENT",
+          "matched_signals": [
+            "ARCHIVED"
+          ],
+          "unknown_signals": [],
+          "reason_code": null
+        }
+      ],
+      "confidence": "MEDIUM",
+      "eol_effective_date": null,
+      "matched_cycle": null,
+      "signals": [
+        {
+          "type": "ARCHIVED",
+          "provider_id": "github",
+          "source_url": "https://api.github.com/repos/dgrijalva/jwt-go",
+          "observed_at": "2026-10-14T17:19:22.049106Z",
+          "details": {
+            "mapping_provenance": "GO_ORIGIN",
+            "mapping_source_url": "https://api.deps.dev/v3/systems/go/packages/github.com%2Fdgrijalva%2Fjwt-go/versions/v3.2.0+incompatible",
+            "raw_payload_hash": "adfd71e8f1f4008c213be790bb7b0075fcf80f0a75bcae53a9b571d16cd22bfc",
+            "repository": "https://github.com/dgrijalva/jwt-go",
+            "scope": "source_repository"
+          }
+        }
+      ],
+      "signal_evaluations": [
+        {
+          "type": "ARCHIVED",
+          "status": "PRESENT",
+          "provider_id": "github",
+          "source_url": "https://api.github.com/repos/dgrijalva/jwt-go",
+          "checked_at": "2026-10-14T17:19:22.049106Z",
+          "reason_code": null
+        },
+        {
+          "type": "DEPRECATED",
+          "status": "UNKNOWN",
+          "provider_id": null,
+          "source_url": null,
+          "checked_at": null,
+          "reason_code": "NO_CAPABILITY"
+        },
+        {
+          "type": "STALE_RELEASE",
+          "status": "UNKNOWN",
+          "provider_id": "deps_dev",
+          "source_url": "https://api.deps.dev/v3/systems/go/packages/github.com%2Fdgrijalva%2Fjwt-go",
+          "checked_at": "2026-10-14T17:19:22.049106Z",
+          "reason_code": "INCOMPLETE_VERSION_INDEX"
+        }
+      ],
+      "selected_evidence_ids": [],
+      "notices": [],
+      "unknown_reasons": [],
+      "rule_ids": [
+        "R-005",
+        "R-006",
+        "R-013"
+      ],
+      "evidence": [],
+      "diagnostics": [],
+      "incomplete": false,
+      "ci_failure": false,
+      "exception_applied": false
+    },
+    {
+      "source_ref": "go-mapstructure",
+      "purl": "pkg:golang/github.com/mitchellh/mapstructure@v1.5.0",
+      "name": "github.com/mitchellh/mapstructure",
+      "version": "v1.5.0",
+      "version_verification": {
+        "status": "VERIFIED",
+        "provider_id": "deps_dev",
+        "source_url": "https://api.deps.dev/v3/systems/go/packages/github.com%2Fmitchellh%2Fmapstructure/versions/v1.5.0",
+        "checked_at": "2026-10-14T17:19:22.049106Z",
+        "published_at": "2022-04-20T22:31:31Z",
+        "reason_code": null
+      },
+      "lifecycle": "EOL",
+      "support_assessment": {
+        "lifecycle": "UNKNOWN",
+        "confidence": null,
+        "eol_effective_date": null,
+        "matched_cycle": null,
+        "selected_evidence_ids": [],
+        "unknown_reasons": [
+          "NO_LIFECYCLE_EVIDENCE"
+        ]
+      },
+      "eol_basis": "POLICY_RULE",
+      "eol_rule_evaluations": [
+        {
+          "rule_id": "archived",
+          "status": "PRESENT",
+          "matched_signals": [
+            "ARCHIVED"
+          ],
+          "unknown_signals": [],
+          "reason_code": null
+        }
+      ],
+      "confidence": "MEDIUM",
+      "eol_effective_date": null,
+      "matched_cycle": null,
+      "signals": [
+        {
+          "type": "ARCHIVED",
+          "provider_id": "github",
+          "source_url": "https://api.github.com/repos/mitchellh/mapstructure",
+          "observed_at": "2026-10-14T17:19:22.049106Z",
+          "details": {
+            "mapping_provenance": "GO_ORIGIN",
+            "mapping_source_url": "https://api.deps.dev/v3/systems/go/packages/github.com%2Fmitchellh%2Fmapstructure/versions/v1.5.0",
+            "raw_payload_hash": "6d3f8c67c95bde2abc8d66ce9b11f26ac4328b7ee7fbe3c7f421a4a186fddba6",
+            "repository": "https://github.com/mitchellh/mapstructure",
+            "scope": "source_repository"
+          }
+        }
+      ],
+      "signal_evaluations": [
+        {
+          "type": "ARCHIVED",
+          "status": "PRESENT",
+          "provider_id": "github",
+          "source_url": "https://api.github.com/repos/mitchellh/mapstructure",
+          "checked_at": "2026-10-14T17:19:22.049106Z",
+          "reason_code": null
+        },
+        {
+          "type": "DEPRECATED",
+          "status": "UNKNOWN",
+          "provider_id": null,
+          "source_url": null,
+          "checked_at": null,
+          "reason_code": "NO_CAPABILITY"
+        },
+        {
+          "type": "STALE_RELEASE",
+          "status": "UNKNOWN",
+          "provider_id": "deps_dev",
+          "source_url": "https://api.deps.dev/v3/systems/go/packages/github.com%2Fmitchellh%2Fmapstructure",
+          "checked_at": "2026-10-14T17:19:22.049106Z",
+          "reason_code": "INCOMPLETE_VERSION_INDEX"
+        }
+      ],
+      "selected_evidence_ids": [],
+      "notices": [],
+      "unknown_reasons": [],
+      "rule_ids": [
+        "R-005",
+        "R-006",
+        "R-013"
+      ],
+      "evidence": [],
+      "diagnostics": [],
+      "incomplete": false,
+      "ci_failure": false,
+      "exception_applied": false
+    },
+    {
+      "source_ref": "go-testify",
+      "purl": "pkg:golang/github.com/stretchr/testify@v1.10.0",
+      "name": "github.com/stretchr/testify",
+      "version": "v1.10.0",
+      "version_verification": {
+        "status": "VERIFIED",
+        "provider_id": "deps_dev",
+        "source_url": "https://api.deps.dev/v3/systems/go/packages/github.com%2Fstretchr%2Ftestify/versions/v1.10.0",
+        "checked_at": "2026-10-14T17:19:22.049106Z",
+        "published_at": "2024-11-12T22:58:45Z",
+        "reason_code": null
+      },
+      "lifecycle": "NO_EOL_DETECTED",
+      "support_assessment": {
+        "lifecycle": "UNKNOWN",
+        "confidence": null,
+        "eol_effective_date": null,
+        "matched_cycle": null,
+        "selected_evidence_ids": [],
+        "unknown_reasons": [
+          "NO_LIFECYCLE_EVIDENCE"
+        ]
+      },
+      "eol_basis": null,
+      "eol_rule_evaluations": [
+        {
+          "rule_id": "archived",
+          "status": "ABSENT",
+          "matched_signals": [],
+          "unknown_signals": [],
+          "reason_code": null
+        }
+      ],
+      "confidence": null,
+      "eol_effective_date": null,
+      "matched_cycle": null,
+      "signals": [],
+      "signal_evaluations": [
+        {
+          "type": "ARCHIVED",
+          "status": "ABSENT",
+          "provider_id": "github",
+          "source_url": "https://api.github.com/repos/stretchr/testify",
+          "checked_at": "2026-10-14T17:19:22.049106Z",
+          "reason_code": null
+        },
+        {
+          "type": "DEPRECATED",
+          "status": "UNKNOWN",
+          "provider_id": null,
+          "source_url": null,
+          "checked_at": null,
+          "reason_code": "NO_CAPABILITY"
+        },
+        {
+          "type": "STALE_RELEASE",
+          "status": "ABSENT",
+          "provider_id": "deps_dev",
+          "source_url": "https://api.deps.dev/v3/systems/go/packages/github.com%2Fstretchr%2Ftestify",
+          "checked_at": "2026-10-14T17:19:22.049106Z",
+          "reason_code": null
+        }
+      ],
+      "selected_evidence_ids": [],
+      "notices": [],
+      "unknown_reasons": [],
+      "rule_ids": [
+        "R-006"
+      ],
+      "evidence": [],
+      "diagnostics": [],
+      "incomplete": false,
+      "ci_failure": false,
+      "exception_applied": false
+    },
+    {
+      "source_ref": "maven-guava",
+      "purl": "pkg:maven/com.google.guava/guava@33.4.8-jre",
+      "name": "com.google.guava/guava",
+      "version": "33.4.8-jre",
+      "version_verification": {
+        "status": "VERIFIED",
+        "provider_id": "deps_dev",
+        "source_url": "https://api.deps.dev/v3/systems/maven/packages/com.google.guava:guava/versions/33.4.8-jre",
+        "checked_at": "2026-10-14T17:19:22.049106Z",
+        "published_at": "2025-04-14T17:25:22Z",
+        "reason_code": null
+      },
+      "lifecycle": "NO_EOL_DETECTED",
+      "support_assessment": {
+        "lifecycle": "UNKNOWN",
+        "confidence": null,
+        "eol_effective_date": null,
+        "matched_cycle": null,
+        "selected_evidence_ids": [],
+        "unknown_reasons": [
+          "NO_LIFECYCLE_EVIDENCE"
+        ]
+      },
+      "eol_basis": null,
+      "eol_rule_evaluations": [
+        {
+          "rule_id": "archived",
+          "status": "ABSENT",
+          "matched_signals": [],
+          "unknown_signals": [],
+          "reason_code": null
+        }
+      ],
+      "confidence": null,
+      "eol_effective_date": null,
+      "matched_cycle": null,
+      "signals": [],
+      "signal_evaluations": [
+        {
+          "type": "ARCHIVED",
+          "status": "ABSENT",
+          "provider_id": "github",
+          "source_url": "https://api.github.com/repos/google/guava",
+          "checked_at": "2026-10-14T17:19:22.049106Z",
+          "reason_code": null
+        },
+        {
+          "type": "DEPRECATED",
+          "status": "UNKNOWN",
+          "provider_id": null,
+          "source_url": null,
+          "checked_at": null,
+          "reason_code": "NO_CAPABILITY"
+        },
+        {
+          "type": "STALE_RELEASE",
+          "status": "ABSENT",
+          "provider_id": "deps_dev",
+          "source_url": "https://api.deps.dev/v3/systems/maven/packages/com.google.guava:guava",
+          "checked_at": "2026-10-14T17:19:22.049106Z",
+          "reason_code": null
+        }
+      ],
+      "selected_evidence_ids": [],
+      "notices": [],
+      "unknown_reasons": [],
+      "rule_ids": [
+        "R-006"
+      ],
+      "evidence": [],
+      "diagnostics": [],
+      "incomplete": false,
+      "ci_failure": false,
+      "exception_applied": false
+    },
+    {
+      "source_ref": "maven-httpclient",
+      "purl": "pkg:maven/commons-httpclient/commons-httpclient@3.1",
+      "name": "commons-httpclient/commons-httpclient",
+      "version": "3.1",
+      "version_verification": {
+        "status": "VERIFIED",
+        "provider_id": "deps_dev",
+        "source_url": "https://api.deps.dev/v3/systems/maven/packages/commons-httpclient:commons-httpclient/versions/3.1",
+        "checked_at": "2026-10-14T17:19:22.049106Z",
+        "published_at": "2007-08-21T13:44:07Z",
+        "reason_code": null
+      },
+      "lifecycle": "UNKNOWN",
+      "support_assessment": {
+        "lifecycle": "UNKNOWN",
+        "confidence": null,
+        "eol_effective_date": null,
+        "matched_cycle": null,
+        "selected_evidence_ids": [],
+        "unknown_reasons": [
+          "NO_LIFECYCLE_EVIDENCE"
+        ]
+      },
+      "eol_basis": null,
+      "eol_rule_evaluations": [
+        {
+          "rule_id": "archived",
+          "status": "UNKNOWN",
+          "matched_signals": [],
+          "unknown_signals": [
+            "ARCHIVED"
+          ],
+          "reason_code": "CONDITION_UNAVAILABLE"
+        }
+      ],
+      "confidence": null,
+      "eol_effective_date": null,
+      "matched_cycle": null,
+      "signals": [
+        {
+          "type": "STALE_RELEASE",
+          "provider_id": "deps_dev",
+          "source_url": "https://api.deps.dev/v3/systems/maven/packages/commons-httpclient:commons-httpclient",
+          "observed_at": "2026-10-14T17:19:22.049106Z",
+          "details": {
+            "days_since_latest_release": 1856,
+            "latest_published_at": "2021-09-14T10:35:21Z",
+            "threshold_days": 730
+          }
+        }
+      ],
+      "signal_evaluations": [
+        {
+          "type": "ARCHIVED",
+          "status": "UNKNOWN",
+          "provider_id": "github",
+          "source_url": null,
+          "checked_at": null,
+          "reason_code": "NO_GITHUB_SOURCE_REPOSITORY"
+        },
+        {
+          "type": "DEPRECATED",
+          "status": "UNKNOWN",
+          "provider_id": null,
+          "source_url": null,
+          "checked_at": null,
+          "reason_code": "NO_CAPABILITY"
+        },
+        {
+          "type": "STALE_RELEASE",
+          "status": "PRESENT",
+          "provider_id": "deps_dev",
+          "source_url": "https://api.deps.dev/v3/systems/maven/packages/commons-httpclient:commons-httpclient",
+          "checked_at": "2026-10-14T17:19:22.049106Z",
+          "reason_code": null
+        }
+      ],
+      "selected_evidence_ids": [],
+      "notices": [],
+      "unknown_reasons": [
+        "EOL_RULE_UNRESOLVED",
+        "NO_LIFECYCLE_EVIDENCE"
+      ],
+      "rule_ids": [
+        "R-005",
+        "R-006"
+      ],
+      "evidence": [],
+      "diagnostics": [],
+      "incomplete": true,
+      "ci_failure": false,
+      "exception_applied": false
+    },
+    {
+      "source_ref": "maven-log4j",
+      "purl": "pkg:maven/log4j/log4j@1.2.17",
+      "name": "log4j/log4j",
+      "version": "1.2.17",
+      "version_verification": {
+        "status": "VERIFIED",
+        "provider_id": "deps_dev",
+        "source_url": "https://api.deps.dev/v3/systems/maven/packages/log4j:log4j/versions/1.2.17",
+        "checked_at": "2026-10-14T17:19:22.049106Z",
+        "published_at": "2012-05-26T09:43:39Z",
+        "reason_code": null
+      },
+      "lifecycle": "UNKNOWN",
+      "support_assessment": {
+        "lifecycle": "UNKNOWN",
+        "confidence": null,
+        "eol_effective_date": null,
+        "matched_cycle": null,
+        "selected_evidence_ids": [],
+        "unknown_reasons": [
+          "GENERAL_EOL_UNREVIEWED"
+        ]
+      },
+      "eol_basis": null,
+      "eol_rule_evaluations": [
+        {
+          "rule_id": "archived",
+          "status": "UNKNOWN",
+          "matched_signals": [],
+          "unknown_signals": [
+            "ARCHIVED"
+          ],
+          "reason_code": "CONDITION_UNAVAILABLE"
+        }
+      ],
+      "confidence": null,
+      "eol_effective_date": null,
+      "matched_cycle": null,
+      "signals": [
+        {
+          "type": "STALE_RELEASE",
+          "provider_id": "deps_dev",
+          "source_url": "https://api.deps.dev/v3/systems/maven/packages/log4j:log4j",
+          "observed_at": "2026-10-14T17:19:22.049106Z",
+          "details": {
+            "days_since_latest_release": 5254,
+            "latest_published_at": "2012-05-26T09:43:39Z",
+            "threshold_days": 730
+          }
+        }
+      ],
+      "signal_evaluations": [
+        {
+          "type": "ARCHIVED",
+          "status": "UNKNOWN",
+          "provider_id": "github",
+          "source_url": null,
+          "checked_at": null,
+          "reason_code": "NO_GITHUB_SOURCE_REPOSITORY"
+        },
+        {
+          "type": "DEPRECATED",
+          "status": "UNKNOWN",
+          "provider_id": null,
+          "source_url": null,
+          "checked_at": null,
+          "reason_code": "NO_CAPABILITY"
+        },
+        {
+          "type": "STALE_RELEASE",
+          "status": "PRESENT",
+          "provider_id": "deps_dev",
+          "source_url": "https://api.deps.dev/v3/systems/maven/packages/log4j:log4j",
+          "checked_at": "2026-10-14T17:19:22.049106Z",
+          "reason_code": null
+        }
+      ],
+      "selected_evidence_ids": [],
+      "notices": [],
+      "unknown_reasons": [
+        "EOL_RULE_UNRESOLVED",
+        "GENERAL_EOL_UNREVIEWED"
+      ],
+      "rule_ids": [
+        "R-005",
+        "R-006"
+      ],
+      "evidence": [
+        {
+          "id": "endoflife_date:log4j:1",
+          "provider_id": "endoflife_date",
+          "source_class": "CURATED_DATABASE",
+          "claim": "GENERAL_EOL_END",
+          "package_purl": "pkg:maven/log4j/log4j",
+          "product_slug": "log4j",
+          "matched_cycle": "1",
+          "support_scope": "general_eol",
+          "support_start_date": null,
+          "eol_effective_date": "2015-10-15",
+          "source_url": "https://endoflife.date/log4j",
+          "source_field": "releases[].eolFrom",
+          "source_label": "Supported",
+          "observed_at": "2026-10-14T17:19:22.049106Z",
+          "source_updated_at": "2026-09-24T07:44:41Z",
+          "reviewed_at": null,
+          "valid_until": null,
+          "raw_payload_hash": "1c51210907c62ca93a4adeee0a8eddba0ca61bc4d93d647841355180204c9796",
+          "confidence": "MEDIUM",
+          "rule_id": "R-003",
+          "general_eol_review": null,
+          "superseded_by": null,
+          "supersession_source_url": null
+        }
+      ],
+      "diagnostics": [],
+      "incomplete": true,
+      "ci_failure": false,
+      "exception_applied": false
+    },
+    {
+      "source_ref": "maven-struts",
+      "purl": "pkg:maven/org.apache.struts/struts2-core@2.3.37",
+      "name": "org.apache.struts/struts2-core",
+      "version": "2.3.37",
+      "version_verification": {
+        "status": "VERIFIED",
+        "provider_id": "deps_dev",
+        "source_url": "https://api.deps.dev/v3/systems/maven/packages/org.apache.struts:struts2-core/versions/2.3.37",
+        "checked_at": "2026-10-14T17:19:22.049106Z",
+        "published_at": "2018-12-30T13:32:57Z",
+        "reason_code": null
+      },
+      "lifecycle": "NO_EOL_DETECTED",
+      "support_assessment": {
+        "lifecycle": "UNKNOWN",
+        "confidence": null,
+        "eol_effective_date": null,
+        "matched_cycle": null,
+        "selected_evidence_ids": [],
+        "unknown_reasons": [
+          "GENERAL_EOL_UNREVIEWED"
+        ]
+      },
+      "eol_basis": null,
+      "eol_rule_evaluations": [
+        {
+          "rule_id": "archived",
+          "status": "ABSENT",
+          "matched_signals": [],
+          "unknown_signals": [],
+          "reason_code": null
+        }
+      ],
+      "confidence": null,
+      "eol_effective_date": null,
+      "matched_cycle": null,
+      "signals": [],
+      "signal_evaluations": [
+        {
+          "type": "ARCHIVED",
+          "status": "ABSENT",
+          "provider_id": "github",
+          "source_url": "https://api.github.com/repos/apache/struts",
+          "checked_at": "2026-10-14T17:19:22.049106Z",
+          "reason_code": null
+        },
+        {
+          "type": "DEPRECATED",
+          "status": "UNKNOWN",
+          "provider_id": null,
+          "source_url": null,
+          "checked_at": null,
+          "reason_code": "NO_CAPABILITY"
+        },
+        {
+          "type": "STALE_RELEASE",
+          "status": "ABSENT",
+          "provider_id": "deps_dev",
+          "source_url": "https://api.deps.dev/v3/systems/maven/packages/org.apache.struts:struts2-core",
+          "checked_at": "2026-10-14T17:19:22.049106Z",
+          "reason_code": null
+        }
+      ],
+      "selected_evidence_ids": [],
+      "notices": [],
+      "unknown_reasons": [],
+      "rule_ids": [
+        "R-006"
+      ],
+      "evidence": [
+        {
+          "id": "endoflife_date:apache-struts:2.3",
+          "provider_id": "endoflife_date",
+          "source_class": "CURATED_DATABASE",
+          "claim": "GENERAL_EOL_END",
+          "package_purl": "pkg:maven/org.apache.struts/struts2-core",
+          "product_slug": "apache-struts",
+          "matched_cycle": "2.3",
+          "support_scope": "general_eol",
+          "support_start_date": null,
+          "eol_effective_date": "2019-05-14",
+          "source_url": "https://endoflife.date/apache-struts",
+          "source_field": "releases[].eolFrom",
+          "source_label": "Support",
+          "observed_at": "2026-10-14T17:19:22.049106Z",
+          "source_updated_at": "2026-09-18T00:08:07Z",
+          "reviewed_at": null,
+          "valid_until": null,
+          "raw_payload_hash": "7cfa59398e69416aa1b090e50f257db9fd304323f69e35c5edc6c08b19dabe02",
+          "confidence": "MEDIUM",
+          "rule_id": "R-003",
+          "general_eol_review": null,
+          "superseded_by": null,
+          "supersession_source_url": null
+        }
+      ],
+      "diagnostics": [
+        {
+          "code": "SUPPORT_SCOPE_DIFFERENCE",
+          "provider_id": "endoflife_date",
+          "http_status": null,
+          "retryable": false,
+          "message": "isMaintained may include extended support; upstream EOL date is retained"
+        }
+      ],
+      "incomplete": false,
+      "ci_failure": false,
+      "exception_applied": false
+    },
+    {
+      "source_ref": "maven-spring",
+      "purl": "pkg:maven/org.springframework/spring-core@4.3.30.RELEASE",
+      "name": "org.springframework/spring-core",
+      "version": "4.3.30.RELEASE",
+      "version_verification": {
+        "status": "VERIFIED",
+        "provider_id": "deps_dev",
+        "source_url": "https://api.deps.dev/v3/systems/maven/packages/org.springframework:spring-core/versions/4.3.30.RELEASE",
+        "checked_at": "2026-10-14T17:19:22.049106Z",
+        "published_at": "2020-12-09T08:59:32Z",
+        "reason_code": null
+      },
+      "lifecycle": "NO_EOL_DETECTED",
+      "support_assessment": {
+        "lifecycle": "UNKNOWN",
+        "confidence": null,
+        "eol_effective_date": null,
+        "matched_cycle": null,
+        "selected_evidence_ids": [],
+        "unknown_reasons": [
+          "NO_LIFECYCLE_EVIDENCE"
+        ]
+      },
+      "eol_basis": null,
+      "eol_rule_evaluations": [
+        {
+          "rule_id": "archived",
+          "status": "ABSENT",
+          "matched_signals": [],
+          "unknown_signals": [],
+          "reason_code": null
+        }
+      ],
+      "confidence": null,
+      "eol_effective_date": null,
+      "matched_cycle": null,
+      "signals": [],
+      "signal_evaluations": [
+        {
+          "type": "ARCHIVED",
+          "status": "ABSENT",
+          "provider_id": "github",
+          "source_url": "https://api.github.com/repos/spring-projects/spring-framework",
+          "checked_at": "2026-10-14T17:19:22.049106Z",
+          "reason_code": null
+        },
+        {
+          "type": "DEPRECATED",
+          "status": "UNKNOWN",
+          "provider_id": null,
+          "source_url": null,
+          "checked_at": null,
+          "reason_code": "NO_CAPABILITY"
+        },
+        {
+          "type": "STALE_RELEASE",
+          "status": "ABSENT",
+          "provider_id": "deps_dev",
+          "source_url": "https://api.deps.dev/v3/systems/maven/packages/org.springframework:spring-core",
+          "checked_at": "2026-10-14T17:19:22.049106Z",
+          "reason_code": null
+        }
+      ],
+      "selected_evidence_ids": [],
+      "notices": [],
+      "unknown_reasons": [],
+      "rule_ids": [
+        "R-006"
+      ],
+      "evidence": [],
+      "diagnostics": [],
+      "incomplete": false,
+      "ci_failure": false,
+      "exception_applied": false
+    },
+    {
+      "source_ref": "npm-glob",
+      "purl": "pkg:npm/glob@7.2.3",
+      "name": "glob",
+      "version": "7.2.3",
+      "version_verification": {
+        "status": "VERIFIED",
+        "provider_id": "npm",
+        "source_url": "https://registry.npmjs.org/glob",
+        "checked_at": "2026-10-14T17:19:22.049106Z",
+        "published_at": "2022-05-15T14:44:04.854Z",
+        "reason_code": null
+      },
+      "lifecycle": "EOL",
+      "support_assessment": {
+        "lifecycle": "UNKNOWN",
+        "confidence": null,
+        "eol_effective_date": null,
+        "matched_cycle": null,
+        "selected_evidence_ids": [],
+        "unknown_reasons": [
+          "NO_LIFECYCLE_EVIDENCE"
+        ]
+      },
+      "eol_basis": "POLICY_RULE",
+      "eol_rule_evaluations": [
+        {
+          "rule_id": "deprecated",
+          "status": "PRESENT",
+          "matched_signals": [
+            "DEPRECATED"
+          ],
+          "unknown_signals": [],
+          "reason_code": null
+        },
+        {
+          "rule_id": "archived",
+          "status": "ABSENT",
+          "matched_signals": [],
+          "unknown_signals": [],
+          "reason_code": null
+        }
+      ],
+      "confidence": "MEDIUM",
+      "eol_effective_date": null,
+      "matched_cycle": null,
+      "signals": [
+        {
+          "type": "DEPRECATED",
+          "provider_id": "npm",
+          "source_url": "https://registry.npmjs.org/glob",
+          "observed_at": "2026-10-14T17:19:22.049106Z",
+          "details": {
+            "deprecated_reason": "Old versions of glob are not supported, and contain widely publicized security vulnerabilities, which have been fixed in the current version. Please update. Support for old versions may be purchased (at exorbitant rates) by contacting i@izs.me"
+          }
+        }
+      ],
+      "signal_evaluations": [
+        {
+          "type": "ARCHIVED",
+          "status": "ABSENT",
+          "provider_id": "github",
+          "source_url": "https://api.github.com/repos/isaacs/node-glob",
+          "checked_at": "2026-10-14T17:19:22.049106Z",
+          "reason_code": null
+        },
+        {
+          "type": "DEPRECATED",
+          "status": "PRESENT",
+          "provider_id": "npm",
+          "source_url": "https://registry.npmjs.org/glob",
+          "checked_at": "2026-10-14T17:19:22.049106Z",
+          "reason_code": null
+        },
+        {
+          "type": "STALE_RELEASE",
+          "status": "ABSENT",
+          "provider_id": "npm",
+          "source_url": "https://registry.npmjs.org/glob",
+          "checked_at": "2026-10-14T17:19:22.049106Z",
+          "reason_code": null
+        }
+      ],
+      "selected_evidence_ids": [],
+      "notices": [],
+      "unknown_reasons": [],
+      "rule_ids": [
+        "R-005",
+        "R-006",
+        "R-013"
+      ],
+      "evidence": [],
+      "diagnostics": [],
+      "incomplete": false,
+      "ci_failure": false,
+      "exception_applied": false
+    },
+    {
+      "source_ref": "npm-har-validator",
+      "purl": "pkg:npm/har-validator@5.1.5",
+      "name": "har-validator",
+      "version": "5.1.5",
+      "version_verification": {
+        "status": "VERIFIED",
+        "provider_id": "npm",
+        "source_url": "https://registry.npmjs.org/har-validator",
+        "checked_at": "2026-10-14T17:19:22.049106Z",
+        "published_at": "2020-07-30T04:42:33.615Z",
+        "reason_code": null
+      },
+      "lifecycle": "EOL",
+      "support_assessment": {
+        "lifecycle": "UNKNOWN",
+        "confidence": null,
+        "eol_effective_date": null,
+        "matched_cycle": null,
+        "selected_evidence_ids": [],
+        "unknown_reasons": [
+          "NO_LIFECYCLE_EVIDENCE"
+        ]
+      },
+      "eol_basis": "POLICY_RULE",
+      "eol_rule_evaluations": [
+        {
+          "rule_id": "deprecated",
+          "status": "PRESENT",
+          "matched_signals": [
+            "DEPRECATED"
+          ],
+          "unknown_signals": [],
+          "reason_code": null
+        },
+        {
+          "rule_id": "archived",
+          "status": "ABSENT",
+          "matched_signals": [],
+          "unknown_signals": [],
+          "reason_code": null
+        }
+      ],
+      "confidence": "MEDIUM",
+      "eol_effective_date": null,
+      "matched_cycle": null,
+      "signals": [
+        {
+          "type": "DEPRECATED",
+          "provider_id": "npm",
+          "source_url": "https://registry.npmjs.org/har-validator",
+          "observed_at": "2026-10-14T17:19:22.049106Z",
+          "details": {
+            "deprecated_reason": "this library is no longer supported"
+          }
+        },
+        {
+          "type": "STALE_RELEASE",
+          "provider_id": "deps_dev",
+          "source_url": "https://api.deps.dev/v3/systems/npm/packages/har-validator",
+          "observed_at": "2026-10-14T17:19:22.049106Z",
+          "details": {
+            "days_since_latest_release": 2267,
+            "latest_published_at": "2020-07-30T04:42:33Z",
+            "threshold_days": 730
+          }
+        }
+      ],
+      "signal_evaluations": [
+        {
+          "type": "ARCHIVED",
+          "status": "ABSENT",
+          "provider_id": "github",
+          "source_url": "https://api.github.com/repos/ahmadnassri/node-har-validator",
+          "checked_at": "2026-10-14T17:19:22.049106Z",
+          "reason_code": null
+        },
+        {
+          "type": "DEPRECATED",
+          "status": "PRESENT",
+          "provider_id": "npm",
+          "source_url": "https://registry.npmjs.org/har-validator",
+          "checked_at": "2026-10-14T17:19:22.049106Z",
+          "reason_code": null
+        },
+        {
+          "type": "STALE_RELEASE",
+          "status": "PRESENT",
+          "provider_id": "deps_dev",
+          "source_url": "https://api.deps.dev/v3/systems/npm/packages/har-validator",
+          "checked_at": "2026-10-14T17:19:22.049106Z",
+          "reason_code": null
+        }
+      ],
+      "selected_evidence_ids": [],
+      "notices": [],
+      "unknown_reasons": [],
+      "rule_ids": [
+        "R-005",
+        "R-006",
+        "R-013"
+      ],
+      "evidence": [],
+      "diagnostics": [],
+      "incomplete": false,
+      "ci_failure": false,
+      "exception_applied": false
+    },
+    {
+      "source_ref": "npm-is-number",
+      "purl": "pkg:npm/is-number@7.0.0",
+      "name": "is-number",
+      "version": "7.0.0",
+      "version_verification": {
+        "status": "VERIFIED",
+        "provider_id": "npm",
+        "source_url": "https://registry.npmjs.org/is-number",
+        "checked_at": "2026-10-14T17:19:22.049106Z",
+        "published_at": "2018-07-04T15:08:58.238Z",
+        "reason_code": null
+      },
+      "lifecycle": "NO_EOL_DETECTED",
+      "support_assessment": {
+        "lifecycle": "UNKNOWN",
+        "confidence": null,
+        "eol_effective_date": null,
+        "matched_cycle": null,
+        "selected_evidence_ids": [],
+        "unknown_reasons": [
+          "NO_LIFECYCLE_EVIDENCE"
+        ]
+      },
+      "eol_basis": null,
+      "eol_rule_evaluations": [
+        {
+          "rule_id": "deprecated",
+          "status": "ABSENT",
+          "matched_signals": [],
+          "unknown_signals": [],
+          "reason_code": null
+        },
+        {
+          "rule_id": "archived",
+          "status": "ABSENT",
+          "matched_signals": [],
+          "unknown_signals": [],
+          "reason_code": null
+        }
+      ],
+      "confidence": null,
+      "eol_effective_date": null,
+      "matched_cycle": null,
+      "signals": [
+        {
+          "type": "STALE_RELEASE",
+          "provider_id": "npm",
+          "source_url": "https://registry.npmjs.org/is-number",
+          "observed_at": "2026-10-14T17:19:22.049106Z",
+          "details": {
+            "days_since_latest_release": 3024,
+            "latest_published_at": "2018-07-04T15:08:58.238Z",
+            "threshold_days": 730
+          }
+        }
+      ],
+      "signal_evaluations": [
+        {
+          "type": "ARCHIVED",
+          "status": "ABSENT",
+          "provider_id": "github",
+          "source_url": "https://api.github.com/repos/jonschlinkert/is-number",
+          "checked_at": "2026-10-14T17:19:22.049106Z",
+          "reason_code": null
+        },
+        {
+          "type": "DEPRECATED",
+          "status": "ABSENT",
+          "provider_id": "npm",
+          "source_url": "https://registry.npmjs.org/is-number",
+          "checked_at": "2026-10-14T17:19:22.049106Z",
+          "reason_code": null
+        },
+        {
+          "type": "STALE_RELEASE",
+          "status": "PRESENT",
+          "provider_id": "npm",
+          "source_url": "https://registry.npmjs.org/is-number",
+          "checked_at": "2026-10-14T17:19:22.049106Z",
+          "reason_code": null
+        }
+      ],
+      "selected_evidence_ids": [],
+      "notices": [],
+      "unknown_reasons": [],
+      "rule_ids": [
+        "R-005",
+        "R-006"
+      ],
+      "evidence": [],
+      "diagnostics": [],
+      "incomplete": false,
+      "ci_failure": false,
+      "exception_applied": false
+    },
+    {
+      "source_ref": "npm-istanbul",
+      "purl": "pkg:npm/istanbul@0.4.5",
+      "name": "istanbul",
+      "version": "0.4.5",
+      "version_verification": {
+        "status": "VERIFIED",
+        "provider_id": "npm",
+        "source_url": "https://registry.npmjs.org/istanbul",
+        "checked_at": "2026-10-14T17:19:22.049106Z",
+        "published_at": "2016-08-21T20:02:09.468Z",
+        "reason_code": null
+      },
+      "lifecycle": "EOL",
+      "support_assessment": {
+        "lifecycle": "UNKNOWN",
+        "confidence": null,
+        "eol_effective_date": null,
+        "matched_cycle": null,
+        "selected_evidence_ids": [],
+        "unknown_reasons": [
+          "NO_LIFECYCLE_EVIDENCE"
+        ]
+      },
+      "eol_basis": "POLICY_RULE",
+      "eol_rule_evaluations": [
+        {
+          "rule_id": "deprecated",
+          "status": "PRESENT",
+          "matched_signals": [
+            "DEPRECATED"
+          ],
+          "unknown_signals": [],
+          "reason_code": null
+        },
+        {
+          "rule_id": "archived",
+          "status": "PRESENT",
+          "matched_signals": [
+            "ARCHIVED"
+          ],
+          "unknown_signals": [],
+          "reason_code": null
+        }
+      ],
+      "confidence": "MEDIUM",
+      "eol_effective_date": null,
+      "matched_cycle": null,
+      "signals": [
+        {
+          "type": "ARCHIVED",
+          "provider_id": "github",
+          "source_url": "https://api.github.com/repos/gotwarlost/istanbul",
+          "observed_at": "2026-10-14T17:19:22.049106Z",
+          "details": {
+            "mapping_provenance": "REGISTRY_METADATA",
+            "mapping_source_url": "https://registry.npmjs.org/istanbul",
+            "raw_payload_hash": "c1340d73ec410da56131843635b0d31f4e71231735b28af3ca140b97b8386d14",
+            "repository": "https://github.com/gotwarlost/istanbul",
+            "scope": "source_repository"
+          }
+        },
+        {
+          "type": "DEPRECATED",
+          "provider_id": "npm",
+          "source_url": "https://registry.npmjs.org/istanbul",
+          "observed_at": "2026-10-14T17:19:22.049106Z",
+          "details": {
+            "deprecated_reason": "This module is no longer maintained, try this instead:\n  npm i nyc\nVisit https://istanbul.js.org/integrations for other alternatives."
+          }
+        },
+        {
+          "type": "STALE_RELEASE",
+          "provider_id": "npm",
+          "source_url": "https://registry.npmjs.org/istanbul",
+          "observed_at": "2026-10-14T17:19:22.049106Z",
+          "details": {
+            "days_since_latest_release": 3706,
+            "latest_published_at": "2016-08-21T20:02:09.468Z",
+            "threshold_days": 730
+          }
+        }
+      ],
+      "signal_evaluations": [
+        {
+          "type": "ARCHIVED",
+          "status": "PRESENT",
+          "provider_id": "github",
+          "source_url": "https://api.github.com/repos/gotwarlost/istanbul",
+          "checked_at": "2026-10-14T17:19:22.049106Z",
+          "reason_code": null
+        },
+        {
+          "type": "DEPRECATED",
+          "status": "PRESENT",
+          "provider_id": "npm",
+          "source_url": "https://registry.npmjs.org/istanbul",
+          "checked_at": "2026-10-14T17:19:22.049106Z",
+          "reason_code": null
+        },
+        {
+          "type": "STALE_RELEASE",
+          "status": "PRESENT",
+          "provider_id": "npm",
+          "source_url": "https://registry.npmjs.org/istanbul",
+          "checked_at": "2026-10-14T17:19:22.049106Z",
+          "reason_code": null
+        }
+      ],
+      "selected_evidence_ids": [],
+      "notices": [],
+      "unknown_reasons": [],
+      "rule_ids": [
+        "R-005",
+        "R-006",
+        "R-013"
+      ],
+      "evidence": [],
+      "diagnostics": [],
+      "incomplete": false,
+      "ci_failure": false,
+      "exception_applied": false
+    },
+    {
+      "source_ref": "npm-left-pad",
+      "purl": "pkg:npm/left-pad@1.3.0",
+      "name": "left-pad",
+      "version": "1.3.0",
+      "version_verification": {
+        "status": "VERIFIED",
+        "provider_id": "npm",
+        "source_url": "https://registry.npmjs.org/left-pad",
+        "checked_at": "2026-10-14T17:19:22.049106Z",
+        "published_at": "2018-04-09T01:10:45.796Z",
+        "reason_code": null
+      },
+      "lifecycle": "EOL",
+      "support_assessment": {
+        "lifecycle": "UNKNOWN",
+        "confidence": null,
+        "eol_effective_date": null,
+        "matched_cycle": null,
+        "selected_evidence_ids": [],
+        "unknown_reasons": [
+          "NO_LIFECYCLE_EVIDENCE"
+        ]
+      },
+      "eol_basis": "POLICY_RULE",
+      "eol_rule_evaluations": [
+        {
+          "rule_id": "deprecated",
+          "status": "PRESENT",
+          "matched_signals": [
+            "DEPRECATED"
+          ],
+          "unknown_signals": [],
+          "reason_code": null
+        },
+        {
+          "rule_id": "archived",
+          "status": "PRESENT",
+          "matched_signals": [
+            "ARCHIVED"
+          ],
+          "unknown_signals": [],
+          "reason_code": null
+        }
+      ],
+      "confidence": "MEDIUM",
+      "eol_effective_date": null,
+      "matched_cycle": null,
+      "signals": [
+        {
+          "type": "ARCHIVED",
+          "provider_id": "github",
+          "source_url": "https://api.github.com/repos/stevemao/left-pad",
+          "observed_at": "2026-10-14T17:19:22.049106Z",
+          "details": {
+            "mapping_provenance": "REGISTRY_METADATA",
+            "mapping_source_url": "https://registry.npmjs.org/left-pad",
+            "raw_payload_hash": "693434256730439fb2db44924e5d95c3d2f321bc9b31a211beb1f84dc825d413",
+            "repository": "https://github.com/left-pad/left-pad",
+            "scope": "source_repository"
+          }
+        },
+        {
+          "type": "DEPRECATED",
+          "provider_id": "npm",
+          "source_url": "https://registry.npmjs.org/left-pad",
+          "observed_at": "2026-10-14T17:19:22.049106Z",
+          "details": {
+            "deprecated_reason": "use String.prototype.padStart()"
+          }
+        },
+        {
+          "type": "STALE_RELEASE",
+          "provider_id": "npm",
+          "source_url": "https://registry.npmjs.org/left-pad",
+          "observed_at": "2026-10-14T17:19:22.049106Z",
+          "details": {
+            "days_since_latest_release": 3110,
+            "latest_published_at": "2018-04-09T01:10:45.796Z",
+            "threshold_days": 730
+          }
+        }
+      ],
+      "signal_evaluations": [
+        {
+          "type": "ARCHIVED",
+          "status": "PRESENT",
+          "provider_id": "github",
+          "source_url": "https://api.github.com/repos/stevemao/left-pad",
+          "checked_at": "2026-10-14T17:19:22.049106Z",
+          "reason_code": null
+        },
+        {
+          "type": "DEPRECATED",
+          "status": "PRESENT",
+          "provider_id": "npm",
+          "source_url": "https://registry.npmjs.org/left-pad",
+          "checked_at": "2026-10-14T17:19:22.049106Z",
+          "reason_code": null
+        },
+        {
+          "type": "STALE_RELEASE",
+          "status": "PRESENT",
+          "provider_id": "npm",
+          "source_url": "https://registry.npmjs.org/left-pad",
+          "checked_at": "2026-10-14T17:19:22.049106Z",
+          "reason_code": null
+        }
+      ],
+      "selected_evidence_ids": [],
+      "notices": [],
+      "unknown_reasons": [],
+      "rule_ids": [
+        "R-005",
+        "R-006",
+        "R-013"
+      ],
+      "evidence": [],
+      "diagnostics": [],
+      "incomplete": false,
+      "ci_failure": false,
+      "exception_applied": false
+    },
+    {
+      "source_ref": "npm-node-sass",
+      "purl": "pkg:npm/node-sass@9.0.0",
+      "name": "node-sass",
+      "version": "9.0.0",
+      "version_verification": {
+        "status": "VERIFIED",
+        "provider_id": "npm",
+        "source_url": "https://registry.npmjs.org/node-sass",
+        "checked_at": "2026-10-14T17:19:22.049106Z",
+        "published_at": "2023-05-20T06:03:42.097Z",
+        "reason_code": null
+      },
+      "lifecycle": "EOL",
+      "support_assessment": {
+        "lifecycle": "UNKNOWN",
+        "confidence": null,
+        "eol_effective_date": null,
+        "matched_cycle": null,
+        "selected_evidence_ids": [],
+        "unknown_reasons": [
+          "NO_LIFECYCLE_EVIDENCE"
+        ]
+      },
+      "eol_basis": "POLICY_RULE",
+      "eol_rule_evaluations": [
+        {
+          "rule_id": "deprecated",
+          "status": "PRESENT",
+          "matched_signals": [
+            "DEPRECATED"
+          ],
+          "unknown_signals": [],
+          "reason_code": null
+        },
+        {
+          "rule_id": "archived",
+          "status": "PRESENT",
+          "matched_signals": [
+            "ARCHIVED"
+          ],
+          "unknown_signals": [],
+          "reason_code": null
+        }
+      ],
+      "confidence": "MEDIUM",
+      "eol_effective_date": null,
+      "matched_cycle": null,
+      "signals": [
+        {
+          "type": "ARCHIVED",
+          "provider_id": "github",
+          "source_url": "https://api.github.com/repos/sass/node-sass",
+          "observed_at": "2026-10-14T17:19:22.049106Z",
+          "details": {
+            "mapping_provenance": "REGISTRY_METADATA",
+            "mapping_source_url": "https://registry.npmjs.org/node-sass",
+            "raw_payload_hash": "229baa29b08e41e8c5609abec1ff8292490a8aefe3ec4ca4dc887ce0ec876f97",
+            "repository": "https://github.com/sass/node-sass",
+            "scope": "source_repository"
+          }
+        },
+        {
+          "type": "DEPRECATED",
+          "provider_id": "npm",
+          "source_url": "https://registry.npmjs.org/node-sass",
+          "observed_at": "2026-10-14T17:19:22.049106Z",
+          "details": {
+            "deprecated_reason": "Node Sass is no longer supported. Please use `sass` or `sass-embedded` instead."
+          }
+        },
+        {
+          "type": "STALE_RELEASE",
+          "provider_id": "deps_dev",
+          "source_url": "https://api.deps.dev/v3/systems/npm/packages/node-sass",
+          "observed_at": "2026-10-14T17:19:22.049106Z",
+          "details": {
+            "days_since_latest_release": 1243,
+            "latest_published_at": "2023-05-20T06:03:42Z",
+            "threshold_days": 730
+          }
+        }
+      ],
+      "signal_evaluations": [
+        {
+          "type": "ARCHIVED",
+          "status": "PRESENT",
+          "provider_id": "github",
+          "source_url": "https://api.github.com/repos/sass/node-sass",
+          "checked_at": "2026-10-14T17:19:22.049106Z",
+          "reason_code": null
+        },
+        {
+          "type": "DEPRECATED",
+          "status": "PRESENT",
+          "provider_id": "npm",
+          "source_url": "https://registry.npmjs.org/node-sass",
+          "checked_at": "2026-10-14T17:19:22.049106Z",
+          "reason_code": null
+        },
+        {
+          "type": "STALE_RELEASE",
+          "status": "PRESENT",
+          "provider_id": "deps_dev",
+          "source_url": "https://api.deps.dev/v3/systems/npm/packages/node-sass",
+          "checked_at": "2026-10-14T17:19:22.049106Z",
+          "reason_code": null
+        }
+      ],
+      "selected_evidence_ids": [],
+      "notices": [],
+      "unknown_reasons": [],
+      "rule_ids": [
+        "R-005",
+        "R-006",
+        "R-013"
+      ],
+      "evidence": [],
+      "diagnostics": [],
+      "incomplete": false,
+      "ci_failure": false,
+      "exception_applied": false
+    },
+    {
+      "source_ref": "npm-picocolors",
+      "purl": "pkg:npm/picocolors@1.1.1",
+      "name": "picocolors",
+      "version": "1.1.1",
+      "version_verification": {
+        "status": "VERIFIED",
+        "provider_id": "npm",
+        "source_url": "https://registry.npmjs.org/picocolors",
+        "checked_at": "2026-10-14T17:19:22.049106Z",
+        "published_at": "2024-10-16T18:20:03.921Z",
+        "reason_code": null
+      },
+      "lifecycle": "NO_EOL_DETECTED",
+      "support_assessment": {
+        "lifecycle": "UNKNOWN",
+        "confidence": null,
+        "eol_effective_date": null,
+        "matched_cycle": null,
+        "selected_evidence_ids": [],
+        "unknown_reasons": [
+          "NO_LIFECYCLE_EVIDENCE"
+        ]
+      },
+      "eol_basis": null,
+      "eol_rule_evaluations": [
+        {
+          "rule_id": "deprecated",
+          "status": "ABSENT",
+          "matched_signals": [],
+          "unknown_signals": [],
+          "reason_code": null
+        },
+        {
+          "rule_id": "archived",
+          "status": "ABSENT",
+          "matched_signals": [],
+          "unknown_signals": [],
+          "reason_code": null
+        }
+      ],
+      "confidence": null,
+      "eol_effective_date": null,
+      "matched_cycle": null,
+      "signals": [],
+      "signal_evaluations": [
+        {
+          "type": "ARCHIVED",
+          "status": "ABSENT",
+          "provider_id": "github",
+          "source_url": "https://api.github.com/repos/alexeyraspopov/picocolors",
+          "checked_at": "2026-10-14T17:19:22.049106Z",
+          "reason_code": null
+        },
+        {
+          "type": "DEPRECATED",
+          "status": "ABSENT",
+          "provider_id": "npm",
+          "source_url": "https://registry.npmjs.org/picocolors",
+          "checked_at": "2026-10-14T17:19:22.049106Z",
+          "reason_code": null
+        },
+        {
+          "type": "STALE_RELEASE",
+          "status": "ABSENT",
+          "provider_id": "npm",
+          "source_url": "https://registry.npmjs.org/picocolors",
+          "checked_at": "2026-10-14T17:19:22.049106Z",
+          "reason_code": null
+        }
+      ],
+      "selected_evidence_ids": [],
+      "notices": [],
+      "unknown_reasons": [],
+      "rule_ids": [
+        "R-006"
+      ],
+      "evidence": [],
+      "diagnostics": [],
+      "incomplete": false,
+      "ci_failure": false,
+      "exception_applied": false
+    },
+    {
+      "source_ref": "npm-request",
+      "purl": "pkg:npm/request@2.88.2",
+      "name": "request",
+      "version": "2.88.2",
+      "version_verification": {
+        "status": "VERIFIED",
+        "provider_id": "npm",
+        "source_url": "https://registry.npmjs.org/request",
+        "checked_at": "2026-10-14T17:19:22.049106Z",
+        "published_at": "2020-02-11T16:35:36.122Z",
+        "reason_code": null
+      },
+      "lifecycle": "EOL",
+      "support_assessment": {
+        "lifecycle": "UNKNOWN",
+        "confidence": null,
+        "eol_effective_date": null,
+        "matched_cycle": null,
+        "selected_evidence_ids": [],
+        "unknown_reasons": [
+          "NO_LIFECYCLE_EVIDENCE"
+        ]
+      },
+      "eol_basis": "POLICY_RULE",
+      "eol_rule_evaluations": [
+        {
+          "rule_id": "deprecated",
+          "status": "PRESENT",
+          "matched_signals": [
+            "DEPRECATED"
+          ],
+          "unknown_signals": [],
+          "reason_code": null
+        },
+        {
+          "rule_id": "archived",
+          "status": "ABSENT",
+          "matched_signals": [],
+          "unknown_signals": [],
+          "reason_code": null
+        }
+      ],
+      "confidence": "MEDIUM",
+      "eol_effective_date": null,
+      "matched_cycle": null,
+      "signals": [
+        {
+          "type": "DEPRECATED",
+          "provider_id": "npm",
+          "source_url": "https://registry.npmjs.org/request",
+          "observed_at": "2026-10-14T17:19:22.049106Z",
+          "details": {
+            "deprecated_reason": "request has been deprecated, see https://github.com/request/request/issues/3142"
+          }
+        },
+        {
+          "type": "STALE_RELEASE",
+          "provider_id": "npm",
+          "source_url": "https://registry.npmjs.org/request",
+          "observed_at": "2026-10-14T17:19:22.049106Z",
+          "details": {
+            "days_since_latest_release": 2437,
+            "latest_published_at": "2020-02-11T16:35:36.122Z",
+            "threshold_days": 730
+          }
+        }
+      ],
+      "signal_evaluations": [
+        {
+          "type": "ARCHIVED",
+          "status": "ABSENT",
+          "provider_id": "github",
+          "source_url": "https://api.github.com/repos/request/request",
+          "checked_at": "2026-10-14T17:19:22.049106Z",
+          "reason_code": null
+        },
+        {
+          "type": "DEPRECATED",
+          "status": "PRESENT",
+          "provider_id": "npm",
+          "source_url": "https://registry.npmjs.org/request",
+          "checked_at": "2026-10-14T17:19:22.049106Z",
+          "reason_code": null
+        },
+        {
+          "type": "STALE_RELEASE",
+          "status": "PRESENT",
+          "provider_id": "npm",
+          "source_url": "https://registry.npmjs.org/request",
+          "checked_at": "2026-10-14T17:19:22.049106Z",
+          "reason_code": null
+        }
+      ],
+      "selected_evidence_ids": [],
+      "notices": [],
+      "unknown_reasons": [],
+      "rule_ids": [
+        "R-005",
+        "R-006",
+        "R-013"
+      ],
+      "evidence": [],
+      "diagnostics": [],
+      "incomplete": false,
+      "ci_failure": false,
+      "exception_applied": false
+    },
+    {
+      "source_ref": "npm-rimraf",
+      "purl": "pkg:npm/rimraf@3.0.2",
+      "name": "rimraf",
+      "version": "3.0.2",
+      "version_verification": {
+        "status": "VERIFIED",
+        "provider_id": "npm",
+        "source_url": "https://registry.npmjs.org/rimraf",
+        "checked_at": "2026-10-14T17:19:22.049106Z",
+        "published_at": "2020-02-09T06:18:37.504Z",
+        "reason_code": null
+      },
+      "lifecycle": "EOL",
+      "support_assessment": {
+        "lifecycle": "UNKNOWN",
+        "confidence": null,
+        "eol_effective_date": null,
+        "matched_cycle": null,
+        "selected_evidence_ids": [],
+        "unknown_reasons": [
+          "NO_LIFECYCLE_EVIDENCE"
+        ]
+      },
+      "eol_basis": "POLICY_RULE",
+      "eol_rule_evaluations": [
+        {
+          "rule_id": "deprecated",
+          "status": "PRESENT",
+          "matched_signals": [
+            "DEPRECATED"
+          ],
+          "unknown_signals": [],
+          "reason_code": null
+        },
+        {
+          "rule_id": "archived",
+          "status": "ABSENT",
+          "matched_signals": [],
+          "unknown_signals": [],
+          "reason_code": null
+        }
+      ],
+      "confidence": "MEDIUM",
+      "eol_effective_date": null,
+      "matched_cycle": null,
+      "signals": [
+        {
+          "type": "DEPRECATED",
+          "provider_id": "npm",
+          "source_url": "https://registry.npmjs.org/rimraf",
+          "observed_at": "2026-10-14T17:19:22.049106Z",
+          "details": {
+            "deprecated_reason": "Rimraf versions prior to v4 are no longer supported"
+          }
+        }
+      ],
+      "signal_evaluations": [
+        {
+          "type": "ARCHIVED",
+          "status": "ABSENT",
+          "provider_id": "github",
+          "source_url": "https://api.github.com/repos/isaacs/rimraf",
+          "checked_at": "2026-10-14T17:19:22.049106Z",
+          "reason_code": null
+        },
+        {
+          "type": "DEPRECATED",
+          "status": "PRESENT",
+          "provider_id": "npm",
+          "source_url": "https://registry.npmjs.org/rimraf",
+          "checked_at": "2026-10-14T17:19:22.049106Z",
+          "reason_code": null
+        },
+        {
+          "type": "STALE_RELEASE",
+          "status": "ABSENT",
+          "provider_id": "npm",
+          "source_url": "https://registry.npmjs.org/rimraf",
+          "checked_at": "2026-10-14T17:19:22.049106Z",
+          "reason_code": null
+        }
+      ],
+      "selected_evidence_ids": [],
+      "notices": [],
+      "unknown_reasons": [],
+      "rule_ids": [
+        "R-005",
+        "R-006",
+        "R-013"
+      ],
+      "evidence": [],
+      "diagnostics": [],
+      "incomplete": false,
+      "ci_failure": false,
+      "exception_applied": false
+    },
+    {
+      "source_ref": "npm-uuid",
+      "purl": "pkg:npm/uuid@3.4.0",
+      "name": "uuid",
+      "version": "3.4.0",
+      "version_verification": {
+        "status": "VERIFIED",
+        "provider_id": "npm",
+        "source_url": "https://registry.npmjs.org/uuid",
+        "checked_at": "2026-10-14T17:19:22.049106Z",
+        "published_at": "2020-01-16T21:05:38.628Z",
+        "reason_code": null
+      },
+      "lifecycle": "EOL",
+      "support_assessment": {
+        "lifecycle": "UNKNOWN",
+        "confidence": null,
+        "eol_effective_date": null,
+        "matched_cycle": null,
+        "selected_evidence_ids": [],
+        "unknown_reasons": [
+          "NO_LIFECYCLE_EVIDENCE"
+        ]
+      },
+      "eol_basis": "POLICY_RULE",
+      "eol_rule_evaluations": [
+        {
+          "rule_id": "deprecated",
+          "status": "PRESENT",
+          "matched_signals": [
+            "DEPRECATED"
+          ],
+          "unknown_signals": [],
+          "reason_code": null
+        },
+        {
+          "rule_id": "archived",
+          "status": "ABSENT",
+          "matched_signals": [],
+          "unknown_signals": [],
+          "reason_code": null
+        }
+      ],
+      "confidence": "MEDIUM",
+      "eol_effective_date": null,
+      "matched_cycle": null,
+      "signals": [
+        {
+          "type": "DEPRECATED",
+          "provider_id": "npm",
+          "source_url": "https://registry.npmjs.org/uuid",
+          "observed_at": "2026-10-14T17:19:22.049106Z",
+          "details": {
+            "deprecated_reason": "uuid@10 and below is no longer supported.  For ESM codebases, update to uuid@latest.  For CommonJS codebases, use uuid@11 (but be aware this version will likely be deprecated in 2028)."
+          }
+        }
+      ],
+      "signal_evaluations": [
+        {
+          "type": "ARCHIVED",
+          "status": "ABSENT",
+          "provider_id": "github",
+          "source_url": "https://api.github.com/repos/uuidjs/uuid",
+          "checked_at": "2026-10-14T17:19:22.049106Z",
+          "reason_code": null
+        },
+        {
+          "type": "DEPRECATED",
+          "status": "PRESENT",
+          "provider_id": "npm",
+          "source_url": "https://registry.npmjs.org/uuid",
+          "checked_at": "2026-10-14T17:19:22.049106Z",
+          "reason_code": null
+        },
+        {
+          "type": "STALE_RELEASE",
+          "status": "ABSENT",
+          "provider_id": "npm",
+          "source_url": "https://registry.npmjs.org/uuid",
+          "checked_at": "2026-10-14T17:19:22.049106Z",
+          "reason_code": null
+        }
+      ],
+      "selected_evidence_ids": [],
+      "notices": [],
+      "unknown_reasons": [],
+      "rule_ids": [
+        "R-005",
+        "R-006",
+        "R-013"
+      ],
+      "evidence": [],
+      "diagnostics": [],
+      "incomplete": false,
+      "ci_failure": false,
+      "exception_applied": false
+    },
+    {
+      "source_ref": "nuget-documentdb",
+      "purl": "pkg:nuget/microsoft.azure.documentdb@2.22.0",
+      "name": "Microsoft.Azure.DocumentDB",
+      "version": "2.22.0",
+      "version_verification": {
+        "status": "VERIFIED",
+        "provider_id": "deps_dev",
+        "source_url": "https://api.deps.dev/v3/systems/nuget/packages/microsoft.azure.documentdb/versions/2.22.0",
+        "checked_at": "2026-10-14T17:19:22.049106Z",
+        "published_at": "2024-03-21T00:53:36Z",
+        "reason_code": null
+      },
+      "lifecycle": "EOL",
+      "support_assessment": {
+        "lifecycle": "UNKNOWN",
+        "confidence": null,
+        "eol_effective_date": null,
+        "matched_cycle": null,
+        "selected_evidence_ids": [],
+        "unknown_reasons": [
+          "NO_LIFECYCLE_EVIDENCE"
+        ]
+      },
+      "eol_basis": "POLICY_RULE",
+      "eol_rule_evaluations": [
+        {
+          "rule_id": "deprecated",
+          "status": "PRESENT",
+          "matched_signals": [
+            "DEPRECATED"
+          ],
+          "unknown_signals": [],
+          "reason_code": null
+        },
+        {
+          "rule_id": "archived",
+          "status": "UNKNOWN",
+          "matched_signals": [],
+          "unknown_signals": [
+            "ARCHIVED"
+          ],
+          "reason_code": "CONDITION_UNAVAILABLE"
+        }
+      ],
+      "confidence": "MEDIUM",
+      "eol_effective_date": null,
+      "matched_cycle": null,
+      "signals": [
+        {
+          "type": "DEPRECATED",
+          "provider_id": "deps_dev",
+          "source_url": "https://api.deps.dev/v3/systems/nuget/packages/microsoft.azure.documentdb/versions/2.22.0",
+          "observed_at": "2026-10-14T17:19:22.049106Z",
+          "details": {
+            "deprecated_reason": "Legacy"
+          }
+        }
+      ],
+      "signal_evaluations": [
+        {
+          "type": "ARCHIVED",
+          "status": "UNKNOWN",
+          "provider_id": "github",
+          "source_url": null,
+          "checked_at": null,
+          "reason_code": "NO_GITHUB_SOURCE_REPOSITORY"
+        },
+        {
+          "type": "DEPRECATED",
+          "status": "PRESENT",
+          "provider_id": "deps_dev",
+          "source_url": "https://api.deps.dev/v3/systems/nuget/packages/microsoft.azure.documentdb/versions/2.22.0",
+          "checked_at": "2026-10-14T17:19:22.049106Z",
+          "reason_code": null
+        },
+        {
+          "type": "STALE_RELEASE",
+          "status": "UNKNOWN",
+          "provider_id": "deps_dev",
+          "source_url": "https://api.deps.dev/v3/systems/nuget/packages/microsoft.azure.documentdb",
+          "checked_at": "2026-10-14T17:19:22.049106Z",
+          "reason_code": "MISSING_PUBLICATION_DATE"
+        }
+      ],
+      "selected_evidence_ids": [],
+      "notices": [],
+      "unknown_reasons": [],
+      "rule_ids": [
+        "R-005",
+        "R-006",
+        "R-013"
+      ],
+      "evidence": [],
+      "diagnostics": [],
+      "incomplete": false,
+      "ci_failure": false,
+      "exception_applied": false
+    },
+    {
+      "source_ref": "nuget-keyvault",
+      "purl": "pkg:nuget/microsoft.azure.keyvault@3.0.5",
+      "name": "Microsoft.Azure.KeyVault",
+      "version": "3.0.5",
+      "version_verification": {
+        "status": "VERIFIED",
+        "provider_id": "deps_dev",
+        "source_url": "https://api.deps.dev/v3/systems/nuget/packages/microsoft.azure.keyvault/versions/3.0.5",
+        "checked_at": "2026-10-14T17:19:22.049106Z",
+        "published_at": "2020-02-03T22:42:08Z",
+        "reason_code": null
+      },
+      "lifecycle": "EOL",
+      "support_assessment": {
+        "lifecycle": "UNKNOWN",
+        "confidence": null,
+        "eol_effective_date": null,
+        "matched_cycle": null,
+        "selected_evidence_ids": [],
+        "unknown_reasons": [
+          "NO_LIFECYCLE_EVIDENCE"
+        ]
+      },
+      "eol_basis": "POLICY_RULE",
+      "eol_rule_evaluations": [
+        {
+          "rule_id": "deprecated",
+          "status": "PRESENT",
+          "matched_signals": [
+            "DEPRECATED"
+          ],
+          "unknown_signals": [],
+          "reason_code": null
+        },
+        {
+          "rule_id": "archived",
+          "status": "ABSENT",
+          "matched_signals": [],
+          "unknown_signals": [],
+          "reason_code": null
+        }
+      ],
+      "confidence": "MEDIUM",
+      "eol_effective_date": null,
+      "matched_cycle": null,
+      "signals": [
+        {
+          "type": "DEPRECATED",
+          "provider_id": "deps_dev",
+          "source_url": "https://api.deps.dev/v3/systems/nuget/packages/microsoft.azure.keyvault/versions/3.0.5",
+          "observed_at": "2026-10-14T17:19:22.049106Z",
+          "details": {
+            "deprecated_reason": "Legacy"
+          }
+        }
+      ],
+      "signal_evaluations": [
+        {
+          "type": "ARCHIVED",
+          "status": "ABSENT",
+          "provider_id": "github",
+          "source_url": "https://api.github.com/repos/azure/azure-sdk-for-net",
+          "checked_at": "2026-10-14T17:19:22.049106Z",
+          "reason_code": null
+        },
+        {
+          "type": "DEPRECATED",
+          "status": "PRESENT",
+          "provider_id": "deps_dev",
+          "source_url": "https://api.deps.dev/v3/systems/nuget/packages/microsoft.azure.keyvault/versions/3.0.5",
+          "checked_at": "2026-10-14T17:19:22.049106Z",
+          "reason_code": null
+        },
+        {
+          "type": "STALE_RELEASE",
+          "status": "UNKNOWN",
+          "provider_id": "deps_dev",
+          "source_url": "https://api.deps.dev/v3/systems/nuget/packages/microsoft.azure.keyvault",
+          "checked_at": "2026-10-14T17:19:22.049106Z",
+          "reason_code": "MISSING_PUBLICATION_DATE"
+        }
+      ],
+      "selected_evidence_ids": [],
+      "notices": [],
+      "unknown_reasons": [],
+      "rule_ids": [
+        "R-005",
+        "R-006",
+        "R-013"
+      ],
+      "evidence": [],
+      "diagnostics": [],
+      "incomplete": false,
+      "ci_failure": false,
+      "exception_applied": false
+    },
+    {
+      "source_ref": "nuget-fluent",
+      "purl": "pkg:nuget/microsoft.azure.management.fluent@1.38.1",
+      "name": "Microsoft.Azure.Management.Fluent",
+      "version": "1.38.1",
+      "version_verification": {
+        "status": "VERIFIED",
+        "provider_id": "deps_dev",
+        "source_url": "https://api.deps.dev/v3/systems/nuget/packages/microsoft.azure.management.fluent/versions/1.38.1",
+        "checked_at": "2026-10-14T17:19:22.049106Z",
+        "published_at": "2022-04-13T03:33:09Z",
+        "reason_code": null
+      },
+      "lifecycle": "EOL",
+      "support_assessment": {
+        "lifecycle": "UNKNOWN",
+        "confidence": null,
+        "eol_effective_date": null,
+        "matched_cycle": null,
+        "selected_evidence_ids": [],
+        "unknown_reasons": [
+          "NO_LIFECYCLE_EVIDENCE"
+        ]
+      },
+      "eol_basis": "POLICY_RULE",
+      "eol_rule_evaluations": [
+        {
+          "rule_id": "deprecated",
+          "status": "PRESENT",
+          "matched_signals": [
+            "DEPRECATED"
+          ],
+          "unknown_signals": [],
+          "reason_code": null
+        },
+        {
+          "rule_id": "archived",
+          "status": "PRESENT",
+          "matched_signals": [
+            "ARCHIVED"
+          ],
+          "unknown_signals": [],
+          "reason_code": null
+        }
+      ],
+      "confidence": "MEDIUM",
+      "eol_effective_date": null,
+      "matched_cycle": null,
+      "signals": [
+        {
+          "type": "ARCHIVED",
+          "provider_id": "github",
+          "source_url": "https://api.github.com/repos/azure/azure-libraries-for-net",
+          "observed_at": "2026-10-14T17:19:22.049106Z",
+          "details": {
+            "mapping_provenance": "UNVERIFIED_METADATA",
+            "mapping_source_url": "https://api.deps.dev/v3/systems/nuget/packages/microsoft.azure.management.fluent/versions/1.38.1",
+            "raw_payload_hash": "818cf63acead616e91cd1ecfad6c79260a1a38bef23238e2b0b97db795123a76",
+            "repository": "https://github.com/Azure/azure-libraries-for-net",
+            "scope": "source_repository"
+          }
+        },
+        {
+          "type": "DEPRECATED",
+          "provider_id": "deps_dev",
+          "source_url": "https://api.deps.dev/v3/systems/nuget/packages/microsoft.azure.management.fluent/versions/1.38.1",
+          "observed_at": "2026-10-14T17:19:22.049106Z",
+          "details": {
+            "deprecated_reason": "Legacy"
+          }
+        }
+      ],
+      "signal_evaluations": [
+        {
+          "type": "ARCHIVED",
+          "status": "PRESENT",
+          "provider_id": "github",
+          "source_url": "https://api.github.com/repos/azure/azure-libraries-for-net",
+          "checked_at": "2026-10-14T17:19:22.049106Z",
+          "reason_code": null
+        },
+        {
+          "type": "DEPRECATED",
+          "status": "PRESENT",
+          "provider_id": "deps_dev",
+          "source_url": "https://api.deps.dev/v3/systems/nuget/packages/microsoft.azure.management.fluent/versions/1.38.1",
+          "checked_at": "2026-10-14T17:19:22.049106Z",
+          "reason_code": null
+        },
+        {
+          "type": "STALE_RELEASE",
+          "status": "UNKNOWN",
+          "provider_id": "deps_dev",
+          "source_url": "https://api.deps.dev/v3/systems/nuget/packages/microsoft.azure.management.fluent",
+          "checked_at": "2026-10-14T17:19:22.049106Z",
+          "reason_code": "MISSING_PUBLICATION_DATE"
+        }
+      ],
+      "selected_evidence_ids": [],
+      "notices": [],
+      "unknown_reasons": [],
+      "rule_ids": [
+        "R-005",
+        "R-006",
+        "R-013"
+      ],
+      "evidence": [],
+      "diagnostics": [],
+      "incomplete": false,
+      "ci_failure": false,
+      "exception_applied": false
+    },
+    {
+      "source_ref": "nuget-newtonsoft",
+      "purl": "pkg:nuget/newtonsoft.json@13.0.3",
+      "name": "Newtonsoft.Json",
+      "version": "13.0.3",
+      "version_verification": {
+        "status": "VERIFIED",
+        "provider_id": "deps_dev",
+        "source_url": "https://api.deps.dev/v3/systems/nuget/packages/newtonsoft.json/versions/13.0.3",
+        "checked_at": "2026-10-14T17:19:22.049106Z",
+        "published_at": "2023-03-08T07:42:54Z",
+        "reason_code": null
+      },
+      "lifecycle": "NO_EOL_DETECTED",
+      "support_assessment": {
+        "lifecycle": "UNKNOWN",
+        "confidence": null,
+        "eol_effective_date": null,
+        "matched_cycle": null,
+        "selected_evidence_ids": [],
+        "unknown_reasons": [
+          "NO_LIFECYCLE_EVIDENCE"
+        ]
+      },
+      "eol_basis": null,
+      "eol_rule_evaluations": [
+        {
+          "rule_id": "deprecated",
+          "status": "ABSENT",
+          "matched_signals": [],
+          "unknown_signals": [],
+          "reason_code": null
+        },
+        {
+          "rule_id": "archived",
+          "status": "ABSENT",
+          "matched_signals": [],
+          "unknown_signals": [],
+          "reason_code": null
+        }
+      ],
+      "confidence": null,
+      "eol_effective_date": null,
+      "matched_cycle": null,
+      "signals": [],
+      "signal_evaluations": [
+        {
+          "type": "ARCHIVED",
+          "status": "ABSENT",
+          "provider_id": "github",
+          "source_url": "https://api.github.com/repos/jamesnk/newtonsoft.json",
+          "checked_at": "2026-10-14T17:19:22.049106Z",
+          "reason_code": null
+        },
+        {
+          "type": "DEPRECATED",
+          "status": "ABSENT",
+          "provider_id": "deps_dev",
+          "source_url": "https://api.deps.dev/v3/systems/nuget/packages/newtonsoft.json/versions/13.0.3",
+          "checked_at": "2026-10-14T17:19:22.049106Z",
+          "reason_code": null
+        },
+        {
+          "type": "STALE_RELEASE",
+          "status": "ABSENT",
+          "provider_id": "deps_dev",
+          "source_url": "https://api.deps.dev/v3/systems/nuget/packages/newtonsoft.json",
+          "checked_at": "2026-10-14T17:19:22.049106Z",
+          "reason_code": null
+        }
+      ],
+      "selected_evidence_ids": [],
+      "notices": [],
+      "unknown_reasons": [],
+      "rule_ids": [
+        "R-006"
+      ],
+      "evidence": [],
+      "diagnostics": [],
+      "incomplete": false,
+      "ci_failure": false,
+      "exception_applied": false
+    },
+    {
+      "source_ref": "nuget-storage",
+      "purl": "pkg:nuget/windowsazure.storage@9.3.3",
+      "name": "WindowsAzure.Storage",
+      "version": "9.3.3",
+      "version_verification": {
+        "status": "VERIFIED",
+        "provider_id": "deps_dev",
+        "source_url": "https://api.deps.dev/v3/systems/nuget/packages/windowsazure.storage/versions/9.3.3",
+        "checked_at": "2026-10-14T17:19:22.049106Z",
+        "published_at": "2018-11-27T00:08:28Z",
+        "reason_code": null
+      },
+      "lifecycle": "EOL",
+      "support_assessment": {
+        "lifecycle": "UNKNOWN",
+        "confidence": null,
+        "eol_effective_date": null,
+        "matched_cycle": null,
+        "selected_evidence_ids": [],
+        "unknown_reasons": [
+          "NO_LIFECYCLE_EVIDENCE"
+        ]
+      },
+      "eol_basis": "POLICY_RULE",
+      "eol_rule_evaluations": [
+        {
+          "rule_id": "deprecated",
+          "status": "PRESENT",
+          "matched_signals": [
+            "DEPRECATED"
+          ],
+          "unknown_signals": [],
+          "reason_code": null
+        },
+        {
+          "rule_id": "archived",
+          "status": "PRESENT",
+          "matched_signals": [
+            "ARCHIVED"
+          ],
+          "unknown_signals": [],
+          "reason_code": null
+        }
+      ],
+      "confidence": "MEDIUM",
+      "eol_effective_date": null,
+      "matched_cycle": null,
+      "signals": [
+        {
+          "type": "ARCHIVED",
+          "provider_id": "github",
+          "source_url": "https://api.github.com/repos/azure/azure-storage-net",
+          "observed_at": "2026-10-14T17:19:22.049106Z",
+          "details": {
+            "mapping_provenance": "UNVERIFIED_METADATA",
+            "mapping_source_url": "https://api.deps.dev/v3/systems/nuget/packages/windowsazure.storage/versions/9.3.3",
+            "raw_payload_hash": "ffc274253053e116c26371d6d4dbaae363348f1cb2b8ce9ef1f14f6c12e86dd8",
+            "repository": "https://github.com/Azure/azure-storage-net",
+            "scope": "source_repository"
+          }
+        },
+        {
+          "type": "DEPRECATED",
+          "provider_id": "deps_dev",
+          "source_url": "https://api.deps.dev/v3/systems/nuget/packages/windowsazure.storage/versions/9.3.3",
+          "observed_at": "2026-10-14T17:19:22.049106Z",
+          "details": {
+            "deprecated_reason": "Legacy"
+          }
+        }
+      ],
+      "signal_evaluations": [
+        {
+          "type": "ARCHIVED",
+          "status": "PRESENT",
+          "provider_id": "github",
+          "source_url": "https://api.github.com/repos/azure/azure-storage-net",
+          "checked_at": "2026-10-14T17:19:22.049106Z",
+          "reason_code": null
+        },
+        {
+          "type": "DEPRECATED",
+          "status": "PRESENT",
+          "provider_id": "deps_dev",
+          "source_url": "https://api.deps.dev/v3/systems/nuget/packages/windowsazure.storage/versions/9.3.3",
+          "checked_at": "2026-10-14T17:19:22.049106Z",
+          "reason_code": null
+        },
+        {
+          "type": "STALE_RELEASE",
+          "status": "UNKNOWN",
+          "provider_id": "deps_dev",
+          "source_url": "https://api.deps.dev/v3/systems/nuget/packages/windowsazure.storage",
+          "checked_at": "2026-10-14T17:19:22.049106Z",
+          "reason_code": "MISSING_PUBLICATION_DATE"
+        }
+      ],
+      "selected_evidence_ids": [],
+      "notices": [],
+      "unknown_reasons": [],
+      "rule_ids": [
+        "R-005",
+        "R-006",
+        "R-013"
+      ],
+      "evidence": [],
+      "diagnostics": [],
+      "incomplete": false,
+      "ci_failure": false,
+      "exception_applied": false
+    },
+    {
+      "source_ref": "pypi-attrs",
+      "purl": "pkg:pypi/attrs@25.3.0",
+      "name": "attrs",
+      "version": "25.3.0",
+      "version_verification": {
+        "status": "VERIFIED",
+        "provider_id": "pypi",
+        "source_url": "https://pypi.org/simple/attrs/",
+        "checked_at": "2026-10-14T17:19:22.049106Z",
+        "published_at": "2025-03-13T11:10:21.140999Z",
+        "reason_code": null
+      },
+      "lifecycle": "NO_EOL_DETECTED",
+      "support_assessment": {
+        "lifecycle": "UNKNOWN",
+        "confidence": null,
+        "eol_effective_date": null,
+        "matched_cycle": null,
+        "selected_evidence_ids": [],
+        "unknown_reasons": [
+          "NO_LIFECYCLE_EVIDENCE"
+        ]
+      },
+      "eol_basis": null,
+      "eol_rule_evaluations": [
+        {
+          "rule_id": "deprecated",
+          "status": "ABSENT",
+          "matched_signals": [],
+          "unknown_signals": [],
+          "reason_code": null
+        },
+        {
+          "rule_id": "archived",
+          "status": "ABSENT",
+          "matched_signals": [],
+          "unknown_signals": [],
+          "reason_code": null
+        }
+      ],
+      "confidence": null,
+      "eol_effective_date": null,
+      "matched_cycle": null,
+      "signals": [],
+      "signal_evaluations": [
+        {
+          "type": "ARCHIVED",
+          "status": "ABSENT",
+          "provider_id": "github",
+          "source_url": "https://api.github.com/repos/python-attrs/attrs",
+          "checked_at": "2026-10-14T17:19:22.049106Z",
+          "reason_code": null
+        },
+        {
+          "type": "DEPRECATED",
+          "status": "ABSENT",
+          "provider_id": "pypi",
+          "source_url": "https://pypi.org/simple/attrs/",
+          "checked_at": "2026-10-14T17:19:22.049106Z",
+          "reason_code": null
+        },
+        {
+          "type": "STALE_RELEASE",
+          "status": "ABSENT",
+          "provider_id": "pypi",
+          "source_url": "https://pypi.org/simple/attrs/",
+          "checked_at": "2026-10-14T17:19:22.049106Z",
+          "reason_code": null
+        }
+      ],
+      "selected_evidence_ids": [],
+      "notices": [],
+      "unknown_reasons": [],
+      "rule_ids": [
+        "R-006"
+      ],
+      "evidence": [],
+      "diagnostics": [],
+      "incomplete": false,
+      "ci_failure": false,
+      "exception_applied": false
+    },
+    {
+      "source_ref": "pypi-django-rest-swagger",
+      "purl": "pkg:pypi/django-rest-swagger@2.2.0",
+      "name": "django-rest-swagger",
+      "version": "2.2.0",
+      "version_verification": {
+        "status": "VERIFIED",
+        "provider_id": "pypi",
+        "source_url": "https://pypi.org/simple/django-rest-swagger/",
+        "checked_at": "2026-10-14T17:19:22.049106Z",
+        "published_at": "2018-04-30T19:59:57.896473Z",
+        "reason_code": null
+      },
+      "lifecycle": "EOL",
+      "support_assessment": {
+        "lifecycle": "UNKNOWN",
+        "confidence": null,
+        "eol_effective_date": null,
+        "matched_cycle": null,
+        "selected_evidence_ids": [],
+        "unknown_reasons": [
+          "NO_LIFECYCLE_EVIDENCE"
+        ]
+      },
+      "eol_basis": "POLICY_RULE",
+      "eol_rule_evaluations": [
+        {
+          "rule_id": "deprecated",
+          "status": "ABSENT",
+          "matched_signals": [],
+          "unknown_signals": [],
+          "reason_code": null
+        },
+        {
+          "rule_id": "archived",
+          "status": "PRESENT",
+          "matched_signals": [
+            "ARCHIVED"
+          ],
+          "unknown_signals": [],
+          "reason_code": null
+        }
+      ],
+      "confidence": "MEDIUM",
+      "eol_effective_date": null,
+      "matched_cycle": null,
+      "signals": [
+        {
+          "type": "ARCHIVED",
+          "provider_id": "github",
+          "source_url": "https://api.github.com/repos/marcgibbons/django-rest-swagger",
+          "observed_at": "2026-10-14T17:19:22.049106Z",
+          "details": {
+            "mapping_provenance": "UNVERIFIED_METADATA",
+            "mapping_source_url": "https://api.deps.dev/v3/systems/pypi/packages/django-rest-swagger/versions/2.2.0",
+            "raw_payload_hash": "bcf4fc5892bffad3d7bd7ff00d98ede15ae29c659777e3e498a86aef86888122",
+            "repository": "https://github.com/marcgibbons/django-rest-swagger",
+            "scope": "source_repository"
+          }
+        },
+        {
+          "type": "STALE_RELEASE",
+          "provider_id": "pypi",
+          "source_url": "https://pypi.org/simple/django-rest-swagger/",
+          "observed_at": "2026-10-14T17:19:22.049106Z",
+          "details": {
+            "days_since_latest_release": 3089,
+            "latest_published_at": "2018-04-30T19:59:57.896473Z",
+            "threshold_days": 730
+          }
+        }
+      ],
+      "signal_evaluations": [
+        {
+          "type": "ARCHIVED",
+          "status": "PRESENT",
+          "provider_id": "github",
+          "source_url": "https://api.github.com/repos/marcgibbons/django-rest-swagger",
+          "checked_at": "2026-10-14T17:19:22.049106Z",
+          "reason_code": null
+        },
+        {
+          "type": "DEPRECATED",
+          "status": "ABSENT",
+          "provider_id": "pypi",
+          "source_url": "https://pypi.org/simple/django-rest-swagger/",
+          "checked_at": "2026-10-14T17:19:22.049106Z",
+          "reason_code": null
+        },
+        {
+          "type": "STALE_RELEASE",
+          "status": "PRESENT",
+          "provider_id": "pypi",
+          "source_url": "https://pypi.org/simple/django-rest-swagger/",
+          "checked_at": "2026-10-14T17:19:22.049106Z",
+          "reason_code": null
+        }
+      ],
+      "selected_evidence_ids": [],
+      "notices": [],
+      "unknown_reasons": [],
+      "rule_ids": [
+        "R-005",
+        "R-006",
+        "R-013"
+      ],
+      "evidence": [],
+      "diagnostics": [],
+      "incomplete": false,
+      "ci_failure": false,
+      "exception_applied": false
+    },
+    {
+      "source_ref": "pypi-django",
+      "purl": "pkg:pypi/django@2.2.28",
+      "name": "django",
+      "version": "2.2.28",
+      "version_verification": {
+        "status": "VERIFIED",
+        "provider_id": "pypi",
+        "source_url": "https://pypi.org/simple/django/",
+        "checked_at": "2026-10-14T17:19:22.049106Z",
+        "published_at": "2022-04-11T07:52:52.782601Z",
+        "reason_code": null
+      },
+      "lifecycle": "EOL",
+      "support_assessment": {
+        "lifecycle": "EOL",
+        "confidence": "MEDIUM",
+        "eol_effective_date": "2022-04-11",
+        "matched_cycle": "2.2",
+        "selected_evidence_ids": [
+          "endoflife_date:django:2.2"
+        ],
+        "unknown_reasons": []
+      },
+      "eol_basis": "SUPPORT_DATE",
+      "eol_rule_evaluations": [
+        {
+          "rule_id": "deprecated",
+          "status": "ABSENT",
+          "matched_signals": [],
+          "unknown_signals": [],
+          "reason_code": null
+        },
+        {
+          "rule_id": "archived",
+          "status": "ABSENT",
+          "matched_signals": [],
+          "unknown_signals": [],
+          "reason_code": null
+        }
+      ],
+      "confidence": "MEDIUM",
+      "eol_effective_date": "2022-04-11",
+      "matched_cycle": "2.2",
+      "signals": [],
+      "signal_evaluations": [
+        {
+          "type": "ARCHIVED",
+          "status": "ABSENT",
+          "provider_id": "github",
+          "source_url": "https://api.github.com/repos/django/django",
+          "checked_at": "2026-10-14T17:19:22.049106Z",
+          "reason_code": null
+        },
+        {
+          "type": "DEPRECATED",
+          "status": "ABSENT",
+          "provider_id": "pypi",
+          "source_url": "https://pypi.org/simple/django/",
+          "checked_at": "2026-10-14T17:19:22.049106Z",
+          "reason_code": null
+        },
+        {
+          "type": "STALE_RELEASE",
+          "status": "ABSENT",
+          "provider_id": "pypi",
+          "source_url": "https://pypi.org/simple/django/",
+          "checked_at": "2026-10-14T17:19:22.049106Z",
+          "reason_code": null
+        }
+      ],
+      "selected_evidence_ids": [
+        "endoflife_date:django:2.2"
+      ],
+      "notices": [],
+      "unknown_reasons": [],
+      "rule_ids": [
+        "R-012"
+      ],
+      "evidence": [
+        {
+          "id": "endoflife_date:django:2.2",
+          "provider_id": "endoflife_date",
+          "source_class": "CURATED_DATABASE",
+          "claim": "CURATED_SECURITY_END",
+          "package_purl": "pkg:pypi/django",
+          "product_slug": "django",
+          "matched_cycle": "2.2",
+          "support_scope": "upstream_security",
+          "support_start_date": null,
+          "eol_effective_date": "2022-04-11",
+          "source_url": "https://endoflife.date/django",
+          "source_field": "releases[].eolFrom",
+          "source_label": "Security Support",
+          "observed_at": "2026-10-14T17:19:22.049106Z",
+          "source_updated_at": "2026-10-07T00:09:21Z",
+          "reviewed_at": null,
+          "valid_until": null,
+          "raw_payload_hash": "2833cb0ff39b61b9fc904af11866b08f872010c087813d19b828331b4d6a28f7",
+          "confidence": "MEDIUM",
+          "rule_id": "R-012",
+          "general_eol_review": null,
+          "superseded_by": null,
+          "supersession_source_url": null
+        }
+      ],
+      "diagnostics": [],
+      "incomplete": false,
+      "ci_failure": false,
+      "exception_applied": false
+    },
+    {
+      "source_ref": "pypi-nose",
+      "purl": "pkg:pypi/nose@1.3.7",
+      "name": "nose",
+      "version": "1.3.7",
+      "version_verification": {
+        "status": "VERIFIED",
+        "provider_id": "pypi",
+        "source_url": "https://pypi.org/simple/nose/",
+        "checked_at": "2026-10-14T17:19:22.049106Z",
+        "published_at": "2015-06-02T09:12:32.961855Z",
+        "reason_code": null
+      },
+      "lifecycle": "UNKNOWN",
+      "support_assessment": {
+        "lifecycle": "UNKNOWN",
+        "confidence": null,
+        "eol_effective_date": null,
+        "matched_cycle": null,
+        "selected_evidence_ids": [],
+        "unknown_reasons": [
+          "NO_LIFECYCLE_EVIDENCE"
+        ]
+      },
+      "eol_basis": null,
+      "eol_rule_evaluations": [
+        {
+          "rule_id": "deprecated",
+          "status": "ABSENT",
+          "matched_signals": [],
+          "unknown_signals": [],
+          "reason_code": null
+        },
+        {
+          "rule_id": "archived",
+          "status": "UNKNOWN",
+          "matched_signals": [],
+          "unknown_signals": [
+            "ARCHIVED"
+          ],
+          "reason_code": "CONDITION_UNAVAILABLE"
+        }
+      ],
+      "confidence": null,
+      "eol_effective_date": null,
+      "matched_cycle": null,
+      "signals": [
+        {
+          "type": "STALE_RELEASE",
+          "provider_id": "pypi",
+          "source_url": "https://pypi.org/simple/nose/",
+          "observed_at": "2026-10-14T17:19:22.049106Z",
+          "details": {
+            "days_since_latest_release": 4152,
+            "latest_published_at": "2015-06-02T09:12:32.961855Z",
+            "threshold_days": 730
+          }
+        }
+      ],
+      "signal_evaluations": [
+        {
+          "type": "ARCHIVED",
+          "status": "UNKNOWN",
+          "provider_id": "github",
+          "source_url": null,
+          "checked_at": null,
+          "reason_code": "NO_GITHUB_SOURCE_REPOSITORY"
+        },
+        {
+          "type": "DEPRECATED",
+          "status": "ABSENT",
+          "provider_id": "pypi",
+          "source_url": "https://pypi.org/simple/nose/",
+          "checked_at": "2026-10-14T17:19:22.049106Z",
+          "reason_code": null
+        },
+        {
+          "type": "STALE_RELEASE",
+          "status": "PRESENT",
+          "provider_id": "pypi",
+          "source_url": "https://pypi.org/simple/nose/",
+          "checked_at": "2026-10-14T17:19:22.049106Z",
+          "reason_code": null
+        }
+      ],
+      "selected_evidence_ids": [],
+      "notices": [],
+      "unknown_reasons": [
+        "EOL_RULE_UNRESOLVED",
+        "NO_LIFECYCLE_EVIDENCE"
+      ],
+      "rule_ids": [
+        "R-005",
+        "R-006"
+      ],
+      "evidence": [],
+      "diagnostics": [],
+      "incomplete": true,
+      "ci_failure": false,
+      "exception_applied": false
+    },
+    {
+      "source_ref": "pypi-pep8",
+      "purl": "pkg:pypi/pep8@1.7.1",
+      "name": "pep8",
+      "version": "1.7.1",
+      "version_verification": {
+        "status": "VERIFIED",
+        "provider_id": "pypi",
+        "source_url": "https://pypi.org/simple/pep8/",
+        "checked_at": "2026-10-14T17:19:22.049106Z",
+        "published_at": "2017-10-24T14:39:11.465365Z",
+        "reason_code": null
+      },
+      "lifecycle": "UNKNOWN",
+      "support_assessment": {
+        "lifecycle": "UNKNOWN",
+        "confidence": null,
+        "eol_effective_date": null,
+        "matched_cycle": null,
+        "selected_evidence_ids": [],
+        "unknown_reasons": [
+          "NO_LIFECYCLE_EVIDENCE"
+        ]
+      },
+      "eol_basis": null,
+      "eol_rule_evaluations": [
+        {
+          "rule_id": "deprecated",
+          "status": "ABSENT",
+          "matched_signals": [],
+          "unknown_signals": [],
+          "reason_code": null
+        },
+        {
+          "rule_id": "archived",
+          "status": "UNKNOWN",
+          "matched_signals": [],
+          "unknown_signals": [
+            "ARCHIVED"
+          ],
+          "reason_code": "CONDITION_UNAVAILABLE"
+        }
+      ],
+      "confidence": null,
+      "eol_effective_date": null,
+      "matched_cycle": null,
+      "signals": [
+        {
+          "type": "STALE_RELEASE",
+          "provider_id": "pypi",
+          "source_url": "https://pypi.org/simple/pep8/",
+          "observed_at": "2026-10-14T17:19:22.049106Z",
+          "details": {
+            "days_since_latest_release": 3277,
+            "latest_published_at": "2017-10-24T14:39:11.465365Z",
+            "threshold_days": 730
+          }
+        }
+      ],
+      "signal_evaluations": [
+        {
+          "type": "ARCHIVED",
+          "status": "UNKNOWN",
+          "provider_id": "github",
+          "source_url": null,
+          "checked_at": null,
+          "reason_code": "NO_GITHUB_SOURCE_REPOSITORY"
+        },
+        {
+          "type": "DEPRECATED",
+          "status": "ABSENT",
+          "provider_id": "pypi",
+          "source_url": "https://pypi.org/simple/pep8/",
+          "checked_at": "2026-10-14T17:19:22.049106Z",
+          "reason_code": null
+        },
+        {
+          "type": "STALE_RELEASE",
+          "status": "PRESENT",
+          "provider_id": "pypi",
+          "source_url": "https://pypi.org/simple/pep8/",
+          "checked_at": "2026-10-14T17:19:22.049106Z",
+          "reason_code": null
+        }
+      ],
+      "selected_evidence_ids": [],
+      "notices": [],
+      "unknown_reasons": [
+        "EOL_RULE_UNRESOLVED",
+        "NO_LIFECYCLE_EVIDENCE"
+      ],
+      "rule_ids": [
+        "R-005",
+        "R-006"
+      ],
+      "evidence": [],
+      "diagnostics": [],
+      "incomplete": true,
+      "ci_failure": false,
+      "exception_applied": false
+    },
+    {
+      "source_ref": "pypi-pycrypto",
+      "purl": "pkg:pypi/pycrypto@2.6.1",
+      "name": "pycrypto",
+      "version": "2.6.1",
+      "version_verification": {
+        "status": "VERIFIED",
+        "provider_id": "pypi",
+        "source_url": "https://pypi.org/simple/pycrypto/",
+        "checked_at": "2026-10-14T17:19:22.049106Z",
+        "published_at": "2014-06-20T08:10:20.813938Z",
+        "reason_code": null
+      },
+      "lifecycle": "UNKNOWN",
+      "support_assessment": {
+        "lifecycle": "UNKNOWN",
+        "confidence": null,
+        "eol_effective_date": null,
+        "matched_cycle": null,
+        "selected_evidence_ids": [],
+        "unknown_reasons": [
+          "NO_LIFECYCLE_EVIDENCE"
+        ]
+      },
+      "eol_basis": null,
+      "eol_rule_evaluations": [
+        {
+          "rule_id": "deprecated",
+          "status": "ABSENT",
+          "matched_signals": [],
+          "unknown_signals": [],
+          "reason_code": null
+        },
+        {
+          "rule_id": "archived",
+          "status": "UNKNOWN",
+          "matched_signals": [],
+          "unknown_signals": [
+            "ARCHIVED"
+          ],
+          "reason_code": "CONDITION_UNAVAILABLE"
+        }
+      ],
+      "confidence": null,
+      "eol_effective_date": null,
+      "matched_cycle": null,
+      "signals": [
+        {
+          "type": "STALE_RELEASE",
+          "provider_id": "pypi",
+          "source_url": "https://pypi.org/simple/pycrypto/",
+          "observed_at": "2026-10-14T17:19:22.049106Z",
+          "details": {
+            "days_since_latest_release": 4499,
+            "latest_published_at": "2014-06-20T08:10:20.813938Z",
+            "threshold_days": 730
+          }
+        }
+      ],
+      "signal_evaluations": [
+        {
+          "type": "ARCHIVED",
+          "status": "UNKNOWN",
+          "provider_id": "github",
+          "source_url": null,
+          "checked_at": null,
+          "reason_code": "NO_GITHUB_SOURCE_REPOSITORY"
+        },
+        {
+          "type": "DEPRECATED",
+          "status": "ABSENT",
+          "provider_id": "pypi",
+          "source_url": "https://pypi.org/simple/pycrypto/",
+          "checked_at": "2026-10-14T17:19:22.049106Z",
+          "reason_code": null
+        },
+        {
+          "type": "STALE_RELEASE",
+          "status": "PRESENT",
+          "provider_id": "pypi",
+          "source_url": "https://pypi.org/simple/pycrypto/",
+          "checked_at": "2026-10-14T17:19:22.049106Z",
+          "reason_code": null
+        }
+      ],
+      "selected_evidence_ids": [],
+      "notices": [],
+      "unknown_reasons": [
+        "EOL_RULE_UNRESOLVED",
+        "NO_LIFECYCLE_EVIDENCE"
+      ],
+      "rule_ids": [
+        "R-005",
+        "R-006"
+      ],
+      "evidence": [],
+      "diagnostics": [],
+      "incomplete": true,
+      "ci_failure": false,
+      "exception_applied": false
+    }
+  ]
+}

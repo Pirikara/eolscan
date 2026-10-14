@@ -1,0 +1,46 @@
+{
+  "recorded_at_local_date": "2026-10-15",
+  "local_timezone": "Asia/Tokyo",
+  "repository_commit": "e6041c59ae9b21866d416caa6ea5b803f5250df1",
+  "binary_sha256": "972a8868e73b4ac3f8d25f0b243e1c59d7472522a231c5afa70b37f39ced834b",
+  "executions": [
+    {
+      "profile": "default",
+      "command": [
+        "./bin/eolscan",
+        "scan",
+        "--input",
+        "/private/tmp/eolscan-real-packages/sbom.cdx.json",
+        "--format",
+        "json",
+        "--output",
+        "/private/tmp/eolscan-real-packages/default.report.json"
+      ],
+      "cli_exit_code": 0,
+      "stderr": "WARNING: 24 component(s) classified as EOL under the configured policy; see eol_basis and matched rules in the report.\n",
+      "report_sha256": "82a32ec231972158cd6fd5aa8de541e0dc47ad32b6a5da834400b518a91f209d",
+      "input_sha256": "cd70732faaa7839671f8ec77369a5084bdf35a2e4944a944421219a3eb54adb9",
+      "effective_policy": "policy.default.yaml"
+    },
+    {
+      "profile": "inactivity",
+      "command": [
+        "./bin/eolscan",
+        "scan",
+        "--input",
+        "/private/tmp/eolscan-real-packages/inactivity.cdx.json",
+        "--config",
+        "/private/tmp/eolscan-real-packages/inactivity.policy.yaml",
+        "--format",
+        "json",
+        "--output",
+        "/private/tmp/eolscan-real-packages/inactivity.report.json"
+      ],
+      "cli_exit_code": 1,
+      "stderr": "WARNING: 6 component(s) classified as EOL under the configured policy; see eol_basis and matched rules in the report.\n",
+      "report_sha256": "09b8564b2cc79ef7d4338cdced37328a53dfcb71fc747d3b419a217df042e2d4",
+      "input_sha256": "b0c87f1701d201cb7e516acf115967f766a635127044e18bbcf12377014a521e",
+      "effective_policy": "policy.inactivity.yaml"
+    }
+  ]
+}

@@ -7,13 +7,14 @@ The configuration contract is version `2`, and the report contract is version `2
 - [EOL criteria](eol-rules.md): Custom AND/OR rules, thresholds, package scopes, source discovery, warnings, and CI.
 - [Architecture](architecture.md): Package responsibilities, dependency direction, embedded assets, and testing.
 - [Testing](testing.md): Decision matrices, registry failures, mixed SBOMs, executable checks, coverage measurement, and regression findings.
+- [Real package validation](real-package-validation.md): Public retirement examples, actual CLI results, detection misses, inactivity criteria, and repeatable live scans.
 - [Registry sources](registries.md): Native APIs, metadata priority, signal semantics, host pacing, and CI cache behavior.
 - [Lifecycle data](catalog.md): Automatic retrieval, security scope, source confidence, cache refresh, optional local catalogs, and migration.
 - [Schemas](../schemas/): Partial policy input, effective policy, support catalog, exceptions, common types, and reports.
 - [Examples](../examples/): Complete policies, local version assertions, generic EOL reviews, and complete reports.
 - [Fixture manifest](../testdata/fixtures/manifest.json): Conflicts, unreviewed evidence, unknown CI-required signals, evaluations before publication, and other fixed cases.
 
-The binary contains no fixed product support dates. Catalogs and reports under `examples/` and `testdata/` use fictional packages for acceptance tests; normal online scans retrieve actual lifecycle data.
+The binary contains no fixed product support dates. Catalogs and reports under `examples/` and `testdata/fixtures/` use fictional packages for acceptance tests. `testdata/real-packages/` contains actual public packages and recorded online results for detection validation. Normal online scans retrieve lifecycle data from the configured sources.
 
 The design validator uses Python with jsonschema and PyYAML. These are development dependencies; they are not required to run the Go CLI.
 

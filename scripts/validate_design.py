@@ -1,4 +1,4 @@
-"""Validate the versioned contracts and fictional fixtures without network access."""
+"""Validate contracts, fictional fixtures, and recorded real scans without network access."""
 
 from __future__ import annotations
 
@@ -13,6 +13,7 @@ from urllib.parse import urlsplit
 import yaml
 from jsonschema import Draft202012Validator, FormatChecker, ValidationError
 from referencing import Registry, Resource
+from validate_real_packages import assess as assess_real_packages
 
 ROOT = Path(__file__).resolve().parents[1]
 EXAMPLES = ROOT / "examples"
@@ -551,6 +552,45 @@ def validate_report(report, policy, catalog, exceptions, input_path):
     return 3 if set(codes) & {"INCOMPLETE_SCAN", "NO_COMPONENTS"} else 0
 
 
+def validate_recorded_real_packages():
+    root = TESTDATA / "real-packages"
+    manifest = json.loads((root / "manifest.json").read_text())
+    cases = manifest["cases"]
+    unique([case["id"] for case in cases], "real package case IDs")
+    for case in cases:
+        ensure(case["source_urls"], f"{case['id']}: independent review sources required")
+        ensure(
+            all(goal in (None, "EOL", "NOT_EOL") for goal in case["goals"].values()),
+            "real package detection goals are invalid",
+        )
+    count = 0
+    for receipts_path in sorted((root / "observations").glob("*/executions.json")):
+        receipts = json.loads(receipts_path.read_text())["executions"]
+        unique([receipt["profile"] for receipt in receipts], "recorded profile receipts")
+        for receipt in receipts:
+            profile = receipt["profile"]
+            spec = manifest["profiles"][profile]
+            report_path = receipts_path.parent / f"{profile}.report.json"
+            input_path = root / spec["input"]
+            ensure(
+                receipt["report_sha256"] == hashlib.sha256(report_path.read_bytes()).hexdigest(),
+                f"{profile}: recorded report hash differs from receipt",
+            )
+            ensure(
+                receipt["input_sha256"] == hashlib.sha256(input_path.read_bytes()).hexdigest(),
+                f"{profile}: recorded input hash differs from receipt",
+            )
+            context = load_context(receipts_path.parent / receipt["effective_policy"])
+            report = json.loads(report_path.read_text())
+            actual_exit = validate_report(report, *context, input_path)
+            ensure(actual_exit == receipt["cli_exit_code"], f"{profile}: CLI gate outcome differs from receipt")
+            # Check exact case/report correspondence; unmet detection goals stay visible.
+            assess_real_packages(report, profile, cases, input_path)
+            count += 1
+    ensure(count > 0, "recorded real package reports are missing")
+    print(f"Validated {count} recorded real scans; this does not assert complete detection")
+
+
 def run():
     valid_files = 0
     for path in sorted([*EXAMPLES.rglob("*.yaml"), *TESTDATA.rglob("*.yaml")]):
@@ -572,6 +612,7 @@ def run():
         actual = validate_report(report, *context, input_path)
         ensure(actual == case["expected_exit"], f"{case['name']}: unexpected exit")
         fixtures[case["name"]] = (report, context, input_path)
+    validate_recorded_real_packages()
     tests = []
 
     def rejected(label, callback):
