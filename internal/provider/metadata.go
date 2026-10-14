@@ -90,9 +90,6 @@ func (m *MetadataResolver) Resolve(ctx context.Context, id identity.Identity, as
 		}
 		if err == nil && pkg.Data.Status == 200 && len(pkg.records(id)) > 0 {
 			refs = append(refs, pkg.Repositories[id.Version]...)
-			if hasDetail && detailErr == nil && detail.Data.Status == 200 {
-				refs = append(refs, detail.Repositories[id.Version]...)
-			}
 			if id.Type == "pypi" && p.Sources.GitHub.Enabled && model.Contains(requested, "ARCHIVED") && pkg.ProjectStatus != "archived" {
 				found, data, repoErr := m.registry.pypiRepositories(ctx, id)
 				refs = append(refs, found...)
@@ -101,6 +98,11 @@ func (m *MetadataResolver) Resolve(ctx context.Context, id identity.Identity, as
 					out.Diagnostics = append(out.Diagnostics, transport.ErrorDiagnostic("pypi", repoErr))
 				}
 			}
+		}
+		// Exact version details can supply publication and repository metadata
+		// independently of a missing or outdated package-wide version list.
+		if hasDetail && detailErr == nil && detail.Data.Status == 200 {
+			refs = append(refs, detail.Repositories[id.Version]...)
 		}
 		for _, kind := range requested {
 			if !registrySignal(kind, id.Type) {

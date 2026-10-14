@@ -232,6 +232,8 @@ go build -o bin/eolscan ./cmd/eolscan
 
 Go tests cover design acceptance cases UT-01 through UT-45, native registry selection, fallback, signal completeness, offline caching, and host rate control. Regression tests cover nested metadata components, empty scans, cancellation, recent-release proof with incomplete older history, automatic security-scope detection, configurable AND/OR rules, package scopes, unknown conditions, source-repository discovery, date refresh, and offline cache expiry. Fifteen report fixtures run through the actual CLI and verify decisions, exit codes, input hashes, and policy hashes. External APIs are replaced with fixed responses and local HTTPS servers, so tests require no public API access.
 
+The expanded suite covers the full two-input three-valued truth tables, mixed seven-ecosystem CycloneDX/SPDX scans, RubyGems listing/detail disagreements, PyPI source discovery, GitHub malformed responses and quota/redirect behavior, inactivity boundaries, and report/CI consistency. Linux CI also runs the built executable against local HTTPS fixtures. See [test scope, platform behavior, and coverage measurement](docs/testing.md).
+
 JSON schemas are embedded in the binary to validate configuration and reports. Additional documentation and example validation uses Python, which is not a CLI runtime dependency.
 
 ```sh

@@ -29,8 +29,10 @@ jobs:
         run: test -z "$(gofmt -l cmd internal schemas tests)"
       - name: Vet
         run: make vet
-      - name: Test with race detection
-        run: make test
+      - name: Test with race detection and coverage
+        run: go test -race -coverpkg=./internal/... -coverprofile=coverage.out ./...
+      - name: Show statement coverage
+        run: go tool cover -func=coverage.out
       - name: Build CLI
         run: make build
       - name: Install contract validation dependencies

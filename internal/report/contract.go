@@ -125,12 +125,65 @@ func Validate(r model.Report, p model.Policy) error {
 				return fmt.Errorf("notice must reference selected evidence")
 			}
 		}
+		violation := model.Contains(p.CI.FailOnStatuses, row.Lifecycle) &&
+			(row.Lifecycle == "UNKNOWN" || p.CI.MinConfidence == "MEDIUM" || model.Text(row.Confidence) == "HIGH")
+		for _, evaluation := range row.SignalEvaluations {
+			violation = violation || evaluation.Status == "PRESENT" && model.Contains(p.CI.FailOnSignals, evaluation.Type)
+		}
+		if row.CIFailure != (violation && !row.ExceptionApplied) || row.ExceptionApplied && !violation {
+			return fmt.Errorf("component CI result contradicts policy")
+		}
 	}
-	if r.Summary.InScope != r.Summary.EOL+r.Summary.Supported+r.Summary.NoEOLDetected+r.Summary.Unknown {
+	return validateTotalsAndGate(r, p)
+}
+
+func validateTotalsAndGate(r model.Report, p model.Policy) error {
+	totals := model.Summary{InScope: len(r.Results), Excluded: r.Summary.Excluded}
+	incomplete := len(r.Results) == 0
+	for _, row := range r.Results {
+		switch row.Lifecycle {
+		case "EOL":
+			totals.EOL++
+		case "SUPPORTED":
+			totals.Supported++
+		case "NO_EOL_DETECTED":
+			totals.NoEOLDetected++
+		default:
+			totals.Unknown++
+		}
+		if row.CIFailure {
+			totals.CIFailureCount++
+		}
+		incomplete = incomplete || row.Incomplete
+	}
+	if totals.InScope > 0 {
+		totals.AssessmentCoverage = float64(totals.EOL+totals.Supported+totals.NoEOLDetected) / float64(totals.InScope)
+	}
+	if r.Summary.InScope != totals.InScope || r.Summary.EOL != totals.EOL || r.Summary.Supported != totals.Supported ||
+		r.Summary.NoEOLDetected != totals.NoEOLDetected || r.Summary.Unknown != totals.Unknown ||
+		r.Summary.CIFailureCount != totals.CIFailureCount || r.Summary.AssessmentCoverage != totals.AssessmentCoverage {
 		return fmt.Errorf("summary is inconsistent")
 	}
-	if r.Summary.InScope == 0 && (r.CIGate.Passed || !r.CIGate.Incomplete || !model.Contains(r.CIGate.ViolationCodes, "NO_COMPONENTS")) {
-		return fmt.Errorf("empty scans must fail with NO_COMPONENTS")
+	codes := []string{}
+	if totals.InScope == 0 {
+		codes = append(codes, "NO_COMPONENTS")
+	}
+	if totals.CIFailureCount > 0 {
+		codes = append(codes, "COMPONENT_POLICY_VIOLATION")
+	}
+	if totals.InScope > 0 && p.CI.MaxUnknownRatio != nil && float64(totals.Unknown)/float64(totals.InScope) > *p.CI.MaxUnknownRatio {
+		codes = append(codes, "MAX_UNKNOWN_RATIO_EXCEEDED")
+	}
+	if totals.InScope > 0 && p.CI.FailOnIncompleteScan && incomplete {
+		codes = append(codes, "INCOMPLETE_SCAN")
+	}
+	if r.CIGate.Incomplete != incomplete || r.CIGate.Passed != (len(codes) == 0) || len(r.CIGate.ViolationCodes) != len(codes) {
+		return fmt.Errorf("CI gate contradicts component results")
+	}
+	for _, code := range codes {
+		if !model.Contains(r.CIGate.ViolationCodes, code) {
+			return fmt.Errorf("CI gate violation codes contradict policy")
+		}
 	}
 	return nil
 }

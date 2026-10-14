@@ -18,9 +18,21 @@ func TestEOLConditionsUseThreeValuedLogic(t *testing.T) {
 		incomplete                                           bool
 	}{
 		{"any_positive_unknown", "any", "PRESENT", "UNKNOWN", "PRESENT", "EOL", false},
+		{"any_two_positives", "any", "PRESENT", "PRESENT", "PRESENT", "EOL", false},
+		{"any_positive_negative", "any", "PRESENT", "ABSENT", "PRESENT", "EOL", false},
+		{"any_negative_positive", "any", "ABSENT", "PRESENT", "PRESENT", "EOL", false},
+		{"any_unknown_positive", "any", "UNKNOWN", "PRESENT", "PRESENT", "EOL", false},
+		{"any_unknown_negative", "any", "UNKNOWN", "ABSENT", "UNKNOWN", "UNKNOWN", true},
+		{"any_two_unknowns", "any", "UNKNOWN", "UNKNOWN", "UNKNOWN", "UNKNOWN", true},
 		{"any_negative_unknown", "any", "ABSENT", "UNKNOWN", "UNKNOWN", "UNKNOWN", true},
 		{"any_two_negatives", "any", "ABSENT", "ABSENT", "ABSENT", "NO_EOL_DETECTED", false},
 		{"all_two_positives", "all", "PRESENT", "PRESENT", "PRESENT", "EOL", false},
+		{"all_positive_negative", "all", "PRESENT", "ABSENT", "ABSENT", "NO_EOL_DETECTED", false},
+		{"all_negative_positive", "all", "ABSENT", "PRESENT", "ABSENT", "NO_EOL_DETECTED", false},
+		{"all_two_negatives", "all", "ABSENT", "ABSENT", "ABSENT", "NO_EOL_DETECTED", false},
+		{"all_unknown_positive", "all", "UNKNOWN", "PRESENT", "UNKNOWN", "UNKNOWN", true},
+		{"all_unknown_negative", "all", "UNKNOWN", "ABSENT", "ABSENT", "NO_EOL_DETECTED", false},
+		{"all_two_unknowns", "all", "UNKNOWN", "UNKNOWN", "UNKNOWN", "UNKNOWN", true},
 		{"all_positive_unknown", "all", "PRESENT", "UNKNOWN", "UNKNOWN", "UNKNOWN", true},
 		{"all_negative_unknown", "all", "ABSENT", "UNKNOWN", "ABSENT", "NO_EOL_DETECTED", false},
 	} {
@@ -46,6 +58,38 @@ func TestEOLConditionsUseThreeValuedLogic(t *testing.T) {
 				t.Fatal("policy EOL became an official support conclusion")
 			}
 		})
+	}
+}
+
+func TestMultipleRulesUseORAndPreserveUnresolvedInputs(t *testing.T) {
+	now := time.Date(2026, 10, 13, 0, 0, 0, 0, time.UTC)
+	id, _ := identity.Resolve(model.Component{PURL: "pkg:npm/transitive-leaf@1.0.0"})
+	// Rows and columns are PRESENT, ABSENT, UNKNOWN. This is the complete
+	// expected outcome table, independent of the evaluator's control flow.
+	states := []string{"PRESENT", "ABSENT", "UNKNOWN"}
+	outcomes := [3][3]string{
+		{"EOL", "EOL", "EOL"},
+		{"EOL", "NO_EOL_DETECTED", "UNKNOWN"},
+		{"EOL", "UNKNOWN", "UNKNOWN"},
+	}
+	for a, first := range states {
+		for b, second := range states {
+			t.Run(first+"/"+second, func(t *testing.T) {
+				for _, reverse := range []bool{false, true} {
+					p := config.Default()
+					p.Decision.EOLRules = []model.EOLRule{{ID: "deprecated", AnyOf: []string{"DEPRECATED"}}, {ID: "archived", AnyOf: []string{"ARCHIVED"}}}
+					if reverse {
+						p.Decision.EOLRules[0], p.Decision.EOLRules[1] = p.Decision.EOLRules[1], p.Decision.EOLRules[0]
+					}
+					r := model.ComponentResult{Lifecycle: "UNKNOWN", VersionVerification: model.VersionVerification{Status: "VERIFIED"},
+						UnknownReasons: []string{"NO_LIFECYCLE_EVIDENCE"}, SignalEvaluations: []model.SignalEvaluation{{Type: "DEPRECATED", Status: first}, {Type: "ARCHIVED", Status: second}}}
+					lifecycle.EvaluateEOLRules(&r, id, p, "2026-10-13", now)
+					if r.Lifecycle != outcomes[a][b] || r.Incomplete != (outcomes[a][b] == "UNKNOWN") || len(r.EOLRuleEvaluations) != 2 {
+						t.Fatalf("reverse=%t result: %+v", reverse, r)
+					}
+				}
+			})
+		}
 	}
 }
 
@@ -84,6 +128,8 @@ func TestMaintenanceRulesPreserveFormalSupportAndRespectDateCriterion(t *testing
 		useDates                          bool
 	}{
 		{"rule_matches_supported_version", "SUPPORTED", "PRESENT", "EOL", "POLICY_RULE", true},
+		{"unresolved_rule_downgrades_supported_version", "SUPPORTED", "UNKNOWN", "UNKNOWN", "", true},
+		{"nonmatching_rule_keeps_supported_version", "SUPPORTED", "ABSENT", "SUPPORTED", "", true},
 		{"date_criterion_enabled", "EOL", "ABSENT", "EOL", "SUPPORT_DATE", true},
 		{"date_criterion_disabled", "EOL", "ABSENT", "NO_EOL_DETECTED", "", false},
 		{"rule_matches_conflicting_dates", "UNKNOWN", "PRESENT", "EOL", "POLICY_RULE", true},

@@ -6,6 +6,7 @@ The configuration contract is version `2`, and the report contract is version `2
 
 - [EOL criteria](eol-rules.md): Custom AND/OR rules, thresholds, package scopes, source discovery, warnings, and CI.
 - [Architecture](architecture.md): Package responsibilities, dependency direction, embedded assets, and testing.
+- [Testing](testing.md): Decision matrices, registry failures, mixed SBOMs, executable checks, coverage measurement, and regression findings.
 - [Registry sources](registries.md): Native APIs, metadata priority, signal semantics, host pacing, and CI cache behavior.
 - [Lifecycle data](catalog.md): Automatic retrieval, security scope, source confidence, cache refresh, optional local catalogs, and migration.
 - [Schemas](../schemas/): Partial policy input, effective policy, support catalog, exceptions, common types, and reports.

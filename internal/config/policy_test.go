@@ -1,12 +1,15 @@
 package config_test
 
 import (
+	"encoding/json"
 	"os"
 	"path/filepath"
 	"reflect"
 	"testing"
 
 	"github.com/Pirikara/eolscan/internal/config"
+	"github.com/Pirikara/eolscan/internal/identity"
+	"github.com/Pirikara/eolscan/internal/model"
 	"github.com/Pirikara/eolscan/internal/testutil"
 )
 
@@ -17,6 +20,86 @@ func TestDefaultPolicyMatchesExample(t *testing.T) {
 	}
 	if !reflect.DeepEqual(config.Default(), fromExample) {
 		t.Fatal("embedded defaults differ from the documented default policy")
+	}
+}
+
+func TestEOLRuleInputRejectsMalformedScopesAndMissingThresholds(t *testing.T) {
+	for _, tc := range []struct {
+		name string
+		rule map[string]any
+	}{
+		{"missing_id", map[string]any{"any_of": []string{"ARCHIVED"}}},
+		{"invalid_id", map[string]any{"id": "rule with spaces", "any_of": []string{"ARCHIVED"}}},
+		{"missing_operator", map[string]any{"id": "rule"}},
+		{"duplicate_conditions", map[string]any{"id": "rule", "any_of": []string{"ARCHIVED", "ARCHIVED"}}},
+		{"unknown_ecosystem", map[string]any{"id": "rule", "any_of": []string{"ARCHIVED"}, "ecosystems": []string{"ruby"}}},
+		{"duplicate_ecosystems", map[string]any{"id": "rule", "any_of": []string{"ARCHIVED"}, "ecosystems": []string{"gem", "gem"}}},
+		{"private_repository_purl", map[string]any{"id": "rule", "any_of": []string{"ARCHIVED"}, "packages": []string{"pkg:gem/leaf?repository_url=https://private.example"}}},
+		{"duplicate_packages", map[string]any{"id": "rule", "any_of": []string{"ARCHIVED"}, "packages": []string{"pkg:gem/leaf", "pkg:gem/leaf"}}},
+		{"unexpected_field", map[string]any{"id": "rule", "any_of": []string{"ARCHIVED"}, "confidence": "HIGH"}},
+		{"null_inactivity_threshold", map[string]any{"id": "rule", "any_of": []string{"STALE_RELEASE"}}},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			input := map[string]any{"schema_version": 2, "decision": map[string]any{"eol_rules": []any{tc.rule}}}
+			if tc.name == "null_inactivity_threshold" {
+				input["signals"] = map[string]any{"stale_release_days": nil}
+			}
+			data, err := json.Marshal(input)
+			if err != nil {
+				t.Fatal(err)
+			}
+			path := filepath.Join(t.TempDir(), "policy.yaml")
+			if err := os.WriteFile(path, data, 0600); err != nil {
+				t.Fatal(err)
+			}
+			if _, err := config.Load(path); err == nil {
+				t.Fatalf("accepted invalid rule: %s", data)
+			}
+		})
+	}
+}
+
+func TestRuleOverridesReplaceDefaultsAndRespectBothScopes(t *testing.T) {
+	path := filepath.Join(t.TempDir(), "policy.yaml")
+	data := `schema_version: 2
+signals:
+  deprecated: false
+  stale_release_days: null
+decision:
+  eol_rules:
+    - id: selected-python-project
+      any_of: [ARCHIVED]
+      ecosystems: [pypi]
+      packages: [pkg:pypi/Foo_Bar]
+`
+	if err := os.WriteFile(path, []byte(data), 0600); err != nil {
+		t.Fatal(err)
+	}
+	p, err := config.Load(path)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(p.Decision.EOLRules) != 1 || p.Decision.EOLRules[0].ID != "selected-python-project" || !p.Decision.UseSupportDates {
+		t.Fatal("partial rule overrides appended defaults or removed unrelated defaults")
+	}
+	for _, tc := range []struct {
+		purl string
+		want []string
+	}{
+		{"pkg:pypi/foo-bar@1.0.0", []string{"ARCHIVED"}},
+		{"pkg:pypi/FOO.BAR@2.0.0", []string{"ARCHIVED"}},
+		{"pkg:pypi/foo-bar-extra@1.0.0", []string{}},
+		{"pkg:gem/foo-bar@1.0.0", []string{}},
+	} {
+		t.Run(tc.purl, func(t *testing.T) {
+			id, reason := identity.Resolve(model.Component{PURL: tc.purl})
+			if reason != "" {
+				t.Fatal(reason)
+			}
+			if got := config.RequestedSignalsForPackage(p, id); !reflect.DeepEqual(got, tc.want) {
+				t.Fatalf("scoped inputs=%v want=%v", got, tc.want)
+			}
+		})
 	}
 }
 
