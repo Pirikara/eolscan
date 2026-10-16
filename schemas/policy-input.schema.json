@@ -212,6 +212,21 @@
         },
         "quarantined": {
           "type": "boolean"
+        },
+        "stale_repository_days": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 36500
+        },
+        "unmaintained_patterns": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 4096
+          },
+          "maxItems": 32,
+          "uniqueItems": true
         }
       },
       "required": [],
@@ -372,7 +387,9 @@
               "QUARANTINED",
               "STALE_RELEASE",
               "STALE_REPOSITORY",
-              "YANKED"
+              "YANKED",
+              "RELEASE_SERIES_EOL",
+              "DECLARED_UNMAINTAINED"
             ]
           },
           "uniqueItems": true

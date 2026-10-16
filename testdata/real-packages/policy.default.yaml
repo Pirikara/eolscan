@@ -1,0 +1,4 @@
+# Default detection criteria; file caching shares requests between benchmark profiles.
+schema_version: 2
+cache:
+  enabled: true

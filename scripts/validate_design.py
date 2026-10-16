@@ -133,6 +133,12 @@ def validate_policy(policy):
         or not any("STALE_RELEASE" in rule.get("any_of", rule.get("all_of", [])) for rule in rules),
         "EOL inactivity rules need a threshold",
     )
+    ensure(
+        policy["signals"].get("stale_repository_days") is not None
+        or ("STALE_REPOSITORY" not in policy["ci"]["fail_on_signals"]
+            and not any("STALE_REPOSITORY" in rule.get("any_of", rule.get("all_of", [])) for rule in rules)),
+        "repository inactivity requires a threshold",
+    )
 
 
 def unique(values, label):
@@ -348,7 +354,7 @@ def expected_eol_rules(row, policy, run_at, as_of):
         absent = False
         for kind in rule.get("any_of", rule.get("all_of", [])):
             status = signals.get(kind, "UNKNOWN")
-            if kind != "STALE_RELEASE" and as_of != run_at.date():
+            if kind not in ("STALE_RELEASE", "RELEASE_SERIES_EOL") and as_of != run_at.date():
                 status = "UNKNOWN"
             if status == "PRESENT":
                 matched.append(kind)
@@ -390,6 +396,8 @@ def validate_report(report, policy, catalog, exceptions, input_path):
             requested.add(flag.upper())
     if policy["signals"]["stale_release_days"] is not None:
         requested.add("STALE_RELEASE")
+    if policy["signals"].get("stale_repository_days") is not None:
+        requested.add("STALE_REPOSITORY")
     counts = {"EOL": 0, "SUPPORTED": 0, "NO_EOL_DETECTED": 0, "UNKNOWN": 0}
     failures = 0
     rows = report["results"]
@@ -565,13 +573,17 @@ def validate_recorded_real_packages():
         )
     count = 0
     for receipts_path in sorted((root / "observations").glob("*/executions.json")):
+        snapshot = receipts_path.parent
+        data_root = snapshot if (snapshot / "manifest.json").is_file() else root
+        manifest = json.loads((data_root / "manifest.json").read_text())
+        cases = manifest["cases"]
         receipts = json.loads(receipts_path.read_text())["executions"]
         unique([receipt["profile"] for receipt in receipts], "recorded profile receipts")
         for receipt in receipts:
             profile = receipt["profile"]
             spec = manifest["profiles"][profile]
             report_path = receipts_path.parent / f"{profile}.report.json"
-            input_path = root / spec["input"]
+            input_path = data_root / spec["input"]
             ensure(
                 receipt["report_sha256"] == hashlib.sha256(report_path.read_bytes()).hexdigest(),
                 f"{profile}: recorded report hash differs from receipt",

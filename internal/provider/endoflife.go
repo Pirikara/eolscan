@@ -134,9 +134,17 @@ func (p *EOLProvider) validProductURI(r ProductRef) bool {
 }
 
 func (p *EOLProvider) Evidence(ctx context.Context, id identity.Identity) ([]model.LifecycleEvidence, []model.Diagnostic, string, bool) {
+	return p.evidence(ctx, id, nil)
+}
+
+func (p *EOLProvider) evidence(ctx context.Context, id identity.Identity, snapshot *seriesSnapshot) ([]model.LifecycleEvidence, []model.Diagnostic, string, bool) {
 	out := []model.LifecycleEvidence{}
 	ds := []model.Diagnostic{}
 	p.loadIndex(ctx)
+	if snapshot != nil {
+		snapshot.data = p.indexData
+		snapshot.url = config.CleanBase(p.t.Policy().Sources.EndoflifeDate.BaseURL) + "/identifiers/purl/"
+	}
 	ds = append(ds, ProviderDiagnostics("endoflife_date", p.indexData.Diagnostics)...)
 	if p.indexErr != nil {
 		return out, append(ds, transport.ErrorDiagnostic("endoflife_date", p.indexErr)), "SOURCE_ERROR", true
@@ -149,9 +157,15 @@ func (p *EOLProvider) Evidence(ctx context.Context, id identity.Identity) ([]mod
 		return out, ds, "AMBIGUOUS_IDENTITY", false
 	}
 	ref := refs[0]
+	if snapshot != nil {
+		snapshot.mapped = true
+	}
 	// Reconstruct from trusted base + validated slug, never fetch an SBOM URL.
 	raw := config.CleanBase(p.t.Policy().Sources.EndoflifeDate.BaseURL) + "/products/" + ref.Name + "/"
 	data, err := p.t.Get(ctx, raw)
+	if snapshot != nil {
+		snapshot.data, snapshot.url = data, raw
+	}
 	ds = append(ds, ProviderDiagnostics("endoflife_date", data.Diagnostics)...)
 	if err != nil {
 		return out, append(ds, transport.ErrorDiagnostic("endoflife_date", err)), "SOURCE_ERROR", true
@@ -205,7 +219,7 @@ func (p *EOLProvider) Evidence(ctx context.Context, id identity.Identity) ([]mod
 		if r.Name == "" || r.IsEOL == nil || r.IsMaintained == nil {
 			return out, append(ds, model.NewDiagnostic("PROVIDER_SCHEMA_MISMATCH", "endoflife_date", "Release is missing required fields")), "SOURCE_ERROR", true
 		}
-		if identity.NumericCycleMatches(id.Version, r.Name) {
+		if identity.NumericCycleMatches(identity.SeriesVersion(id), r.Name) {
 			n := len(strings.Split(r.Name, "."))
 			if n > best {
 				best = n
@@ -217,11 +231,17 @@ func (p *EOLProvider) Evidence(ctx context.Context, id identity.Identity) ([]mod
 	}
 	if len(chosen) > 1 {
 		for _, r := range chosen[1:] {
-			if r.Name != chosen[0].Name || model.Text(r.EOLFrom) != model.Text(chosen[0].EOLFrom) {
+			if r.Name != chosen[0].Name || model.Text(r.EOLFrom) != model.Text(chosen[0].EOLFrom) || *r.IsEOL != *chosen[0].IsEOL {
 				return out, ds, "AMBIGUOUS_CYCLE", false
 			}
 		}
 		chosen = chosen[:1]
+	}
+	if snapshot != nil {
+		snapshot.product, snapshot.label = product.Name, model.Text(product.Labels.EOL)
+		if len(chosen) == 1 {
+			snapshot.release = model.Ptr(chosen[0])
+		}
 	}
 	for _, r := range chosen {
 		if r.EOLFrom == nil {

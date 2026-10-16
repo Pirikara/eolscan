@@ -1,8 +1,8 @@
 # Automatic lifecycle data and optional catalogs
 
-eolscan 0.5.0 retrieves lifecycle dates during normal online scans. It does not embed product support dates. No database, separately maintained date file, or binary rebuild is needed to use new API products and release series that match the supported identities.
+eolscan 0.6.0 retrieves lifecycle dates during normal online scans. It does not embed product support dates. No database, separately maintained date file, or binary rebuild is needed to use new API products and release series that match the supported identities.
 
-Support dates are one configurable EOL criterion. Registry/repository rules can classify dependencies without a date-catalog match; see [EOL criteria](eol-rules.md). This page describes the formal support assessment.
+Support dates are one configurable EOL criterion. Registry/repository rules can classify dependencies without a date-catalog match; see [EOL criteria](eol-rules.md). General support end is a default EOL criterion through `RELEASE_SERIES_EOL`; it does not require proof that security updates have stopped. The optional formal security assessment preserves the distinction for consumers that need it.
 
 ## Retrieval and identity matching
 
@@ -15,13 +15,23 @@ Support dates are one configurable EOL criterion. Registry/repository rules can 
 
 Support-date coverage follows the API's PURL index, available release dates and scope metadata, and the seven registry ecosystems that eolscan can verify. Unmapped packages have an UNKNOWN formal support assessment; registry/repository criteria can still classify their final result as EOL or NO_EOL_DETECTED. Unsupported runtimes/OS PURLs remain UNKNOWN because their identities cannot be verified. Additional framework modules receive date evidence only when the API provides their exact PURLs; namespaces and similar names do not create mappings.
 
-## Security scope and confidence
+## General release-series EOL
+
+The default `ended-release-series` rule accepts an elapsed `releases[].eolFrom` for the exact mapped package and most specific matching series, including `Support`, `Supported`, and `OSS support` labels. No per-product whitelist is required. An explicit undated `isEol: true` is usable only for the current UTC evaluation date. A future date is `ABSENT` for this condition and does not certify support.
+
+Successful index/detail retrieval without an applicable EOL claim means `ABSENT` in that feed. Mapping ambiguity, conflicting same-series facts (including future dates), stale evidence, invalid dates, unsupported mapped version schemes, and API failures remain `UNKNOWN`. The original phase, cycle, date when present, URL, timestamp, and response hash are retained in signal evidence. No cutoff is invented for a status-only claim.
+
+Maven's stable `.RELEASE`, `.Final`, and `-GA` suffixes are equivalent to the numeric release for series matching. Exact version verification retains the original version string. RC, SNAPSHOT, service-pack, and arbitrary qualifiers are not stripped. See [Maven version ordering](https://maven.apache.org/pom.html#Version_Order_Specification).
+
+To exclude general EOL, replace `decision.eol_rules` with a list omitting `RELEASE_SERIES_EOL`. `eol_rules: []` retains only the formal support-date criterion.
+
+## Formal security scope and confidence
 
 The [API v1 contract](https://endoflife.date/docs/api/v1/) defines `labels.eol` as the phase preceding the end of life. The [Django response](https://endoflife.date/api/v1/products/django/) illustrates `labels.eol`, `releases[].eolFrom`, and separate active-support fields.
 
 The automatic scope rule accepts exactly `Security Support` and `Maintenance & Security Support`. The corresponding dated `eolFrom` is recorded as `CURATED_SECURITY_END`, with `source_class=CURATED_DATABASE`, `confidence=MEDIUM`, and the original label in `source_label`. Linked official pages are references; merely linking one does not make an API claim official/HIGH.
 
-| Evidence | Lifecycle result |
+| Evidence | Formal security assessment |
 | --- | --- |
 | Explicit security phase and an elapsed dated cutoff | EOL / MEDIUM, after version verification |
 | Explicit security phase and a future cutoff | UNKNOWN / SECURITY_END_ONLY; retain the scheduled cutoff as evidence |
@@ -31,7 +41,7 @@ The automatic scope rule accepts exactly `Security Support` and `Maintenance & S
 
 Commercial/extended-support dates and `isMaintained` do not replace upstream security end dates. Registry deprecation, yanking, and inactivity are separate from date evidence and can drive configured EOL rules. An API error is a diagnostic and can make the scan incomplete; it is never evidence that a package is supported.
 
-To require the earlier manual meaning-review path for all endoflife.date dates, disable the automatic label rule:
+To require manual meaning review for the formal security assessment, disable its automatic label rule. This does not disable the independent general EOL rule:
 
 ```yaml
 schema_version: 2
@@ -80,4 +90,4 @@ Local official evidence takes precedence over automatically retrieved curated ev
 
 The five fixed Angular/Rails windows and the reserved `builtin:upstream-security` selection have been removed. Disable that old official-catalog selection or set a local path. `--catalog builtin` now returns an explanatory configuration error. Automatic security dates have MEDIUM confidence and do not create official SUPPORTED windows.
 
-Release 0.4 introduced report schema 2.3 with `source_label`, `CURATED_SECURITY_END`, and security-specific UNKNOWN reasons. The current report schema is 2.4; see [the configurable criteria](eol-rules.md) for its additional fields and states. Configuration remains version 2; partial policies inherit `sources.endoflife_date.use_security_support_label: true` and the current EOL-rule defaults.
+Release 0.4 introduced report schema 2.3 with `source_label`, `CURATED_SECURITY_END`, and security-specific UNKNOWN reasons. The current report schema is 2.5; see [the configurable criteria](eol-rules.md) for its additional fields and states. Configuration remains version 2; partial policies inherit `sources.endoflife_date.use_security_support_label: true` and the current EOL-rule defaults.

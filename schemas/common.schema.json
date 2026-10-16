@@ -236,7 +236,9 @@
             "QUARANTINED",
             "STALE_RELEASE",
             "STALE_REPOSITORY",
-            "YANKED"
+            "YANKED",
+            "RELEASE_SERIES_EOL",
+            "DECLARED_UNMAINTAINED"
           ]
         },
         "status": {
@@ -354,7 +356,9 @@
             "QUARANTINED",
             "STALE_RELEASE",
             "STALE_REPOSITORY",
-            "YANKED"
+            "YANKED",
+            "RELEASE_SERIES_EOL",
+            "DECLARED_UNMAINTAINED"
           ]
         },
         "provider_id": {
@@ -860,11 +864,13 @@
               "QUARANTINED",
               "STALE_RELEASE",
               "STALE_REPOSITORY",
-              "YANKED"
+              "YANKED",
+              "RELEASE_SERIES_EOL",
+              "DECLARED_UNMAINTAINED"
             ]
           },
           "minItems": 1,
-          "maxItems": 7,
+          "maxItems": 9,
           "uniqueItems": true
         },
         "all_of": {
@@ -878,11 +884,13 @@
               "QUARANTINED",
               "STALE_RELEASE",
               "STALE_REPOSITORY",
-              "YANKED"
+              "YANKED",
+              "RELEASE_SERIES_EOL",
+              "DECLARED_UNMAINTAINED"
             ]
           },
           "minItems": 1,
-          "maxItems": 7,
+          "maxItems": 9,
           "uniqueItems": true
         },
         "ecosystems": {
@@ -963,7 +971,9 @@
               "QUARANTINED",
               "STALE_RELEASE",
               "STALE_REPOSITORY",
-              "YANKED"
+              "YANKED",
+              "RELEASE_SERIES_EOL",
+              "DECLARED_UNMAINTAINED"
             ]
           },
           "uniqueItems": true
@@ -978,7 +988,9 @@
               "QUARANTINED",
               "STALE_RELEASE",
               "STALE_REPOSITORY",
-              "YANKED"
+              "YANKED",
+              "RELEASE_SERIES_EOL",
+              "DECLARED_UNMAINTAINED"
             ]
           },
           "uniqueItems": true

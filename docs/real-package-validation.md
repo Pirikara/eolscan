@@ -2,141 +2,144 @@
 
 ## Recorded result
 
-On **2026-10-15 JST**, the actual eolscan 0.5.0 executable scanned **39 public package versions across all seven supported ecosystems**. Upstream announcements, publisher registry metadata, and repository archival were reviewed independently of the scanner's classification.
+On **2026-10-17 JST**, eolscan **0.6.0** evaluated **47 actual public package versions across all seven supported ecosystems**: 36 independently reviewed retirement/deprecation targets, ten default-policy controls, and one separate inactivity candidate (nose).
 
-The default policy detected **24 of 30 retirement/deprecation targets**. Four targets were `UNKNOWN`; two were `NO_EOL_DETECTED`. All eight default-policy controls were `NO_EOL_DETECTED`. One separate inactivity candidate, nose, was `UNKNOWN`.
+| Policy profile | Retirement targets detected | Other results | Scanner exit |
+| --- | ---: | --- | ---: |
+| Default EOL criteria | **34/36** | All ten controls NO_EOL_DETECTED; nose UNKNOWN | 0 |
+| Default plus release inactivity over 730 days | **36/36** | nose, is-number, and pathlib2 also EOL; eight other controls NO_EOL_DETECTED | 1 |
+| Publisher declarations only (nine selected versions) | **7/7** | Both controls NO_EOL_DETECTED | 1 |
 
-Adding a **730-day release inactivity rule** detected four of the six missed targets and nose. Struts 2.3 and Spring 4.3 remained undetected. Across the two profiles, **28 of 30 targets** were detected. The inactivity profile also classified the old, non-deprecated is-number project as EOL, illustrating how a configurable maintenance threshold changes the meaning of EOL.
+All 47 exact versions were verified. The default report has 34 EOL, ten NO_EOL_DETECTED, and three UNKNOWN results. PyCrypto, Commons HttpClient, and nose remain incomplete under default rules. The inactivity report has 39 EOL, eight NO_EOL_DETECTED, no UNKNOWN, and no incomplete result. All observed EOL results have MEDIUM confidence.
 
-**The tool still misses known ended release series.** This validation does not support a claim of complete EOL detection.
+The default HIGH confidence CI threshold reports EOL warnings without failing; the other profiles select MEDIUM and fail for detected EOL. The validator itself still exits 1 because the two reviewed default misses remain unmet goals. A scanner exit of 0 is not evidence that all targets were detected.
 
-| Ecosystem | Retirement/deprecation targets | Detected by default | Controls without EOL |
+These are deliberately selected diagnostic examples, **not an estimate of recall on arbitrary SBOMs**. A default-policy control means the selected criteria should not flag that package; it does not certify security support. Release inactivity deliberately changes that criterion: old but non-deprecated is-number and pathlib2 match the opt-in threshold.
+
+## Improvement against the original sample
+
+The original 0.5.0 observation detected **24/30** targets by default. On those same 30 targets, 0.6.0 detects **28/30** by default and **30/30** with the inactivity rule.
+
+| Previously missed package | Default in 0.6.0 | Acquired criterion |
+| --- | --- | --- |
+| Struts 2.3.37 | EOL | Matching 2.3 series ended; general Support phase accepted. |
+| Spring 4.3.30.RELEASE | EOL | Stable Maven qualifier resolves to 4.3; elapsed OSS support cutoff accepted. |
+| Log4j 1.2.17 | EOL | Matching 1.x general support cutoff accepted. |
+| pep8 1.7.1 | EOL | Exact PyPI description explicitly says fixes are released only under pycodestyle. |
+| PyCrypto 2.6.1 | UNKNOWN | No usable publisher source-repository mapping or retirement marker in queried metadata. The opt-in release inactivity rule detects it. |
+| Commons HttpClient 3.1 | UNKNOWN | No applicable feed entry or usable source mapping. The upstream website declares EOL, but this adapter does not extract arbitrary website notices. Release inactivity detects it. |
+
+The general EOL rule no longer requires proof that security support ended. The original phase, URL, cutoff when supplied, and payload hash remain in the report. Formal security assessment remains separate. Log4j's feed cutoff (2015-10-15) differs from [Apache's EOL announcement](https://logging.apache.org/log4j/1.x/); the tool retains the feed's stated date and does not present it as an official date.
+
+## Publisher declaration coverage
+
+The isolated declarations profile disables support-date classification and removes archival/deprecation rules. Each positive result therefore requires DECLARED_UNMAINTAINED; being archived cannot make this profile pass.
+
+| Package | Independently reviewed declaration | Result |
+| --- | --- | --- |
+| [pep8 1.7.1](https://pypi.org/project/pep8/) | Distribution replaced by pycodestyle; fixes published only under the new name. | EOL |
+| [sklearn 0.0.post12](https://pypi.org/project/sklearn/0.0.post12/) | Publisher deprecates the placeholder distribution and directs users to scikit-learn. | EOL |
+| [pathlib 1.0.1](https://pypi.org/project/pathlib/1.0.1/) | Publisher says the backport is no longer maintained. | EOL |
+| [cbor 0.4.1](https://github.com/BurntSushi/rust-cbor) | Original README declares the project unmaintained. | EOL |
+| [jasmine-rails 0.15.0](https://github.com/testdouble/jasmine-rails) | Maintainer says the project is no longer actively maintained; old repository URL redirects. | EOL |
+| [better_html 2.1.1](https://github.com/Shopify/better-html) | Deprecation in an HTML heading; development ended, with only possible best-effort critical security patches. | EOL |
+| [liquid-c 4.2.0](https://github.com/Shopify/liquid-c) | Bold quoted warning explicitly ends maintenance. | EOL |
+| [pathlib2 2.3.7.post1](https://pypi.org/project/pathlib2/2.3.7.post1/) | Its description discusses the retired predecessor pathlib; that statement must not retire pathlib2. | NO_EOL_DETECTED |
+| [orjson 3.11.3](https://github.com/ijl/orjson) | Active-project control with platform/dependency support discussions. | NO_EOL_DETECTED |
+
+The live checks exposed two real parser misses: HTML retirement headings and bold quoted warnings. Both were corrected and re-scanned. Default matching is still bounded English pattern matching, not a general interpretation of every maintenance notice. Custom expressions, source limitations, thresholds, and failure semantics are documented in [EOL criteria](eol-rules.md).
+
+## Coverage by ecosystem
+
+| Ecosystem | Retirement targets | Detected by default | Controls without default EOL |
 | --- | ---: | ---: | ---: |
 | npm | 8 | 8 | 2 |
-| RubyGems | 4 | 4 | 1 |
-| PyPI | 4 | 2 | 1 |
-| Go | 3 | 3 | 1 |
-| Cargo | 3 | 3 | 1 |
-| Maven | 4 | 0 | 1 |
-| NuGet | 4 | 4 | 1 |
-| Total | 30 | 24 | 8 |
+| gem | 7 | 7 | 1 |
+| pypi | 6 | 5 | 3 |
+| golang | 3 | 3 | 1 |
+| cargo | 4 | 4 | 1 |
+| maven | 4 | 3 | 1 |
+| nuget | 4 | 4 | 1 |
+| Total | 36 | 34 | 10 |
 
-The corpus deliberately includes ordinary libraries, older versions of active projects, archived projects, and ended framework series. It is a selected diagnostic sample, not a representative SBOM or an estimate of recall on arbitrary dependencies. Controls check for an unwanted EOL result under the selected policy; they do not certify security support for their exact versions.
+## Execution and evidence
 
-The 30 targets have different evidence:
+Inputs contain only package identities and versions, with no injected repository mapping, end date, or local support catalog. Public API responses were fetched by the normal online CLI on October 17 JST, then shared by the three profiles using the supported file cache. Re-scans after parser corrections reused those same-day responses. Detection criteria in the default profile are unchanged from built-in defaults; its only policy override enables the cache. This is not an offline reconstruction of an earlier support policy.
 
-- Eight have explicit upstream support-end/EOL announcements. Four were detected by default.
-- Eleven have publisher registry deprecation. All eleven were detected by default.
-- Four have explicit upstream retirement or replacement announcements. Three were detected by default.
-- Seven have archived upstream repositories. Six were detected by default.
+The CLI's evaluation date is **2026-10-16 UTC**, the current UTC date during execution on October 17 in Japan. No `--as-of` override was used, so current status flags were eligible. GitHub authentication used the already configured account credential through EOLSCAN_GITHUB_TOKEN, passed in process memory; no token was logged or persisted. The validation script itself does not retrieve gh credentials.
 
-These categories are recorded in the manifest. Registry deprecation and source archival establish policy-based maintenance EOL, not a dated security-support commitment. nose is an inactivity candidate, excluded from the 30-target denominator: its documentation recommends alternatives and warns about maintenance, without establishing a dated security EOL.
+One optional provider diagnostic remains: deps.dev returned VERSION_CONFLICT for sklearn's exact-version fallback. Native PyPI independently verified that version, and its publisher declaration establishes EOL. This diagnostic is retained in the reports; it is not silently counted as a successful source lookup.
 
-## What was run
+[Recorded observations](../testdata/real-packages/observations/2026-10-17/) contain unmodified CLI reports, stderr, execution receipts, complete effective policies, input/manifest snapshots, binary and report hashes, and the source commit. The [original 0.5.0 observations](../testdata/real-packages/observations/2026-10-15/) retain their original 39-case inputs and reports. Neither snapshot is a runtime lifecycle catalog.
 
-The default profile used the built-in policy, automatic public data retrieval, no local support catalog, and no persistent cache. The input contains only actual package identities and versions; it supplies no manually added source repository or EOL date. All **39 exact versions were verified**, and the scan reported **zero provider errors**.
+## All default and inactivity outcomes
 
-The default report contains 24 EOL results, five UNKNOWN results, and ten NO_EOL_DETECTED results. Its `incomplete` flag is true because some required archival checks could not be completed. All 24 EOL results have MEDIUM confidence: 22 match maintenance rules, and two use automatically retrieved security-support dates (Rails and Django).
+| Package/version and independent source | Role | Default | With inactivity |
+| --- | --- | --- | --- |
+| [request 2.88.2](https://github.com/request/request) | Target | EOL | EOL |
+| [node-sass 9.0.0](https://sass-lang.com/blog/node-sass-is-end-of-life/) | Target | EOL | EOL |
+| [har-validator 5.1.5](https://registry.npmjs.org/har-validator/5.1.5) | Target | EOL | EOL |
+| [istanbul 0.4.5](https://registry.npmjs.org/istanbul/0.4.5) | Target | EOL | EOL |
+| [glob 7.2.3](https://registry.npmjs.org/glob/7.2.3) | Target | EOL | EOL |
+| [rimraf 3.0.2](https://registry.npmjs.org/rimraf/3.0.2) | Target | EOL | EOL |
+| [left-pad 1.3.0](https://registry.npmjs.org/left-pad/1.3.0) | Target | EOL | EOL |
+| [uuid 3.4.0](https://registry.npmjs.org/uuid/3.4.0) | Target | EOL | EOL |
+| [picocolors 1.1.1](https://github.com/alexeyraspopov/picocolors) | Control | NO_EOL_DETECTED | NO_EOL_DETECTED |
+| [is-number 7.0.0](https://github.com/jonschlinkert/is-number) | Control | NO_EOL_DETECTED | EOL |
+| [therubyracer 0.12.3](https://github.com/rubyjs/therubyracer) | Target | EOL | EOL |
+| [sass 3.7.4](https://sass-lang.com/blog/ruby-sass-is-unsupported/) | Target | EOL | EOL |
+| [thread_safe 0.3.6](https://github.com/ruby-concurrency/thread_safe) | Target | EOL | EOL |
+| [rails 6.1.7.10](https://rubyonrails.org/2024/10/15/new-maintenance-policy-and-eol-annouments) | Target | EOL | EOL |
+| [concurrent-ruby 1.3.5](https://github.com/ruby-concurrency/concurrent-ruby) | Control | NO_EOL_DETECTED | NO_EOL_DETECTED |
+| [pycrypto 2.6.1](https://github.com/pycrypto/pycrypto) | Target | UNKNOWN | EOL |
+| [nose 1.3.7](https://nose.readthedocs.io/en/latest/) | Candidate | UNKNOWN | EOL |
+| [django-rest-swagger 2.2.0](https://github.com/marcgibbons/django-rest-swagger) | Target | EOL | EOL |
+| [pep8 1.7.1](https://pypi.org/project/pep8/) | Target | EOL | EOL |
+| [django 2.2.28](https://www.djangoproject.com/weblog/2022/apr/11/security-releases/) | Target | EOL | EOL |
+| [attrs 25.3.0](https://github.com/python-attrs/attrs) | Control | NO_EOL_DETECTED | NO_EOL_DETECTED |
+| [github.com/dgrijalva/jwt-go v3.2.0+incompatible](https://github.com/dgrijalva/jwt-go) | Target | EOL | EOL |
+| [github.com/mitchellh/mapstructure v1.5.0](https://github.com/mitchellh/mapstructure) | Target | EOL | EOL |
+| [github.com/boltdb/bolt v1.3.1](https://github.com/boltdb/bolt) | Target | EOL | EOL |
+| [github.com/stretchr/testify v1.10.0](https://github.com/stretchr/testify) | Control | NO_EOL_DETECTED | NO_EOL_DETECTED |
+| [failure 0.1.8](https://github.com/rust-lang-deprecated/failure) | Target | EOL | EOL |
+| [rustc-serialize 0.3.25](https://github.com/rust-lang-deprecated/rustc-serialize) | Target | EOL | EOL |
+| [serde_yaml 0.9.34+deprecated](https://github.com/dtolnay/serde-yaml/releases) | Target | EOL | EOL |
+| [serde 1.0.228](https://github.com/serde-rs/serde) | Control | NO_EOL_DETECTED | NO_EOL_DETECTED |
+| [log4j/log4j 1.2.17](https://logging.apache.org/log4j/1.x/) | Target | EOL | EOL |
+| [org.apache.struts/struts2-core 2.3.37](https://struts.apache.org/struts23-eol-announcement) | Target | EOL | EOL |
+| [org.springframework/spring-core 4.3.30.RELEASE](https://spring.io/blog/2019/12/03/spring-framework-maintenance-roadmap-in-2020-including-4-3-eol/) | Target | EOL | EOL |
+| [commons-httpclient/commons-httpclient 3.1](https://hc.apache.org/httpclient-legacy/) | Target | UNKNOWN | EOL |
+| [com.google.guava/guava 33.4.8-jre](https://github.com/google/guava) | Control | NO_EOL_DETECTED | NO_EOL_DETECTED |
+| [Microsoft.Azure.KeyVault 3.0.5](https://www.nuget.org/packages/Microsoft.Azure.KeyVault/3.0.5) | Target | EOL | EOL |
+| [Microsoft.Azure.DocumentDB 2.22.0](https://www.nuget.org/packages/Microsoft.Azure.DocumentDB/2.22.0) | Target | EOL | EOL |
+| [WindowsAzure.Storage 9.3.3](https://www.nuget.org/packages/WindowsAzure.Storage/9.3.3) | Target | EOL | EOL |
+| [Microsoft.Azure.Management.Fluent 1.38.1](https://www.nuget.org/packages/Microsoft.Azure.Management.Fluent/1.38.1) | Target | EOL | EOL |
+| [Newtonsoft.Json 13.0.3](https://github.com/JamesNK/Newtonsoft.Json) | Control | NO_EOL_DETECTED | NO_EOL_DETECTED |
+| [sklearn 0.0.post12](https://pypi.org/project/sklearn/0.0.post12/) | Target | EOL | EOL |
+| [pathlib 1.0.1](https://pypi.org/project/pathlib/1.0.1/) | Target | EOL | EOL |
+| [cbor 0.4.1](https://github.com/BurntSushi/rust-cbor) | Target | EOL | EOL |
+| [jasmine-rails 0.15.0](https://github.com/testdouble/jasmine-rails) | Target | EOL | EOL |
+| [better_html 2.1.1](https://github.com/Shopify/better-html) | Target | EOL | EOL |
+| [liquid-c 4.2.0](https://github.com/Shopify/liquid-c) | Target | EOL | EOL |
+| [pathlib2 2.3.7.post1](https://pypi.org/project/pathlib2/2.3.7.post1/) | Control | NO_EOL_DETECTED | EOL |
+| [orjson 3.11.3](https://github.com/ijl/orjson) | Control | NO_EOL_DETECTED | NO_EOL_DETECTED |
 
-The scanner emitted a warning for 24 EOL components and exited **0**, consistent with its default HIGH confidence CI threshold. EOL warnings and CI failure are separate decisions.
-
-The inactivity profile scanned the six misses, nose, and three controls. It retained the default deprecation/archive rules, added `STALE_RELEASE` with a 730-day threshold, and set `ci.min_confidence: MEDIUM`. It produced six EOL and four NO_EOL_DETECTED results, with no UNKNOWN or incomplete result, and exited **1**. Four EOL results recover retirement targets; the other two are nose and is-number.
-
-The CLI uses UTC dates. The recorded scans' `as_of` is **2026-10-14**, which was the current UTC date during execution on October 15 in Japan. No historical `--as-of` value was supplied. Live registry and archival flags were therefore eligible.
-
-## Six default misses
-
-| Package | Independent upstream evidence | Default | With inactivity | Acquisition or decision gap |
-| --- | --- | --- | --- | --- |
-| pycrypto 2.6.1 | [Upstream repository is archived](https://github.com/pycrypto/pycrypto) | UNKNOWN | EOL | Exact PyPI metadata supplies only a non-repository homepage; deps.dev has no source links or related projects. The registry's project status does not report retirement. |
-| pep8 1.7.1 | [Publisher says fixes are released only as pycodestyle](https://pypi.org/project/pep8/) | UNKNOWN | EOL | Exact metadata points to documentation, with no source mapping or registry retirement marker. The tool does not interpret the package description's retirement notice. |
-| log4j:log4j 1.2.17 | [Apache declares Log4j 1.x EOL and no further security fixes](https://logging.apache.org/log4j/1.x/) | UNKNOWN | EOL | No usable GitHub source mapping. endoflife.date supplies a generic `Supported` label, excluded without a meaning review. Its date also differs from the upstream EOL announcement. |
-| commons-httpclient:commons-httpclient 3.1 | [Apache declares the project EOL](https://hc.apache.org/httpclient-legacy/) | UNKNOWN | EOL | No usable GitHub source mapping or exact product entry. The tool does not extract a support-end claim from the upstream website. |
-| org.apache.struts:struts2-core 2.3.37 | [Apache ended support for the 2.3 series](https://struts.apache.org/struts23-eol-announcement) | NO_EOL_DETECTED | NO_EOL_DETECTED | endoflife.date's generic `Support` label remains unreviewed. The shared repository and newer releases are active, so project-wide archive/inactivity criteria do not identify this ended series. |
-| org.springframework:spring-core 4.3.30.RELEASE | [Spring specifies the 4.3 EOL cutoff](https://spring.io/blog/2019/12/03/spring-framework-maintenance-roadmap-in-2020-including-4-3-eol/) | NO_EOL_DETECTED | NO_EOL_DETECTED | The exact product mapping and 4.3 end date exist, but numeric cycle matching rejects `.RELEASE`. The product's `OSS support` label also lacks a security-scope review. The shared project remains active. |
-
-The observed limitations identify two distinct needs: authoritative source discovery for packages with sparse metadata, and support information applicable to the exact release series. Project activity cannot establish that an old series remains supported. A missing/unused support-end claim also cannot be repaired merely by checking whether the latest version is recent.
-
-Generic dates retain the accepted security-scope checks. This corpus serves as validation data; runtime scans still acquire public evidence automatically. Repository criteria were evaluated on the original upstream projects.
-
-## All package outcomes
-
-The following table links each package to independently reviewed public evidence. `POLICY_RULE` means a maintenance criterion matched; `SUPPORT_DATE` means an eligible support-end date matched. A dash in the inactivity column means that profile did not scan the package.
-
-| Ecosystem | Package/version and independent source | Role | Default result / basis | With inactivity |
-| --- | --- | --- | --- | --- |
-| npm | [request 2.88.2](https://github.com/request/request) | Target | EOL / POLICY_RULE | — |
-| npm | [node-sass 9.0.0](https://sass-lang.com/blog/node-sass-is-end-of-life/) | Target | EOL / POLICY_RULE | — |
-| npm | [har-validator 5.1.5](https://registry.npmjs.org/har-validator/5.1.5) | Target | EOL / POLICY_RULE | — |
-| npm | [istanbul 0.4.5](https://registry.npmjs.org/istanbul/0.4.5) | Target | EOL / POLICY_RULE | — |
-| npm | [glob 7.2.3](https://registry.npmjs.org/glob/7.2.3) | Target | EOL / POLICY_RULE | — |
-| npm | [rimraf 3.0.2](https://registry.npmjs.org/rimraf/3.0.2) | Target | EOL / POLICY_RULE | — |
-| npm | [left-pad 1.3.0](https://registry.npmjs.org/left-pad/1.3.0) | Target | EOL / POLICY_RULE | — |
-| npm | [uuid 3.4.0](https://registry.npmjs.org/uuid/3.4.0) | Target | EOL / POLICY_RULE | — |
-| npm | [picocolors 1.1.1](https://github.com/alexeyraspopov/picocolors) | Control | NO_EOL_DETECTED | — |
-| npm | [is-number 7.0.0](https://github.com/jonschlinkert/is-number) | Control | NO_EOL_DETECTED | EOL |
-| gem | [therubyracer 0.12.3](https://github.com/rubyjs/therubyracer) | Target | EOL / POLICY_RULE | — |
-| gem | [sass 3.7.4](https://sass-lang.com/blog/ruby-sass-is-unsupported/) | Target | EOL / POLICY_RULE | — |
-| gem | [thread_safe 0.3.6](https://github.com/ruby-concurrency/thread_safe) | Target | EOL / POLICY_RULE | — |
-| gem | [rails 6.1.7.10](https://rubyonrails.org/2024/10/15/new-maintenance-policy-and-eol-annouments) | Target | EOL / SUPPORT_DATE | — |
-| gem | [concurrent-ruby 1.3.5](https://github.com/ruby-concurrency/concurrent-ruby) | Control | NO_EOL_DETECTED | — |
-| pypi | [pycrypto 2.6.1](https://github.com/pycrypto/pycrypto) | Target | UNKNOWN | EOL |
-| pypi | [nose 1.3.7](https://nose.readthedocs.io/en/latest/) | Inactivity candidate | UNKNOWN | EOL |
-| pypi | [django-rest-swagger 2.2.0](https://github.com/marcgibbons/django-rest-swagger) | Target | EOL / POLICY_RULE | — |
-| pypi | [pep8 1.7.1](https://pypi.org/project/pep8/) | Target | UNKNOWN | EOL |
-| pypi | [django 2.2.28](https://www.djangoproject.com/weblog/2022/apr/11/security-releases/) | Target | EOL / SUPPORT_DATE | — |
-| pypi | [attrs 25.3.0](https://github.com/python-attrs/attrs) | Control | NO_EOL_DETECTED | NO_EOL_DETECTED |
-| golang | [github.com/dgrijalva/jwt-go v3.2.0+incompatible](https://github.com/dgrijalva/jwt-go) | Target | EOL / POLICY_RULE | — |
-| golang | [github.com/mitchellh/mapstructure v1.5.0](https://github.com/mitchellh/mapstructure) | Target | EOL / POLICY_RULE | — |
-| golang | [github.com/boltdb/bolt v1.3.1](https://github.com/boltdb/bolt) | Target | EOL / POLICY_RULE | — |
-| golang | [github.com/stretchr/testify v1.10.0](https://github.com/stretchr/testify) | Control | NO_EOL_DETECTED | — |
-| cargo | [failure 0.1.8](https://github.com/rust-lang-deprecated/failure) | Target | EOL / POLICY_RULE | — |
-| cargo | [rustc-serialize 0.3.25](https://github.com/rust-lang-deprecated/rustc-serialize) | Target | EOL / POLICY_RULE | — |
-| cargo | [serde_yaml 0.9.34+deprecated](https://github.com/dtolnay/serde-yaml/releases) | Target | EOL / POLICY_RULE | — |
-| cargo | [serde 1.0.228](https://github.com/serde-rs/serde) | Control | NO_EOL_DETECTED | — |
-| maven | [log4j/log4j 1.2.17](https://logging.apache.org/log4j/1.x/) | Target | UNKNOWN | EOL |
-| maven | [org.apache.struts/struts2-core 2.3.37](https://struts.apache.org/struts23-eol-announcement) | Target | NO_EOL_DETECTED | NO_EOL_DETECTED |
-| maven | [org.springframework/spring-core 4.3.30.RELEASE](https://spring.io/blog/2019/12/03/spring-framework-maintenance-roadmap-in-2020-including-4-3-eol/) | Target | NO_EOL_DETECTED | NO_EOL_DETECTED |
-| maven | [commons-httpclient/commons-httpclient 3.1](https://hc.apache.org/httpclient-legacy/) | Target | UNKNOWN | EOL |
-| maven | [com.google.guava/guava 33.4.8-jre](https://github.com/google/guava) | Control | NO_EOL_DETECTED | NO_EOL_DETECTED |
-| nuget | [Microsoft.Azure.KeyVault 3.0.5](https://www.nuget.org/packages/Microsoft.Azure.KeyVault/3.0.5) | Target | EOL / POLICY_RULE | — |
-| nuget | [Microsoft.Azure.DocumentDB 2.22.0](https://www.nuget.org/packages/Microsoft.Azure.DocumentDB/2.22.0) | Target | EOL / POLICY_RULE | — |
-| nuget | [WindowsAzure.Storage 9.3.3](https://www.nuget.org/packages/WindowsAzure.Storage/9.3.3) | Target | EOL / POLICY_RULE | — |
-| nuget | [Microsoft.Azure.Management.Fluent 1.38.1](https://www.nuget.org/packages/Microsoft.Azure.Management.Fluent/1.38.1) | Target | EOL / POLICY_RULE | — |
-| nuget | [Newtonsoft.Json 13.0.3](https://github.com/JamesNK/Newtonsoft.Json) | Control | NO_EOL_DETECTED | — |
-
-## Re-run live validation
+## Re-run
 
 ```sh
 make validate-real-packages
-```
 
-Or choose a profile and output directory:
+# Choose a profile:
+python3 scripts/validate_real_packages.py --profile default
+python3 scripts/validate_real_packages.py --profile inactivity
+python3 scripts/validate_real_packages.py --profile declarations
 
-```sh
-go build -o bin/eolscan ./cmd/eolscan
+# Inspect recorded reports without network requests:
 python3 scripts/validate_real_packages.py \
-  --profile default --output-dir artifacts/real-packages
-python3 scripts/validate_real_packages.py \
-  --profile inactivity --output-dir artifacts/real-packages
-```
-
-This calls the normal executable against public APIs. It writes the raw reports, execution receipts, stderr, and a derived `results.json`. The Python script needs only the standard library. It does not mock providers, bypass version verification, or manufacture source mappings.
-
-The validation script exits **1 when a reviewed detection goal is unmet**, including known misses; it exits **2 for a validation/run error**. These are the validator's exit codes. The scanner's original exit code is preserved in each execution receipt. Unmet goals must not be relabeled as successful detection merely because the scanner's own CI gate passed.
-
-Results can change with publisher metadata, releases, data coverage, and API availability. Live validation consumes provider quota. GitHub authentication remains optional through `EOLSCAN_GITHUB_TOKEN`; the script does not read or borrow credentials from gh. Normal deterministic CI does not run live requests.
-
-## Inspect the recorded observations without network access
-
-```sh
-python3 scripts/validate_real_packages.py \
-  --reports-dir testdata/real-packages/observations/2026-10-15 \
+  --reports-dir testdata/real-packages/observations/2026-10-17 \
   --output-dir artifacts/real-packages-recorded
 ```
 
-This reproduces the detection summary from the recorded CLI output, and still exits 1 for unmet goals. It does not perform a new scan or reconstruct historical support policies.
+The live validator uses only the Python standard library and invokes the normal compiled CLI. `--profile all` is the default; `both` retains the older default/inactivity pair. It writes raw reports, stderr, execution receipts, and derived results. It exits 1 for unmet detection goals and 2 for run/validation errors; each original scanner exit is retained separately.
 
-The [review manifest](../testdata/real-packages/manifest.json) records identities, roles, goals, source URLs, and review notes. The [recorded observations](../testdata/real-packages/observations/2026-10-15/) retain unmodified reports, effective policies, binary/report/input hashes, scanner exits, and independent API observations with retrieval timestamps and payload hashes.
-
-The ordinary design validator also checks the recorded report schemas, input/report/policy hashes, case correspondence, and CI decisions without public requests. Those contract checks verify the integrity of the recorded evidence; they do not assert that all retirement targets were detected.
+Results can change with source metadata, releases, cache freshness, and API availability. Live requests consume provider quota; explicit GitHub authentication is optional through EOLSCAN_GITHUB_TOKEN. Deterministic CI validates recorded schemas, input/report/policy hashes, case correspondence, and CI decisions without public requests. These checks protect evidence integrity and do not claim complete real-world detection.

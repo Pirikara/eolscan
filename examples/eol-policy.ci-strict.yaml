@@ -59,6 +59,10 @@ decision:
       ecosystems: [npm, pypi, nuget]
     - id: archived
       any_of: [ARCHIVED]
+    - id: ended-release-series
+      any_of: [RELEASE_SERIES_EOL]
+    - id: declared-unmaintained
+      any_of: [DECLARED_UNMAINTAINED]
 network:
   allowed_hosts:
     - "endoflife.date"

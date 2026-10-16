@@ -72,10 +72,26 @@ func (s *Scanner) component(ctx context.Context, c model.Component) model.Compon
 		if localOK {
 			assertion = &local
 		}
-		metadata := s.metadata.Resolve(ctx, id, s.asOf, assertion, requested)
+		eolUnavailable := false
+		if p.Sources.EndoflifeDate.Enabled {
+			data := s.eol.Collect(ctx, id, s.asOf, model.Contains(requested, "RELEASE_SERIES_EOL"))
+			r.Evidence = append(r.Evidence, data.Evidence...)
+			r.Diagnostics = append(r.Diagnostics, data.Diagnostics...)
+			if data.Reason != "" {
+				r.UnknownReasons = model.AddUnique(r.UnknownReasons, data.Reason)
+			}
+			if data.SeriesEvaluation != nil {
+				r.SignalEvaluations = append(r.SignalEvaluations, *data.SeriesEvaluation)
+			}
+			if data.SeriesEvidence != nil {
+				r.Signals = append(r.Signals, *data.SeriesEvidence)
+			}
+			eolUnavailable = data.Failed
+		}
+		metadata := s.metadata.Resolve(ctx, id, s.asOf, assertion, requested, r.SignalEvaluations...)
 		r.VersionVerification = metadata.Version
-		r.SignalEvaluations = metadata.Evaluations
-		r.Signals = metadata.Signals
+		r.SignalEvaluations = append(r.SignalEvaluations, metadata.Evaluations...)
+		r.Signals = append(r.Signals, metadata.Signals...)
 		r.Diagnostics = append(r.Diagnostics, metadata.Diagnostics...)
 		if r.VersionVerification.Status == "UNVERIFIED" {
 			r.Incomplete = true
@@ -85,16 +101,6 @@ func (s *Scanner) component(ctx context.Context, c model.Component) model.Compon
 		}
 		if len(r.Signals) > 0 {
 			r.RuleIDs = model.AddUnique(r.RuleIDs, "R-005")
-		}
-		eolUnavailable := false
-		if p.Sources.EndoflifeDate.Enabled {
-			e, ds, reason, failed := s.eol.Evidence(ctx, id)
-			r.Evidence = append(r.Evidence, e...)
-			r.Diagnostics = append(r.Diagnostics, ds...)
-			if reason != "" {
-				r.UnknownReasons = model.AddUnique(r.UnknownReasons, reason)
-			}
-			eolUnavailable = failed
 		}
 		lifecycle.Evaluate(&r, id, p, s.asOf, s.now)
 		if eolUnavailable && p.Decision.UseSupportDates {

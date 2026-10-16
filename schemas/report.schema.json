@@ -4,7 +4,10 @@
   "type": "object",
   "properties": {
     "schema_version": {
-      "const": "2.4"
+      "enum": [
+        "2.4",
+        "2.5"
+      ]
     },
     "tool_version": {
       "type": "string",

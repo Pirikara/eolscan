@@ -15,7 +15,8 @@
         "https://registry.npmjs.org/request/2.88.2"
       ],
       "goals": {
-        "default": "EOL"
+        "default": "EOL",
+        "inactivity": "EOL"
       },
       "reference_kind": "REGISTRY_DEPRECATION"
     },
@@ -33,7 +34,8 @@
         "https://registry.npmjs.org/node-sass/9.0.0"
       ],
       "goals": {
-        "default": "EOL"
+        "default": "EOL",
+        "inactivity": "EOL"
       },
       "reference_kind": "UPSTREAM_SUPPORT_END"
     },
@@ -50,7 +52,8 @@
         "https://registry.npmjs.org/har-validator/5.1.5"
       ],
       "goals": {
-        "default": "EOL"
+        "default": "EOL",
+        "inactivity": "EOL"
       },
       "reference_kind": "REGISTRY_DEPRECATION"
     },
@@ -67,7 +70,8 @@
         "https://registry.npmjs.org/istanbul/0.4.5"
       ],
       "goals": {
-        "default": "EOL"
+        "default": "EOL",
+        "inactivity": "EOL"
       },
       "reference_kind": "REGISTRY_DEPRECATION"
     },
@@ -84,7 +88,8 @@
         "https://registry.npmjs.org/glob/7.2.3"
       ],
       "goals": {
-        "default": "EOL"
+        "default": "EOL",
+        "inactivity": "EOL"
       },
       "reference_kind": "REGISTRY_DEPRECATION"
     },
@@ -101,7 +106,8 @@
         "https://registry.npmjs.org/rimraf/3.0.2"
       ],
       "goals": {
-        "default": "EOL"
+        "default": "EOL",
+        "inactivity": "EOL"
       },
       "reference_kind": "REGISTRY_DEPRECATION"
     },
@@ -118,7 +124,8 @@
         "https://registry.npmjs.org/left-pad/1.3.0"
       ],
       "goals": {
-        "default": "EOL"
+        "default": "EOL",
+        "inactivity": "EOL"
       },
       "reference_kind": "REGISTRY_DEPRECATION"
     },
@@ -135,7 +142,8 @@
         "https://registry.npmjs.org/uuid/3.4.0"
       ],
       "goals": {
-        "default": "EOL"
+        "default": "EOL",
+        "inactivity": "EOL"
       },
       "reference_kind": "REGISTRY_DEPRECATION"
     },
@@ -153,7 +161,8 @@
         "https://registry.npmjs.org/picocolors/1.1.1"
       ],
       "goals": {
-        "default": "NOT_EOL"
+        "default": "NOT_EOL",
+        "inactivity": "NOT_EOL"
       },
       "reference_kind": "DEFAULT_POLICY_CONTROL"
     },
@@ -189,7 +198,8 @@
         "https://github.com/rubyjs/therubyracer"
       ],
       "goals": {
-        "default": "EOL"
+        "default": "EOL",
+        "inactivity": "EOL"
       },
       "reference_kind": "UPSTREAM_RETIREMENT"
     },
@@ -206,7 +216,8 @@
         "https://sass-lang.com/blog/ruby-sass-is-unsupported/"
       ],
       "goals": {
-        "default": "EOL"
+        "default": "EOL",
+        "inactivity": "EOL"
       },
       "reference_kind": "UPSTREAM_SUPPORT_END"
     },
@@ -223,7 +234,8 @@
         "https://github.com/ruby-concurrency/thread_safe"
       ],
       "goals": {
-        "default": "EOL"
+        "default": "EOL",
+        "inactivity": "EOL"
       },
       "reference_kind": "UPSTREAM_RETIREMENT"
     },
@@ -240,7 +252,8 @@
         "https://rubyonrails.org/2024/10/15/new-maintenance-policy-and-eol-annouments"
       ],
       "goals": {
-        "default": "EOL"
+        "default": "EOL",
+        "inactivity": "EOL"
       },
       "reference_kind": "UPSTREAM_SUPPORT_END"
     },
@@ -257,7 +270,8 @@
         "https://github.com/ruby-concurrency/concurrent-ruby"
       ],
       "goals": {
-        "default": "NOT_EOL"
+        "default": "NOT_EOL",
+        "inactivity": "NOT_EOL"
       },
       "reference_kind": "DEFAULT_POLICY_CONTROL"
     },
@@ -310,7 +324,8 @@
         "https://github.com/marcgibbons/django-rest-swagger"
       ],
       "goals": {
-        "default": "EOL"
+        "default": "EOL",
+        "inactivity": "EOL"
       },
       "reference_kind": "REPOSITORY_ARCHIVAL"
     },
@@ -328,7 +343,8 @@
       ],
       "goals": {
         "default": "EOL",
-        "inactivity": "EOL"
+        "inactivity": "EOL",
+        "declarations": "EOL"
       },
       "reference_kind": "UPSTREAM_RETIREMENT"
     },
@@ -345,7 +361,8 @@
         "https://www.djangoproject.com/weblog/2022/apr/11/security-releases/"
       ],
       "goals": {
-        "default": "EOL"
+        "default": "EOL",
+        "inactivity": "EOL"
       },
       "reference_kind": "UPSTREAM_SUPPORT_END"
     },
@@ -380,7 +397,8 @@
         "https://github.com/dgrijalva/jwt-go"
       ],
       "goals": {
-        "default": "EOL"
+        "default": "EOL",
+        "inactivity": "EOL"
       },
       "reference_kind": "REPOSITORY_ARCHIVAL"
     },
@@ -397,7 +415,8 @@
         "https://github.com/mitchellh/mapstructure"
       ],
       "goals": {
-        "default": "EOL"
+        "default": "EOL",
+        "inactivity": "EOL"
       },
       "reference_kind": "REPOSITORY_ARCHIVAL"
     },
@@ -414,7 +433,8 @@
         "https://github.com/boltdb/bolt"
       ],
       "goals": {
-        "default": "EOL"
+        "default": "EOL",
+        "inactivity": "EOL"
       },
       "reference_kind": "REPOSITORY_ARCHIVAL"
     },
@@ -431,7 +451,8 @@
         "https://github.com/stretchr/testify"
       ],
       "goals": {
-        "default": "NOT_EOL"
+        "default": "NOT_EOL",
+        "inactivity": "NOT_EOL"
       },
       "reference_kind": "DEFAULT_POLICY_CONTROL"
     },
@@ -448,7 +469,8 @@
         "https://github.com/rust-lang-deprecated/failure"
       ],
       "goals": {
-        "default": "EOL"
+        "default": "EOL",
+        "inactivity": "EOL"
       },
       "reference_kind": "REPOSITORY_ARCHIVAL"
     },
@@ -466,7 +488,8 @@
         "https://users.rust-lang.org/t/deprecation-of-rustc-serialize/10485"
       ],
       "goals": {
-        "default": "EOL"
+        "default": "EOL",
+        "inactivity": "EOL"
       },
       "reference_kind": "REPOSITORY_ARCHIVAL"
     },
@@ -483,7 +506,8 @@
         "https://github.com/dtolnay/serde-yaml/releases"
       ],
       "goals": {
-        "default": "EOL"
+        "default": "EOL",
+        "inactivity": "EOL"
       },
       "reference_kind": "UPSTREAM_RETIREMENT"
     },
@@ -500,7 +524,8 @@
         "https://github.com/serde-rs/serde"
       ],
       "goals": {
-        "default": "NOT_EOL"
+        "default": "NOT_EOL",
+        "inactivity": "NOT_EOL"
       },
       "reference_kind": "DEFAULT_POLICY_CONTROL"
     },
@@ -607,7 +632,8 @@
         "https://www.nuget.org/packages/Microsoft.Azure.KeyVault/3.0.5"
       ],
       "goals": {
-        "default": "EOL"
+        "default": "EOL",
+        "inactivity": "EOL"
       },
       "reference_kind": "REGISTRY_DEPRECATION"
     },
@@ -624,7 +650,8 @@
         "https://www.nuget.org/packages/Microsoft.Azure.DocumentDB/2.22.0"
       ],
       "goals": {
-        "default": "EOL"
+        "default": "EOL",
+        "inactivity": "EOL"
       },
       "reference_kind": "REGISTRY_DEPRECATION"
     },
@@ -641,7 +668,8 @@
         "https://www.nuget.org/packages/WindowsAzure.Storage/9.3.3"
       ],
       "goals": {
-        "default": "EOL"
+        "default": "EOL",
+        "inactivity": "EOL"
       },
       "reference_kind": "REGISTRY_DEPRECATION"
     },
@@ -658,7 +686,8 @@
         "https://www.nuget.org/packages/Microsoft.Azure.Management.Fluent/1.38.1"
       ],
       "goals": {
-        "default": "EOL"
+        "default": "EOL",
+        "inactivity": "EOL"
       },
       "reference_kind": "REGISTRY_DEPRECATION"
     },
@@ -675,22 +704,181 @@
         "https://github.com/JamesNK/Newtonsoft.Json"
       ],
       "goals": {
-        "default": "NOT_EOL"
+        "default": "NOT_EOL",
+        "inactivity": "NOT_EOL"
       },
       "reference_kind": "DEFAULT_POLICY_CONTROL"
+    },
+    {
+      "id": "pypi-sklearn",
+      "ecosystem": "pypi",
+      "name": "sklearn",
+      "version": "0.0.post12",
+      "purl": "pkg:pypi/sklearn@0.0.post12",
+      "group": "retired",
+      "reference_kind": "UPSTREAM_RETIREMENT",
+      "reviewed_at": "2026-10-17",
+      "upstream_note": "Publisher explicitly deprecates the placeholder distribution in favor of scikit-learn.",
+      "source_urls": [
+        "https://pypi.org/project/sklearn/0.0.post12/"
+      ],
+      "goals": {
+        "default": "EOL",
+        "inactivity": "EOL",
+        "declarations": "EOL"
+      }
+    },
+    {
+      "id": "pypi-pathlib",
+      "ecosystem": "pypi",
+      "name": "pathlib",
+      "version": "1.0.1",
+      "purl": "pkg:pypi/pathlib@1.0.1",
+      "group": "retired",
+      "reference_kind": "UPSTREAM_RETIREMENT",
+      "reviewed_at": "2026-10-17",
+      "upstream_note": "Publisher states this backport is no longer maintained and recommends pathlib2.",
+      "source_urls": [
+        "https://pypi.org/project/pathlib/1.0.1/"
+      ],
+      "goals": {
+        "default": "EOL",
+        "inactivity": "EOL",
+        "declarations": "EOL"
+      }
+    },
+    {
+      "id": "cargo-cbor",
+      "ecosystem": "cargo",
+      "name": "cbor",
+      "version": "0.4.1",
+      "purl": "pkg:cargo/cbor@0.4.1",
+      "group": "retired",
+      "reference_kind": "UPSTREAM_RETIREMENT",
+      "reviewed_at": "2026-10-17",
+      "upstream_note": "Original repository README explicitly declares the project unmaintained and recommends serde_cbor.",
+      "source_urls": [
+        "https://github.com/BurntSushi/rust-cbor"
+      ],
+      "goals": {
+        "default": "EOL",
+        "inactivity": "EOL",
+        "declarations": "EOL"
+      }
+    },
+    {
+      "id": "gem-jasmine-rails",
+      "ecosystem": "gem",
+      "name": "jasmine-rails",
+      "version": "0.15.0",
+      "purl": "pkg:gem/jasmine-rails@0.15.0",
+      "group": "retired",
+      "reference_kind": "UPSTREAM_RETIREMENT",
+      "reviewed_at": "2026-10-17",
+      "upstream_note": "Original source repository redirects from searls to testdouble; maintainer declares the project no longer actively maintained.",
+      "source_urls": [
+        "https://github.com/testdouble/jasmine-rails"
+      ],
+      "goals": {
+        "default": "EOL",
+        "inactivity": "EOL",
+        "declarations": "EOL"
+      }
+    },
+    {
+      "id": "gem-better-html",
+      "ecosystem": "gem",
+      "name": "better_html",
+      "version": "2.1.1",
+      "purl": "pkg:gem/better_html@2.1.1",
+      "group": "retired",
+      "reference_kind": "UPSTREAM_RETIREMENT",
+      "reviewed_at": "2026-10-17",
+      "upstream_note": "Publisher declares deprecation and development shutdown. Critical security patches are only best effort, illustrating general retirement without a definitive security end date.",
+      "source_urls": [
+        "https://github.com/Shopify/better-html"
+      ],
+      "goals": {
+        "default": "EOL",
+        "inactivity": "EOL",
+        "declarations": "EOL"
+      }
+    },
+    {
+      "id": "gem-liquid-c",
+      "ecosystem": "gem",
+      "name": "liquid-c",
+      "version": "4.2.0",
+      "purl": "pkg:gem/liquid-c@4.2.0",
+      "group": "retired",
+      "reference_kind": "UPSTREAM_RETIREMENT",
+      "reviewed_at": "2026-10-17",
+      "upstream_note": "Maintainer README warning explicitly states that this project is no longer maintained.",
+      "source_urls": [
+        "https://github.com/Shopify/liquid-c"
+      ],
+      "goals": {
+        "default": "EOL",
+        "inactivity": "EOL",
+        "declarations": "EOL"
+      }
+    },
+    {
+      "id": "pypi-pathlib2",
+      "ecosystem": "pypi",
+      "name": "pathlib2",
+      "version": "2.3.7.post1",
+      "purl": "pkg:pypi/pathlib2@2.3.7.post1",
+      "group": "control",
+      "reference_kind": "DEFAULT_POLICY_CONTROL",
+      "reviewed_at": "2026-10-17",
+      "upstream_note": "Default-policy control: its description discusses the retired predecessor pathlib. That statement must not retire pathlib2 itself. Release inactivity may independently match the opt-in rule.",
+      "source_urls": [
+        "https://pypi.org/project/pathlib2/2.3.7.post1/"
+      ],
+      "goals": {
+        "default": "NOT_EOL",
+        "inactivity": "EOL",
+        "declarations": "NOT_EOL"
+      }
+    },
+    {
+      "id": "pypi-orjson",
+      "ecosystem": "pypi",
+      "name": "orjson",
+      "version": "3.11.3",
+      "purl": "pkg:pypi/orjson@3.11.3",
+      "group": "control",
+      "reference_kind": "DEFAULT_POLICY_CONTROL",
+      "reviewed_at": "2026-10-17",
+      "upstream_note": "Control for an active project whose README discusses unsupported platforms and dependencies.",
+      "source_urls": [
+        "https://github.com/ijl/orjson",
+        "https://pypi.org/project/orjson/3.11.3/"
+      ],
+      "goals": {
+        "default": "NOT_EOL",
+        "inactivity": "NOT_EOL",
+        "declarations": "NOT_EOL"
+      }
     }
   ],
-  "review_scope": "Purposefully selected public retirement/deprecation examples, release-series EOL examples, one inactivity candidate, and eight default-policy controls. This is not a representative dependency sample or an estimate of general recall.",
+  "review_scope": "Purposefully selected public retirement/deprecation and release-series EOL examples, one inactivity candidate, and ten default-policy controls, including a retired predecessor mentioned by its successor. This is not a representative dependency sample or an estimate of general recall.",
   "profiles": {
     "default": {
       "input": "sbom.cdx.json",
-      "config": null,
-      "description": "Unmodified built-in policy and all 39 real packages."
+      "config": "policy.default.yaml",
+      "description": "Built-in default EOL criteria on all 47 real versions; file caching enabled solely to share responses with the inactivity profile."
     },
     "inactivity": {
-      "input": "inactivity.cdx.json",
+      "input": "sbom.cdx.json",
       "config": "policy.inactivity.yaml",
-      "description": "Six default-policy misses, one inactivity candidate, and three controls. Add a 730-day inactivity rule and fail CI at MEDIUM confidence."
+      "description": "The same 47 versions and default criteria, plus a 730-day release inactivity EOL rule and a MEDIUM CI threshold; file caching enabled."
+    },
+    "declarations": {
+      "input": "declarations.cdx.json",
+      "config": "policy.declarations.yaml",
+      "description": "Seven explicit publisher-retirement targets and two controls; use only DECLARED_UNMAINTAINED as the EOL criterion, with no support-date or archival rule."
     }
   }
 }

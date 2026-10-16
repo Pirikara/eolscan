@@ -275,6 +275,62 @@
       "name": "Newtonsoft.Json",
       "version": "13.0.3",
       "purl": "pkg:nuget/Newtonsoft.Json@13.0.3"
+    },
+    {
+      "type": "library",
+      "bom-ref": "pypi-sklearn",
+      "name": "sklearn",
+      "version": "0.0.post12",
+      "purl": "pkg:pypi/sklearn@0.0.post12"
+    },
+    {
+      "type": "library",
+      "bom-ref": "pypi-pathlib",
+      "name": "pathlib",
+      "version": "1.0.1",
+      "purl": "pkg:pypi/pathlib@1.0.1"
+    },
+    {
+      "type": "library",
+      "bom-ref": "cargo-cbor",
+      "name": "cbor",
+      "version": "0.4.1",
+      "purl": "pkg:cargo/cbor@0.4.1"
+    },
+    {
+      "type": "library",
+      "bom-ref": "gem-jasmine-rails",
+      "name": "jasmine-rails",
+      "version": "0.15.0",
+      "purl": "pkg:gem/jasmine-rails@0.15.0"
+    },
+    {
+      "type": "library",
+      "bom-ref": "gem-better-html",
+      "name": "better_html",
+      "version": "2.1.1",
+      "purl": "pkg:gem/better_html@2.1.1"
+    },
+    {
+      "type": "library",
+      "bom-ref": "gem-liquid-c",
+      "name": "liquid-c",
+      "version": "4.2.0",
+      "purl": "pkg:gem/liquid-c@4.2.0"
+    },
+    {
+      "type": "library",
+      "bom-ref": "pypi-pathlib2",
+      "name": "pathlib2",
+      "version": "2.3.7.post1",
+      "purl": "pkg:pypi/pathlib2@2.3.7.post1"
+    },
+    {
+      "type": "library",
+      "bom-ref": "pypi-orjson",
+      "name": "orjson",
+      "version": "3.11.3",
+      "purl": "pkg:pypi/orjson@3.11.3"
     }
   ]
 }

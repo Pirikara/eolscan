@@ -73,7 +73,7 @@ func TestRegistryAdaptersThroughCLIAndHTTPS(t *testing.T) {
 	if err := json.Unmarshal(out.Bytes(), &report); err != nil {
 		t.Fatal(err)
 	}
-	if report.SchemaVersion != "2.4" || report.CIGate.Incomplete {
+	if report.SchemaVersion != "2.5" || report.CIGate.Incomplete {
 		t.Fatalf("report contract: %+v", report)
 	}
 	for _, row := range report.Results {

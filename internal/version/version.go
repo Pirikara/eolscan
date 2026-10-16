@@ -1,6 +1,6 @@
 // Package version records the application version used by commands and reports.
 package version
 
-const Current = "0.5.0"
+const Current = "0.6.0"
 
-const ReportSchema = "2.4"
+const ReportSchema = "2.5"

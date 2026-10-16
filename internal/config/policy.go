@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"net/url"
 	"path/filepath"
+	"regexp"
 	"strings"
 
 	"github.com/Pirikara/eolscan/internal/contract"
@@ -122,6 +123,14 @@ func Validate(p model.Policy) error {
 	if model.Contains(p.CI.FailOnSignals, "STALE_RELEASE") && p.Signals.StaleReleaseDays == nil {
 		return fmt.Errorf("CI requires STALE_RELEASE but stale_release_days is null")
 	}
+	if model.Contains(p.CI.FailOnSignals, "STALE_REPOSITORY") && p.Signals.StaleRepositoryDays == nil {
+		return fmt.Errorf("CI requires STALE_REPOSITORY but stale_repository_days is unset")
+	}
+	for _, pattern := range UnmaintainedPatterns(p) {
+		if _, err := regexp.Compile(strings.ReplaceAll(pattern, "{package}", "example")); err != nil {
+			return fmt.Errorf("unmaintained_patterns contains an invalid Go regular expression")
+		}
+	}
 	ids := map[string]bool{}
 	for _, rule := range p.Decision.EOLRules {
 		if ids[rule.ID] {
@@ -130,6 +139,9 @@ func Validate(p model.Policy) error {
 		ids[rule.ID] = true
 		if model.Contains(rule.Conditions(), "STALE_RELEASE") && p.Signals.StaleReleaseDays == nil {
 			return fmt.Errorf("EOL rule %s requires a non-null stale_release_days", rule.ID)
+		}
+		if model.Contains(rule.Conditions(), "STALE_REPOSITORY") && p.Signals.StaleRepositoryDays == nil {
+			return fmt.Errorf("EOL rule %s requires stale_repository_days", rule.ID)
 		}
 		for _, raw := range rule.Packages {
 			if _, err := identity.Base(raw); err == nil {
@@ -281,6 +293,9 @@ func requestedSignals(p model.Policy, rules []model.EOLRule) []string {
 	if p.Signals.StaleReleaseDays != nil {
 		out = model.AddUnique(out, "STALE_RELEASE")
 	}
+	if p.Signals.StaleRepositoryDays != nil {
+		out = model.AddUnique(out, "STALE_REPOSITORY")
+	}
 	for _, rule := range rules {
 		for _, kind := range rule.Conditions() {
 			out = model.AddUnique(out, kind)
@@ -291,6 +306,24 @@ func requestedSignals(p model.Policy, rules []model.EOLRule) []string {
 }
 
 func CleanBase(raw string) string { return strings.TrimRight(raw, "/") }
+
+// Patterns match declarations about this project, not arbitrary mentions of
+// deprecated APIs or dependencies. {package} is replaced with a quoted name.
+// An explicit empty list disables text patterns; the PyPI inactive classifier
+// remains an independent structured declaration.
+func UnmaintainedPatterns(p model.Policy) []string {
+	if p.Signals.UnmaintainedPatterns != nil {
+		return *p.Signals.UnmaintainedPatterns
+	}
+	return []string{
+		`(?im)^(?:this (?:backport )?(?:project|package|library|module|gem|tool|repository|crate)|{package}) (?:isn't|is not) maintained (?:anymore|any longer)(?:\s*[.!,:;]|\s*$)`,
+		`(?im)^(?:(?:this|the) (?:project|package|library|module|gem|tool|repository|crate)|(?:the )?["'\x60]*{package}["'\x60]*(?: (?:pypi )?package)?) (?:is |has been |is now |has now been )?(?:no longer (?:being )?(?:actively )?(?:maintained|supported)|unmaintained|deprecated|not maintained)(?:\s*[.!,:;]|\s*$| in (?:favor|favour) of\b| (?:please )?use\b)`,
+		`(?im)^(?:(?:(?:project|maintenance) )?status\s*:\s*)?(?:unmaintained|not maintained)\s*[.!]?\s*$`,
+		`(?i)\b(?:the tool|this package|{package}) is no longer released as ["'\x60]*{package}["'\x60]* and will only be fixed in the [a-z0-9_.-]+ package\b`,
+		`(?im)^(?:this (?:project|package|library|module|gem|tool)|{package}) has reached (?:end[- ]of[- ]life|eol)(?:\s*[.!,:;]|\s*$)`,
+		`(?im)^{package}\s*[\[(]\s*(?:deprecated|unmaintained|retired)\s*[\])]\s*$`,
+	}
+}
 
 //go:embed defaults.yaml
 var defaultYAML []byte

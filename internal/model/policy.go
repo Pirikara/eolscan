@@ -69,11 +69,13 @@ type Policy struct {
 		Sources []string `json:"sources"`
 	} `json:"version_verification"`
 	Signals struct {
-		Deprecated       bool `json:"deprecated"`
-		Yanked           bool `json:"yanked"`
-		Archived         bool `json:"archived"`
-		Quarantined      bool `json:"quarantined"`
-		StaleReleaseDays *int `json:"stale_release_days"`
+		Deprecated           bool      `json:"deprecated"`
+		Yanked               bool      `json:"yanked"`
+		Archived             bool      `json:"archived"`
+		Quarantined          bool      `json:"quarantined"`
+		StaleReleaseDays     *int      `json:"stale_release_days"`
+		StaleRepositoryDays  *int      `json:"stale_repository_days,omitempty"`
+		UnmaintainedPatterns *[]string `json:"unmaintained_patterns,omitempty"`
 	} `json:"signals"`
 	Notices struct {
 		EOLSoonDays int `json:"eol_soon_days"`

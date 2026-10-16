@@ -8,7 +8,13 @@ decision:
       ecosystems: [npm, pypi, nuget]
     - id: archived
       any_of: [ARCHIVED]
+    - id: ended-release-series
+      any_of: [RELEASE_SERIES_EOL]
+    - id: declared-unmaintained
+      any_of: [DECLARED_UNMAINTAINED]
     - id: inactive-two-years
       any_of: [STALE_RELEASE]
 ci:
   min_confidence: MEDIUM
+cache:
+  enabled: true

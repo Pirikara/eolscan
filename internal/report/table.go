@@ -50,6 +50,12 @@ func Table(w io.Writer, r model.Report, p model.Policy) error {
 					return err
 				}
 			}
+			for _, signal := range row.Signals {
+				date, _ := signal.Details["eol_effective_date"].(string)
+				if _, err := fmt.Fprintf(table, "  signal evidence\t\t%s\t\t%s\t%s\t\t\t\t\t\t\n", signal.Type, date, model.Text(signal.SourceURL)); err != nil {
+					return err
+				}
+			}
 		}
 	}
 	if err := table.Flush(); err != nil {

@@ -33,7 +33,7 @@ func EvaluateEOLRules(r *model.ComponentResult, id identity.Identity, p model.Po
 			}
 			// Live registry/repository flags do not establish their status on a
 			// different date. Release-date comparisons have their own as-of logic.
-			if kind != "STALE_RELEASE" && asOf != model.UTCDate(now) {
+			if !model.DatedSignal(kind) && asOf != model.UTCDate(now) {
 				status = "UNKNOWN"
 			}
 			switch status {

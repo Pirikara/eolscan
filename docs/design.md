@@ -1,18 +1,27 @@
-# eolscan — Implementation Design v0.7
+# eolscan — Implementation Design v0.8
 
-**Document status:** Release 0.5.0 implemented; configurable EOL criteria and automatic registry/repository acquisition
+**Document status:** Release 0.6.0 implemented; general release-series EOL, publisher retirement declarations, and repository inactivity
 
-**Revised:** 2026-10-13
+**Revised:** 2026-10-17
 
 **Audience:** CLI implementers, security reviewers, and CI administrators
 
 **Authoritative specification:** This Markdown document. JSON schemas and example policies conform to it.
 
-**Corresponding implementation release:** 0.5.0, independent of the document version
+**Corresponding implementation release:** 0.6.0, independent of the document version
 
 > **Core principle:** Return `SUPPORTED` only with **explicit evidence** that upstream security support covers the evaluation date. If the target version's existence and publication time cannot be verified, its lifecycle remains `UNKNOWN`.
 
 ## 0. Revision history and accepted decisions
+
+### Decisions adopted in v0.8
+
+| ID | Decision | Affected sections |
+| --- | --- | --- |
+| D-25 | General/OSS support end is sufficient for the default EOL warning. Add RELEASE_SERIES_EOL from an exact PURL and matching series without a security-scope whitelist. Retain phase and date; keep formal security assessment separate. Supersedes earlier security-scope restrictions for overall policy classification. | §2, §6, §7 |
+| D-26 | Add DECLARED_UNMAINTAINED from exact-version publisher descriptions, PyPI Inactive classifiers, and validated GitHub READMEs. Use configurable bounded Go RE2 patterns; retain proof and unresolved failures. | §6, §7, §8 |
+| D-27 | Implement STALE_REPOSITORY using pushed_at with a configurable threshold. Preserve live-status time limits, CI-required checks, and shared request scheduling. | §6, §7, §8 |
+| D-28 | Match Maven stable RELEASE/Final/GA aliases to numeric release series while preserving exact-version verification. Expand independently reviewed real-package scans and retain historical input snapshots. Emit report 2.5; continue accepting recorded 2.4 reports. | §5, §10, §12 |
 
 ### Decisions adopted in v0.7
 
@@ -51,7 +60,7 @@
 | D-11 | Pace all HTTP request starts per host, including retries and redirects; share 429/503 cooldowns, honor Retry-After, add jitter, and bound waits. | §8, §11 |
 | D-12 | Add YANKED independently of DEPRECATED, expose explicit PyPI project markers, and retain UNKNOWN for unavailable required signals. Emit report 2.1. | §6, §7, §10 |
 
-Configuration remains version 2, with native source and network defaults added. Current reports use version 2.4; consumers must accept NO_EOL_DETECTED, support_assessment, eol_basis, and eol_rule_evaluations in addition to the previous fields. Partial policies inherit configurable deprecation/archive EOL criteria. Use decision.eol_rules: [] for support dates only. Fixed bundled dates from CLI 0.3.0 are removed. A policy overriding `network.allowed_hosts` must allow enabled native hosts or disable those sources explicitly.
+Configuration remains version 2, with native source and network defaults added. Current reports use version 2.5; consumers must accept NO_EOL_DETECTED, support_assessment, eol_basis, and eol_rule_evaluations in addition to the previous fields. Partial policies inherit general release-series EOL, publisher retirement, deprecation, and archival EOL criteria. Use decision.eol_rules: [] for support dates only. Fixed bundled dates from CLI 0.3.0 are removed. A policy overriding `network.allowed_hosts` must allow enabled native hosts or disable those sources explicitly.
 
 ### Decisions adopted in v0.3
 
@@ -74,7 +83,7 @@ Document v0.3 was implemented by CLI 0.1.0 with configuration version 2 and repo
 | D-04 | `/products/full` and per-product GET requests duplicate work. | Fetch endoflife.date's `/identifiers/purl` index, then details for matched products. The MVP does not fetch the full dataset. Disk caching is **optional and off by default**. | §6, §11 |
 | D-05 | EOL_SOON types, conflict settings, and output examples were inconsistent. | Separate `EOL_SOON` into `Notice`. Remove `unknown_on_same_tier_conflict`; same-tier conflicts always produce UNKNOWN. Define required and nullable fields in schemas. | §7, §8, §10 |
 
-Configuration uses `schema_version: 2` and output uses `schema_version: "2.4"`. The earlier v0.1 design contract must not be silently reinterpreted. The HTTP cache format remains version 2.0, independently of the output report version.
+Configuration uses `schema_version: 2` and output uses `schema_version: "2.5"`. The earlier v0.1 design contract must not be silently reinterpreted. The HTTP cache format remains version 2.0, independently of the output report version.
 
 ## 1. System overview and scope
 
@@ -90,7 +99,7 @@ The CLI extracts packages from a single CycloneDX or SPDX JSON SBOM, identifies 
 | EOL criteria | Configurable maintenance rules and support dates; native/deps.dev facts and GitHub archival | Official vendor APIs, successor projects |
 | Version verification | Exact catalog assertions; native npm/PyPI/RubyGems; deps.dev GetVersion | Additional native registries, signed snapshots |
 | Signals | Native deprecation/project/yank metadata, GitHub archival, release dates, and deps.dev fallback | Native Go retract, native NuGet deprecation, repository inactivity, and other hosts |
-| Output | Tables; JSON report schema 2.4 | SARIF, HTML, CycloneDX annotations |
+| Output | Tables; JSON report schema 2.5 | SARIF, HTML, CycloneDX annotations |
 | Execution modes | Default report-first; strict CI policy; offline | Organization-wide policy distribution |
 
 **Outside scope:** Vulnerability or CVSS detection, inventing support dates from release age, fuzzy name matching, automatically combining extended support with upstream support, and interpreting web pages with an LLM.
@@ -120,7 +129,7 @@ The date semantics in §2.1 and the evidence-tier algorithm in §7.2 derive `sup
 - Convert `published_at` to a UTC calendar date before comparing it with `as_of`. A version published on the same calendar date can be evaluated for that date; this is not timestamp-level historical replay. A publication timestamp later than execution time cannot prove the existence of a future version.
 - `eol_effective_date` means support is considered ended **from 00:00 UTC on that date**. If a source means support continues through the end of that day, normalize the effective date to the next day. Preserve the original date and conversion in evidence.
 - `UPSTREAM_SECURITY_WINDOW` permits SUPPORTED when `support_start_date <= as_of < eol_effective_date`. `UPSTREAM_SECURITY_END` remains UNKNOWN before the end date.
-- When `labels.eol` is exactly Security Support or Maintenance & Security Support and automatic scope detection is enabled, store endoflife.date's dated `eolFrom` as `CURATED_SECURITY_END` at MEDIUM confidence. On or after the cutoff it can establish EOL; beforehand return UNKNOWN/SECURITY_END_ONLY. Otherwise store it as `GENERAL_EOL_END`. It can yield `EOL/MEDIUM` only after the date has passed and a valid allowlist review matches the product, PURL, release series, and support scope. Retain unreviewed information as evidence and return `UNKNOWN/GENERAL_EOL_UNREVIEWED`. Before the end date, remain UNKNOWN unless a separate security window applies. Boolean fields cannot imply SUPPORTED.
+- When `labels.eol` is exactly Security Support or Maintenance & Security Support and automatic scope detection is enabled, store endoflife.date's dated `eolFrom` as `CURATED_SECURITY_END` at MEDIUM confidence. On or after the cutoff it can establish EOL; beforehand return UNKNOWN/SECURITY_END_ONLY. Otherwise store it as `GENERAL_EOL_END`. In the formal security assessment it can yield `EOL/MEDIUM` only after the date has passed and a valid allowlist review matches the product, PURL, release series, and support scope. Retain unreviewed information as evidence and return `UNKNOWN/GENERAL_EOL_UNREVIEWED`. Before the end date, remain UNKNOWN unless a separate security window applies. Boolean fields cannot imply SUPPORTED.
 - `isMaintained=true` may include extended support. Keep upstream and extended support distinct; `isMaintained` must not reverse an established upstream EOL. Record diagnostics for conflicting information.
 - The default generic EOL review count is zero. Product-name-only permissions and blanket permissions for all products are prohibited. Expired reviews cannot supply EOL evidence.
 - Future `--as-of` dates set `projection=true`. Do not infer future version existence or continued support.
@@ -226,7 +235,7 @@ The verification status values are `VERIFIED | NOT_FOUND_IN_INDEX | UNVERIFIED |
 - Match product release series only after an exact PURL type and package identity match.
 - MVP automatic matching supports only **numeric dotted series**, such as `7.2` matching `7.2.4`. Compare complete numeric segments so `7.2` does not match `7.20`.
 - Choose the longest matching series. If equally ranked candidates differ in meaning, return `AMBIGUOUS_CYCLE`.
-- Date-based series, codenames, LTS names, and prereleases remain UNKNOWN without an explicit catalog mapping.
+- Maven stable RELEASE, Final, and GA aliases are stripped only for numeric series matching, following Maven version ordering. Exact identity verification retains the original version. RC, SNAPSHOT, service-pack, date-based series, codenames, and LTS names remain unsupported without an explicit catalog mapping.
 - **A series match establishes the applicability of lifecycle evidence; it cannot replace exact version verification.**
 
 ## 6. Providers and data retrieval
@@ -322,6 +331,8 @@ The schema is `../schemas/support-catalog.schema.json`; a complete example is `.
 
 ### 6.3 endoflife.date API v1: PURL index to product details
 
+The default `RELEASE_SERIES_EOL` condition independently accepts an elapsed matching `eolFrom` regardless of phase label, or an undated current `isEol: true`. It retains the original scope/phase, cycle, date when present, source, observation time, and payload hash. Resolve identity/series ambiguity and same-series contradictions before date comparisons. Future dates are ABSENT; invalid or unavailable facts are UNKNOWN. A successfully examined feed with no applicable claim is ABSENT for this detector, not proof of support. Formal security evidence below retains its existing scope requirements.
+
 **The MVP uses the following retrieval strategy.** Do not use `/products/full`.
 
 1. When needed, fetch `GET https://endoflife.date/api/v1/identifiers/purl/` once per run. Redirects, including trailing-slash normalization, must remain on the fixed host.
@@ -416,6 +427,7 @@ VersionVerification {
 ```text
 SignalEvidence {
   type: DEPRECATED | YANKED | ARCHIVED | RETRACTED | QUARANTINED |
+        RELEASE_SERIES_EOL | DECLARED_UNMAINTAINED |
         STALE_RELEASE | STALE_REPOSITORY
   provider_id: string
   source_url: https_url | null
@@ -548,6 +560,8 @@ exit_code = apply_exit_precedence(report.ci_gate)
 ### 7.5 Configured EOL rules
 
 After deriving the support assessment, evaluate applicable decision.eol_rules against aggregated signal facts. Rules are ORed; a rule chooses any_of (OR) or all_of (AND). A true OR dominates unknown inputs; a false AND resolves the rule despite unknown inputs. Verify exact version existence/publication before any EOL classification. Retain the support assessment and every rule evaluation. A rule match produces EOL/MEDIUM with eol_basis=POLICY_RULE and a null end date; an enabled support-date match keeps its original confidence and eol_basis=SUPPORT_DATE. Unresolved outcomes remain UNKNOWN/incomplete. Completed unmatched maintenance-policy checks can produce NO_EOL_DETECTED. See [the rule contract](eol-rules.md).
+
+Publisher retirement and repository inactivity acquisition, expression defaults/overrides, scope semantics, request short-circuiting, and time restrictions are specified in [EOL criteria](eol-rules.md) and [registry sources](registries.md). These documents form part of this implementation contract. General support end can produce overall policy EOL while a formal security window remains SUPPORTED; that is an intentional difference in scope.
 
 ### 7.6 UNKNOWN reasons and scan incompleteness
 
@@ -729,7 +743,7 @@ Cancellation takes precedence over scan outcomes. Otherwise precedence is `2/4` 
 
 The parser and scanner check context cancellation; the dispatch loop stops submitting jobs and active workers finish cancellation. The CLI does not serialize an interrupted scan as a successful report and leaves an existing report file intact when cancellation occurs during input or provider work. The process entry point allows a bounded shutdown interval for blocked I/O. Exit 130 applies even when `ci.fail_on_incomplete_scan=false`.
 
-## 10. JSON report 2.4 contract
+## 10. JSON report 2.5 contract
 
 Keep `../schemas/report.schema.json` consistent with this specification, and maintain `../examples/report.example.json` as a complete valid example. Schemas validate structure; additional semantic validation checks date comparisons, reference IDs, and aggregate values.
 
@@ -737,7 +751,7 @@ Keep `../schemas/report.schema.json` consistent with this specification, and mai
 
 ```text
 Report {
-  schema_version: "2.4", tool_version, as_of, projection, generated_at,
+  schema_version: "2.5", tool_version, as_of, projection, generated_at,
   input_sha256, policy_hash,
   summary: {in_scope, excluded, eol, supported, no_eol_detected, unknown,
             assessment_coverage, provider_error_count, ci_failure_count},
@@ -906,6 +920,8 @@ Release 0.2.0 additionally verifies package sharing across versions, native sele
 
 **Release 0.3.0 — Scan correctness and bundled evidence:** nested metadata components, mandatory NO_COMPONENTS failure, cancellation and bounded shutdown, recent-release negative proof with incomplete older history, legacy PyPI eggs, informative unavailable-signal reasons, five real reviewed support windows, catalog override, and report 2.2.
 
+**Release 0.6.0 — Broader automatic criteria:** general release-series EOL, publisher retirement declarations with configurable patterns, repository inactivity, Maven stable qualifier matching, report 2.5, and expanded real-package validation.
+
 **Release 0.5.0 — Configurable EOL criteria:** add custom AND/OR rules and scopes, mandatory condition inputs, automatic GitHub archival, separate support assessments, NO_EOL_DETECTED, explicit warnings, report 2.4, and API quota handling.
 
 **Release 0.4.0 — Automatic lifecycle data:** remove fixed product dates, enable explicit security-phase scope from current API metadata, emit CURATED_SECURITY_END/MEDIUM and source_label in report 2.3, retain unknown future end-only claims, test response changes and cache expiry, and provide the automatic-EOL CI policy.
@@ -930,7 +946,7 @@ Follow `eol-exceptions.example.yaml`. Require an exact `package_purl`, `reason`,
 
 ### 15.2 Deliberately deferred work
 
-- Maintaining meaning reviews for products whose API labels do not explicitly establish security scope. Automatic security labels need no per-product date catalog; ambiguous labels remain UNKNOWN without a review.
+- Maintaining meaning reviews for products whose API labels do not explicitly establish security scope. Automatic security labels need no per-product date catalog; ambiguous labels remain UNKNOWN in the formal security assessment without a review. General support end can independently satisfy the default policy rule.
 - Binary distribution and organization-specific rate tuning. Process-local request budgets are implemented; cross-job coordination is deferred. The implementation uses Go 1.24 or later.
 - Adapter changes when actual endoflife.date responses differ from OpenAPI descriptions. Schema mismatches remain failures.
 - Private registries and distribution backports.
@@ -960,4 +976,4 @@ Deferred work does not relax lifecycle invariants.
 uv run --with-requirements scripts/design-requirements.txt python scripts/validate_design.py
 ```
 
-**Implementation constraints:** Deriving EOL from unreviewed generic EOL, discarding future end dates before conflict detection, marking a version VERIFIED without publication time, or converting UNKNOWN CI-required signals to ABSENT violates this specification. EOL_SOON is a notice; only an official security window can establish SUPPORTED.
+**Implementation constraints:** Claiming confirmed security termination from unreviewed generic EOL, discarding future end dates before conflict detection, marking a version VERIFIED without publication time, or converting UNKNOWN CI-required signals to ABSENT violates this specification. EOL_SOON is a notice; only an official security window can establish SUPPORTED.

@@ -24,7 +24,7 @@ func CatalogEvidence(bundle model.PolicyBundle, id identity.Identity, now time.T
 		if e.Match == "exact_versions" && model.Contains(e.Versions, id.Version) {
 			exact = true
 		}
-		if e.Match == "numeric_segment_prefix" && identity.NumericSegmentsMatch(id.Version, e.MatchedCycle) {
+		if e.Match == "numeric_segment_prefix" && identity.NumericSegmentsMatch(identity.SeriesVersion(id), e.MatchedCycle) {
 			n := len(strings.Split(e.MatchedCycle, "."))
 			if n > best {
 				best = n
@@ -37,7 +37,7 @@ func CatalogEvidence(bundle model.PolicyBundle, id identity.Identity, now time.T
 		}
 		applies := e.Match == "exact_versions" && model.Contains(e.Versions, id.Version)
 		if !exact {
-			applies = e.Match == "numeric_segment_prefix" && identity.NumericSegmentsMatch(id.Version, e.MatchedCycle) && len(strings.Split(e.MatchedCycle, ".")) == best
+			applies = e.Match == "numeric_segment_prefix" && identity.NumericSegmentsMatch(identity.SeriesVersion(id), e.MatchedCycle) && len(strings.Split(e.MatchedCycle, ".")) == best
 		}
 		if !applies {
 			continue

@@ -3,6 +3,7 @@ package provider
 import (
 	"context"
 
+	"github.com/Pirikara/eolscan/internal/config"
 	"github.com/Pirikara/eolscan/internal/identity"
 	"github.com/Pirikara/eolscan/internal/model"
 	"github.com/Pirikara/eolscan/internal/transport"
@@ -36,6 +37,8 @@ func registrySignal(kind, ecosystem string) bool {
 		return ecosystem == "pypi" || ecosystem == "gem"
 	case "ARCHIVED":
 		return ecosystem == "npm" || ecosystem == "pypi" || ecosystem == "gem"
+	case "DECLARED_UNMAINTAINED":
+		return ecosystem == "npm" || ecosystem == "pypi" || ecosystem == "gem"
 	case "QUARANTINED":
 		return ecosystem == "pypi"
 	}
@@ -46,12 +49,13 @@ func terminalVersion(v model.VersionVerification) bool {
 	return v.Status == "VERIFIED" || v.Status == "NOT_RELEASED_AS_OF"
 }
 
-func (m *MetadataResolver) Resolve(ctx context.Context, id identity.Identity, asOf string, local *model.VersionVerification, requested []string) Metadata {
+func (m *MetadataResolver) Resolve(ctx context.Context, id identity.Identity, asOf string, local *model.VersionVerification, requested []string, known ...model.SignalEvaluation) Metadata {
 	out := Metadata{Version: NoVersionCapability(), Evaluations: []model.SignalEvaluation{}, Signals: []model.SignalEvidence{}, Diagnostics: []model.Diagnostic{}}
 	if local != nil {
 		out.Version = *local
 	}
 	p := m.t.Policy()
+	needsRepository := p.Sources.GitHub.Enabled && (model.Contains(requested, "ARCHIVED") || model.Contains(requested, "STALE_REPOSITORY") || model.Contains(requested, "DECLARED_UNMAINTAINED"))
 	needsNativeVersion := !terminalVersion(out.Version) && model.Contains(p.VersionVerification.Sources, "registries")
 	needsNativeSignals := false
 	for _, kind := range requested {
@@ -73,7 +77,7 @@ func (m *MetadataResolver) Resolve(ctx context.Context, id identity.Identity, as
 		var detailErr error
 		hasDetail := id.Type == "gem" && id.Platform == "" && err == nil &&
 			(needsNativeVersion && len(pkg.records(id)) == 0 || model.Contains(requested, "YANKED") && missingYankStatus(pkg.records(id)) ||
-				p.Sources.GitHub.Enabled && model.Contains(requested, "ARCHIVED"))
+				needsRepository)
 		if hasDetail {
 			detail, detailErr = m.registry.gemVersion(ctx, id)
 			out.Diagnostics = append(out.Diagnostics, ProviderDiagnostics("rubygems", detail.Data.Diagnostics)...)
@@ -90,7 +94,7 @@ func (m *MetadataResolver) Resolve(ctx context.Context, id identity.Identity, as
 		}
 		if err == nil && pkg.Data.Status == 200 && len(pkg.records(id)) > 0 {
 			refs = append(refs, pkg.Repositories[id.Version]...)
-			if id.Type == "pypi" && p.Sources.GitHub.Enabled && model.Contains(requested, "ARCHIVED") && pkg.ProjectStatus != "archived" {
+			if id.Type == "pypi" && needsRepository && (pkg.ProjectStatus != "archived" || model.Contains(requested, "DECLARED_UNMAINTAINED") || model.Contains(requested, "STALE_REPOSITORY")) {
 				found, data, repoErr := m.registry.pypiRepositories(ctx, id)
 				refs = append(refs, found...)
 				out.Diagnostics = append(out.Diagnostics, ProviderDiagnostics("pypi", data.Diagnostics)...)
@@ -105,6 +109,9 @@ func (m *MetadataResolver) Resolve(ctx context.Context, id identity.Identity, as
 			refs = append(refs, detail.Repositories[id.Version]...)
 		}
 		for _, kind := range requested {
+			if kind == "DECLARED_UNMAINTAINED" {
+				continue
+			}
 			if !registrySignal(kind, id.Type) {
 				continue
 			}
@@ -122,8 +129,8 @@ func (m *MetadataResolver) Resolve(ctx context.Context, id identity.Identity, as
 	// deps.dev certifies a gem version, but not an exact platform artifact.
 	needsDepsVersion := !terminalVersion(out.Version) && model.Contains(p.VersionVerification.Sources, "deps_dev") && !(id.Type == "gem" && id.Platform != "")
 	needsDepsDeprecated := model.Contains(requested, "DEPRECATED") && primary["DEPRECATED"].Status == "UNKNOWN"
-	needsDepsRepository := p.Sources.GitHub.Enabled && model.Contains(requested, "ARCHIVED") &&
-		len(refs) == 0 && primary["ARCHIVED"].Status != "PRESENT"
+	needsDepsRepository := needsRepository && len(refs) == 0 &&
+		(primary["ARCHIVED"].Status != "PRESENT" || model.Contains(requested, "STALE_REPOSITORY") || model.Contains(requested, "DECLARED_UNMAINTAINED"))
 	if p.Sources.DepsDev.Enabled && (needsDepsVersion || needsDepsDeprecated || needsDepsRepository) {
 		v, data, err := FetchVersion(ctx, m.t, id)
 		out.Diagnostics = append(out.Diagnostics, ProviderDiagnostics("deps_dev", data.Diagnostics)...)
@@ -152,6 +159,39 @@ func (m *MetadataResolver) Resolve(ctx context.Context, id identity.Identity, as
 			out.Signals = append(out.Signals, *evidence)
 		}
 	}
+	declarationEvaluations := append(append([]model.SignalEvaluation{}, known...), out.Evaluations...)
+	skipDeclaration := declarationCanBeSkipped(p, id, asOf, m.t, out.Version, declarationEvaluations, primary)
+	if model.Contains(requested, "DECLARED_UNMAINTAINED") && !skipDeclaration {
+		declaredPresent := false
+		if m.registry.enabled(id) {
+			e, evidence, ds := m.registry.declaredUnmaintained(ctx, id)
+			declaredPresent = e.Status == "PRESENT"
+			out.Evaluations = append(out.Evaluations, e)
+			out.Diagnostics = append(out.Diagnostics, ds...)
+			if evidence != nil {
+				out.Signals = append(out.Signals, *evidence)
+			}
+		}
+		if needsRepository && !declaredPresent {
+			e, evidence, ds := repositoryDeclaration(ctx, m.t, refs, id)
+			out.Evaluations = append(out.Evaluations, e)
+			out.Diagnostics = append(out.Diagnostics, ds...)
+			if evidence != nil {
+				out.Signals = append(out.Signals, *evidence)
+			}
+		}
+	}
+	if model.Contains(requested, "DECLARED_UNMAINTAINED") && skipDeclaration {
+		primary["DECLARED_UNMAINTAINED"] = UnknownSignal("DECLARED_UNMAINTAINED", "NOT_NEEDED_FOR_EOL")
+	}
+	if p.Sources.GitHub.Enabled && model.Contains(requested, "STALE_REPOSITORY") {
+		e, evidence, ds := repositoryInactivity(ctx, m.t, refs, asOf)
+		out.Evaluations = append(out.Evaluations, e)
+		out.Diagnostics = append(out.Diagnostics, ds...)
+		if evidence != nil {
+			out.Signals = append(out.Signals, *evidence)
+		}
+	}
 	if p.Sources.DepsDev.Enabled && model.Contains(requested, "STALE_RELEASE") && primary["STALE_RELEASE"].Status == "UNKNOWN" {
 		e, evidence, diagnostics := StaleRelease(ctx, m.t, id, asOf)
 		out.Evaluations = append(out.Evaluations, e)
@@ -165,6 +205,33 @@ func (m *MetadataResolver) Resolve(ctx context.Context, id identity.Identity, as
 	}
 	out.Diagnostics = append(out.Diagnostics, PublicationDiagnostic(model.Text(out.Version.ProviderID), out.Version)...)
 	return out
+}
+
+// Avoid another API request when a verified live fact already satisfies an
+// independent OR rule. CI-required declarations are always evaluated. The
+// skipped condition remains UNKNOWN in the report, never an invented absence.
+func declarationCanBeSkipped(p model.Policy, id identity.Identity, asOf string, t *transport.Transport, verification model.VersionVerification, evaluations []model.SignalEvaluation, primary map[string]model.SignalEvaluation) bool {
+	if verification.Status != "VERIFIED" || asOf != model.UTCDate(t.Now()) || model.Contains(p.CI.FailOnSignals, "DECLARED_UNMAINTAINED") {
+		return false
+	}
+	for _, kind := range []string{"ARCHIVED", "DEPRECATED", "RELEASE_SERIES_EOL"} {
+		positive, negative := primary[kind].Status == "PRESENT", primary[kind].Status == "ABSENT"
+		for _, e := range evaluations {
+			if e.Type == kind {
+				positive = positive || e.Status == "PRESENT"
+				negative = negative || e.Status == "ABSENT"
+			}
+		}
+		if !positive || kind != "ARCHIVED" && negative {
+			continue
+		}
+		for _, rule := range config.ApplicableEOLRules(p, id) {
+			if model.Contains(rule.AnyOf, kind) || len(rule.AllOf) == 1 && rule.AllOf[0] == kind {
+				return true
+			}
+		}
+	}
+	return false
 }
 
 // Version details certify one platform. Keep other platform/ABI records so a

@@ -44,3 +44,21 @@ func TestIdentityAndCycleBoundaries(t *testing.T) {
 		}
 	}
 }
+
+func TestMavenStableAliasesForSeriesOnly(t *testing.T) {
+	for _, suffix := range []string{".RELEASE", ".Final", "-GA", "_release"} {
+		id, reason := identity.Resolve(model.Component{PURL: "pkg:maven/org.example/leaf@4.3.30" + suffix})
+		if reason != "" || identity.SeriesVersion(id) != "4.3.30" || id.Version != "4.3.30"+suffix {
+			t.Fatalf("stable alias lost identity or series: %+v %s", id, reason)
+		}
+	}
+	for _, version := range []string{"4.3.30.RC1", "4.3.30.SNAPSHOT", "4.3.30.SP1", "4.3.30.foo", "4.3.RC1.RELEASE"} {
+		id := identity.Identity{Type: "maven", Version: version}
+		if identity.SeriesVersion(id) != version {
+			t.Fatalf("normalized a non-stable version %s", version)
+		}
+	}
+	if identity.SeriesVersion(identity.Identity{Type: "npm", Version: "4.3.30.RELEASE"}) != "4.3.30.RELEASE" {
+		t.Fatal("Maven aliases leaked into another ecosystem")
+	}
+}

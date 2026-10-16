@@ -116,17 +116,21 @@ def run_cli(binary, profile, spec, output):
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--binary", type=Path, default=ROOT / "bin" / "eolscan")
-    parser.add_argument("--profile", choices=("default", "inactivity", "both"), default="both")
+    parser.add_argument("--profile", choices=("default", "inactivity", "declarations", "all", "both"), default="all")
     parser.add_argument("--output-dir", type=Path, default=ROOT / "artifacts" / "real-packages")
     parser.add_argument("--reports-dir", type=Path, help="Analyze recorded reports without making requests")
     args = parser.parse_args()
-    manifest = read_json(DATA / "manifest.json")
+    # Recorded scans retain their own input/manifest snapshot as the current
+    # corpus grows. Never reinterpret an old report against a new case list.
+    data_root = args.reports_dir if args.reports_dir and (args.reports_dir / "manifest.json").is_file() else DATA
+    manifest = read_json(data_root / "manifest.json")
     cases = manifest["cases"]
     if len({c["id"] for c in cases}) != len(cases):
         raise ValueError("case IDs must be unique")
     if any(goal not in (None, "EOL", "NOT_EOL") for c in cases for goal in c["goals"].values()):
         raise ValueError("case goals must be EOL, NOT_EOL, or null")
-    profiles = list(manifest["profiles"]) if args.profile == "both" else [args.profile]
+    profiles = (list(manifest["profiles"]) if args.profile == "all" else
+                ["default", "inactivity"] if args.profile == "both" else [args.profile])
     output = args.output_dir.resolve()
     output.mkdir(parents=True, exist_ok=True)
     receipts = {}
@@ -148,7 +152,7 @@ def main():
         else:
             report_path, receipt = run_cli(args.binary.resolve(), profile, spec, output)
             live_receipts.append(receipt)
-        analysis = assess(read_json(report_path), profile, cases, DATA / spec["input"])
+        analysis = assess(read_json(report_path), profile, cases, data_root / spec["input"])
         analysis["cli_exit_code"] = receipt["cli_exit_code"] if receipt else None
         analyses[profile] = analysis
         print(f"{profile}: {analysis['retirement_targets_detected']}/"

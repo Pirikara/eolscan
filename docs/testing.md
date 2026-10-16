@@ -13,6 +13,7 @@ Tests exercise package facts through normalization, version verification, EOL cl
 | PyPI | Exact-version project URL discovery; source-label normalization; homepage and issue links excluded; wrong names/versions and malformed metadata; registry archival combined with source-repository archival. |
 | GitHub | Provenance ranking, ambiguous mappings, malformed/duplicate fields, incorrect identities, absent archival flags, 404/403/429/503, timeouts, safe redirects, token scope, primary and secondary quota resets. |
 | Release inactivity | Native npm/PyPI/RubyGems results just below, exactly at, and above the threshold; a recent project release must prevent an inactivity match even when the SBOM version is old. Existing cases cover incomplete histories and later artifacts for older releases. |
+| Broader EOL acquisition | General/OSS series end while an official security window continues; Maven stable qualifiers and excluded prerelease/service-pack qualifiers; undated flags and historical/future dates; publisher classifiers and configurable text patterns; missing metadata and wrong identities; HTML/Markdown retirement notices versus examples, comments, predecessor/dependency notices; repository push thresholds and ignored metadata updates; standalone CI checks are not skipped. |
 | CI and exceptions | HIGH versus MEDIUM thresholds; same-day and expired exceptions; exact-version matching; unresolved checks remain incomplete; exceptions suppress CI failures without changing EOL or warnings. |
 | Reports | Support notices and evidence; hiding UNKNOWN rows preserves totals; reject invented dates, unsupported confidence, missing signal proof, historical live-status claims, inconsistent counts, coverage, component failures, and aggregate gates. |
 | Executable | Linux CI builds the actual CLI and runs it as a child process against local HTTPS providers, verifying a dependency nested under an excluded metadata subject and real exit codes 0, 1, and 3. |
@@ -42,7 +43,7 @@ Fixed responses verify behavior under known API shapes and failure modes. They d
 
 ## Detection on actual packages
 
-[Real package validation](real-package-validation.md) covers 39 public package versions across all seven supported ecosystems: 30 retirement/deprecation targets, one inactivity candidate, and eight controls. It records real CLI output and independently reviewed upstream sources. The default scan detected 24 of the 30 targets; a separate inactivity profile recovered four misses. Two ended Maven release series remained undetected. These are actual coverage gaps, not successful acceptance cases.
+[Real package validation](real-package-validation.md) covers 47 actual versions across all seven supported ecosystems: 36 retirement/deprecation targets, one inactivity candidate, and ten controls. The default criteria detect 34/36 targets, with 36/36 under an opt-in 730-day release inactivity rule. An isolated publisher-declarations profile detects 7/7 targets across RubyGems, PyPI, and Cargo without support-date or archival criteria. These observed outcomes and two default misses are retained alongside independently reviewed upstream sources.
 
 ```sh
 make validate-real-packages
@@ -54,3 +55,5 @@ This makes public API requests and exits nonzero for unmet detection goals. It i
 
 - Exact RubyGems version details could verify a version but their source URL was discarded when the package-wide version list lacked it. Repository discovery now uses validated exact-version details independently of that list.
 - Report validation previously checked only that lifecycle totals summed to the component count. It now compares classification and CI totals with the actual rows and verifies coverage, component CI decisions, aggregate incompleteness, and gate violations against the effective policy.
+
+- Live declaration checks exposed missed HTML headings and bold quoted warnings. Regression cases and re-scans confirm the corrected acquisition without treating code examples, comments, or predecessor retirement as self-declarations.

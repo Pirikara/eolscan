@@ -58,6 +58,7 @@ func mixedInput(t *testing.T, format string) []byte {
 func mixedProviderResponses(t *testing.T) *testutil.StubAPI {
 	t.Helper()
 	stub := testutil.NewStub()
+	stub.Bodies["endoflife.date/api/v1/identifiers/purl/"] = `{"schema_version":"1.2.1","generated_at":"2026-10-11T00:00:00Z","result":[]}`
 	npmPackage(t, stub, "mixed-leaf", map[string]string{"1.0.0": "2020-01-01T00:00:00Z", "2.0.0": "2026-10-01T00:00:00Z"}, map[string]string{"1.0.0": "No longer supported"})
 	var npm map[string]any
 	if err := json.Unmarshal([]byte(stub.Bodies["registry.npmjs.org/mixed-leaf"]), &npm); err != nil {
@@ -67,11 +68,13 @@ func mixedProviderResponses(t *testing.T) *testutil.StubAPI {
 		v.(map[string]any)["repository"] = "git+https://github.com/publisher/current.git"
 	}
 	testutil.PutJSON(t, stub, "registry.npmjs.org/mixed-leaf", npm)
+	stub.Bodies["registry.npmjs.org/mixed-leaf/2.0.0"] = `{"name":"mixed-leaf","version":"2.0.0","description":"A maintained utility."}`
 	stub.Bodies["rubygems.org/api/v1/versions/mixed-gem.json"] = `[{"number":"1.0.0","platform":"ruby","created_at":"2020-01-01T00:00:00Z"}]`
 	stub.Bodies["rubygems.org/api/v2/rubygems/mixed-gem/versions/1.0.0.json"] = `{"name":"mixed-gem","version":"1.0.0","platform":"ruby","version_created_at":"2020-01-01T00:00:00Z","source_code_uri":"https://github.com/publisher/retired"}`
 	pypiPackage(t, stub, "mixed-python", "active", []map[string]any{{"filename": "mixed_python-1.0.0.tar.gz", "upload-time": "2026-10-01T00:00:00Z", "yanked": false}})
-	stub.Bodies["pypi.org/pypi/mixed-python/1.0.0/json"] = `{"info":{"name":"mixed-python","version":"1.0.0","project_urls":{}}}`
+	stub.Bodies["pypi.org/pypi/mixed-python/1.0.0/json"] = `{"info":{"name":"mixed-python","version":"1.0.0","project_urls":{},"description":"A maintained utility.","classifiers":[]}}`
 	stub.Bodies["api.github.com/repos/publisher/current"] = `{"full_name":"publisher/current","archived":false}`
+	stub.Bodies["api.github.com/repos/publisher/current/readme"] = `{"type":"file","path":"README.md","encoding":"base64","size":0,"content":""}`
 	stub.Bodies["api.github.com/repos/publisher/retired"] = `{"full_name":"publisher/retired","archived":true}`
 	for _, item := range mixedPackages {
 		id, reason := identity.Resolve(model.Component{PURL: item.purl})
@@ -97,7 +100,6 @@ func TestMixedEcosystemSBOMThroughCLI(t *testing.T) {
 		for _, outputFormat := range []string{"json", "table"} {
 			t.Run(format+"/"+outputFormat, func(t *testing.T) {
 				p := config.Default()
-				p.Sources.EndoflifeDate.Enabled = false
 				p.CI.MinConfidence, p.CI.FailOnIncompleteScan = "MEDIUM", true
 				p.Network.RequestsPerSecond = 100
 				policy, err := json.Marshal(p)

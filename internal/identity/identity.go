@@ -278,6 +278,26 @@ func NumericCycleMatches(version, cycle string) bool {
 	return !(len(first) == 4 && first >= "1900" && first <= "2999")
 }
 
+// SeriesVersion removes only Maven's stable release aliases when comparing
+// release series. The original identity still verifies the exact published
+// version; prereleases, service packs and arbitrary qualifiers stay intact.
+func SeriesVersion(id Identity) string {
+	if id.Type == "maven" {
+		for _, separator := range []string{".", "-", "_"} {
+			for _, alias := range []string{"release", "final", "ga"} {
+				suffix := separator + alias
+				if strings.HasSuffix(strings.ToLower(id.Version), suffix) {
+					base := id.Version[:len(id.Version)-len(suffix)]
+					if numeric.MatchString(base) {
+						return base
+					}
+				}
+			}
+		}
+	}
+	return id.Version
+}
+
 func SupportedIndexPrefix(raw string) bool {
 	for kind := range systems {
 		if strings.HasPrefix(strings.ToLower(raw), "pkg:"+kind+"/") {

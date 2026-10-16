@@ -57,11 +57,11 @@ func PublicationDiagnostic(provider string, v model.VersionVerification) []model
 
 func DescribeProviders() string {
 	return fmt.Sprintln("official_catalog: reviewed upstream support, exact local versions, general EOL reviews") +
-		fmt.Sprintln("endoflife_date: automatic exact-PURL lifecycle lookup; explicit security end dates (MEDIUM) and general EOL evidence") +
+		fmt.Sprintln("endoflife_date: automatic exact-PURL lifecycle lookup; general/security release-series EOL and support-date evidence") +
 		fmt.Sprintln("npm: exact versions and publication; DEPRECATED and STALE_RELEASE") +
 		fmt.Sprintln("pypi: Index API publication; DEPRECATED, ARCHIVED, QUARANTINED, YANKED, and STALE_RELEASE") +
 		fmt.Sprintln("rubygems: exact versions and publication; YANKED where explicit, and STALE_RELEASE") +
-		fmt.Sprintln("github: source-repository ARCHIVED; publisher metadata or verified origin maps a package version to its repository") +
+		fmt.Sprintln("github: source-repository ARCHIVED, DECLARED_UNMAINTAINED from README, and STALE_REPOSITORY from pushed_at") +
 		fmt.Sprintln("deps_dev: gem/npm/pypi/maven/golang/cargo/nuget version publication; DEPRECATED and STALE_RELEASE where metadata is sufficient")
 }
 

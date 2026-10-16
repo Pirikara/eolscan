@@ -1,6 +1,6 @@
 # eolscan
 
-eolscan is a Go CLI that reads an SBOM and classifies dependencies as EOL using **configurable criteria**. Support dates, version deprecation, project archival, and selected maintenance conditions can drive the result. Release 0.5.0 implements the [v0.7 design specification](docs/design.md).
+eolscan is a Go CLI that reads an SBOM and classifies dependencies as EOL using **configurable criteria**. Support dates, version deprecation, project archival, and selected maintenance conditions can drive the result. Release 0.6.0 implements the [v0.8 design specification](docs/design.md).
 
 No database is required. Repeated API queries share an in-memory result during each run, and disk caching is disabled by default. Build with Go 1.24 or later; the CLI runs as a single binary.
 
@@ -20,13 +20,15 @@ cat sbom.cdx.json | ./bin/eolscan scan -i - -f json
 
 Supported inputs are CycloneDX JSON 1.4–1.7 and SPDX 2.3 JSON. Packages are identified by PURL, with support for the gem, npm, pypi, maven, golang, cargo, and nuget ecosystems. Components without a version remain in the report as `UNKNOWN`. CycloneDX `metadata.component` is excluded by default; its nested components are still inspected individually. A scan with no components in scope exits `3` with `NO_COMPONENTS`.
 
-Configuration uses schema version `2`, and JSON reports use version `2.4`. Native Syft JSON, CPE matching, and OS name matching are outside the current scope. When using Syft, provide CycloneDX or SPDX JSON. Registry ecosystem support does not imply lifecycle coverage for every package; generic runtimes and OS package PURLs are currently unsupported.
+Configuration uses schema version `2`, and JSON reports use version `2.5`. Native Syft JSON, CPE matching, and OS name matching are outside the current scope. When using Syft, provide CycloneDX or SPDX JSON. Registry ecosystem support does not imply lifecycle coverage for every package; generic runtimes and OS package PURLs are currently unsupported.
 
 When upgrading from 0.1.0, allow the three native registry hosts if your policy overrides `network.allowed_hosts`, or disable those sources explicitly. Partial version 2 policies inherit the new defaults.
 
-When upgrading from 0.3.0, report consumers must accept the current schema `2.4`, including the `source_label` evidence field and `CURATED_SECURITY_END` claim introduced in 0.4. Fixed bundled support dates and `--catalog builtin` have been removed. Disable the old `official_catalog` selection or provide a local path. Partial policies inherit automatic security-scope detection. Empty scans still exit `3`; interrupted scans exit `130`. Local catalog contents participate in `policy_hash`; remote responses are identified by evidence hashes.
+When upgrading from 0.3.0, report consumers must accept the current schema `2.5`, including the `source_label` evidence field and `CURATED_SECURITY_END` claim introduced in 0.4. Fixed bundled support dates and `--catalog builtin` have been removed. Disable the old `official_catalog` selection or provide a local path. Partial policies inherit automatic security-scope detection. Empty scans still exit `3`; interrupted scans exit `130`. Local catalog contents participate in `policy_hash`; remote responses are identified by evidence hashes.
 
-When upgrading from 0.4.0, accept report schema `2.4`, `NO_EOL_DETECTED`, `support_assessment`, `eol_basis`, and `eol_rule_evaluations`. Partial policies inherit the default deprecated/archive EOL rules. Use `decision.eol_rules: []` for dates-only behavior. Allow `api.github.com` when GitHub is enabled, or disable that source and adjust rules that depend on it.
+When upgrading from 0.4.0, accept report schema `2.5`, `NO_EOL_DETECTED`, `support_assessment`, `eol_basis`, and `eol_rule_evaluations`. Partial policies inherit the default deprecated/archive EOL rules. Use `decision.eol_rules: []` for dates-only behavior. Allow `api.github.com` when GitHub is enabled, or disable that source and adjust rules that depend on it.
+
+When upgrading from 0.5.0, accept report schema `2.5` and the `RELEASE_SERIES_EOL` and `DECLARED_UNMAINTAINED` signal types. Partial policies inherit both new default rules; an explicit `decision.eol_rules` list still replaces all defaults. Declaration patterns and repository inactivity are configurable. The report schema also accepts recorded 2.4 reports.
 
 ## Configure what counts as EOL
 
@@ -49,7 +51,7 @@ ci:
 
 Rules are ORed together; `all_of` combines conditions with AND. This policy warns and fails CI for a deprecated npm/PyPI/NuGet version, an archived project with more than 365 days of release inactivity, or an eligible support end date that has passed. `eol_rules` replaces the default list. Rules can be scoped by ecosystem or exact package PURL. See [criteria, acquisition, unknown conditions, and CI](docs/eol-rules.md).
 
-The defaults use support dates, deprecation for npm/PyPI/NuGet, and project/source-repository archival. Release inactivity becomes EOL only when selected in a rule. An EOL rule automatically requests the facts it needs. Missing methods and API failures remain unresolved, never a confirmed negative.
+The defaults warn on an elapsed applicable release-series EOL date, publisher-declared retirement, deprecation for npm/PyPI/NuGet, project/source-repository archival, and eligible support dates. General support end is sufficient for the default EOL warning; a confirmed security-support cutoff is not required. Release and repository inactivity become EOL only when selected in a rule. An EOL rule automatically requests the facts it needs. Missing methods and API failures remain unresolved, never a confirmed negative.
 
 ## Understanding results
 
@@ -62,20 +64,20 @@ The defaults use support dates, deprecation for npm/PyPI/NuGet, and project/sour
 
 Maintenance facts use three states: `PRESENT / ABSENT / UNKNOWN`. The policy decides which facts count as EOL. Every EOL result emits a warning, identifies its basis and matched rules, and participates in CI policy. `support_assessment` preserves the formal security-support conclusion; maintenance-rule EOL has no invented end date. `EOL_SOON` remains a notice derived from a `SUPPORTED` window.
 
-**Online scans automatically retrieve lifecycle data from endoflife.date.** They fetch the exact PURL index once, then details for the products present in the SBOM. When the API explicitly labels the phase ending at `eolFrom` as `Security Support` or `Maintenance & Security Support`, an elapsed date can establish `EOL / MEDIUM`. No product or release-series date table is embedded in the binary. New matching products and series can be used without rebuilding eolscan. See [automatic data retrieval, coverage, and optional catalogs](docs/catalog.md).
+**Online scans automatically retrieve lifecycle data from endoflife.date.** They fetch the exact PURL index once, then details for the products present in the SBOM. An elapsed applicable `eolFrom` establishes `RELEASE_SERIES_EOL`, including general/OSS support phases, at `MEDIUM` confidence. An undated explicit `isEol: true` can establish the same current-status condition. The original phase, source, and date remain in the report. No product or release-series date table is embedded in the binary. New matching products and series can be used without rebuilding eolscan. See [automatic data retrieval, coverage, and optional catalogs](docs/catalog.md).
 
 In dates-only mode, a future security end date alone remains `UNKNOWN / SECURITY_END_ONLY`. `SUPPORTED / HIGH` still requires a reviewed official support window. Missing identities, dates, or verified publication times also remain `UNKNOWN`.
 
-The default general EOL review list remains empty. A date with an unknown or generic support label alone cannot establish `EOL` or `SUPPORTED`.
+The optional formal security assessment retains its scope checks; the overall default EOL warning also accepts general support end through `RELEASE_SERIES_EOL`. General support end does not establish that security patches have stopped, and a future cutoff does not establish `SUPPORTED`.
 
 | Data source | Role |
 | --- | --- |
 | Local support catalog | Reviewed official support windows and end dates, exact version publication times, and reviews of what generic EOL dates mean. |
-| [endoflife.date API v1](https://endoflife.date/docs/api/v1/) | Automatically fetches the PURL index and matched product dates; explicit security labels enable EOL/MEDIUM, while other dates require meaning review. |
-| [npm registry](https://github.com/npm/registry/blob/main/docs/REGISTRY-API.md) | Full package metadata: versions, publication times, and per-version deprecation. |
-| [PyPI Index API](https://docs.pypi.org/api/index-api/) | JSON file metadata: publication times, yank status, and project status. |
-| [RubyGems API](https://guides.rubygems.org/rubygems-org-api/) | Available versions and publication times; explicit yank status where supplied. |
-| [GitHub repository API](https://docs.github.com/en/rest/repos/repos#get-a-repository) | Explicit repository archival after resolving the exact version’s publisher-declared source repository. |
+| [endoflife.date API v1](https://endoflife.date/docs/api/v1/) | Automatically fetches exact PURL mappings and matched release-series EOL; retains the stated phase without requiring a security-scope review for the general EOL rule. |
+| [npm registry](https://github.com/npm/registry/blob/main/docs/REGISTRY-API.md) | Versions, publication times, per-version deprecation, and exact-version publisher descriptions. |
+| [PyPI Index API](https://docs.pypi.org/api/index-api/) | Publication times, yank/project status, exact-version descriptions, and the publisher's Inactive classifier. |
+| [RubyGems API](https://guides.rubygems.org/rubygems-org-api/) | Available versions, publication times, exact-version descriptions/source links, and explicit yank status where supplied. |
+| [GitHub repository API](https://docs.github.com/en/rest/repos/repos#get-a-repository) | Repository archival, current README retirement declarations, and optional last-push inactivity after validating the source mapping. |
 | [deps.dev API v3](https://docs.deps.dev/api/v3/) | Fallback version/publication verification and available maintenance metadata; primary remote provider for the other four ecosystems. |
 
 Version verification prefers a valid local assertion, then the native registry for npm/PyPI/RubyGems, then deps.dev. Native package metadata is fetched and parsed once per package, shared across its SBOM versions. Successful native verification avoids a deps.dev request for that check; additional requested facts or missing repository mappings can still require deps.dev. Failed lookups remain diagnostics even when a fallback completes the check.
@@ -110,7 +112,7 @@ The catalog contains three arrays. See the [example](examples/support-catalog.ex
 - `verified_versions`: Exact versioned PURLs and publication times. These are preferred for version verification and enable offline checks or proof of versions absent from remote indexes.
 - `general_eol_reviews`: Reviews of generic EOL dates, matched exactly by product slug, unversioned PURL, release series, and support scope.
 
-Official evidence has `HIGH` confidence; automatically scoped security end dates and reviewed generic EOL evidence have `MEDIUM` confidence. Unreviewed or expired generic EOL evidence remains in the report but is excluded from support-date decisions. A future generic EOL date cannot establish `SUPPORTED`. Conflicting end dates within the highest applicable tier produce a formal support assessment of `UNKNOWN / CONFLICT`, including conflicts involving future dates. Evidence is excluded from conflict detection only when a formal replacement or withdrawal has been verified.
+Official evidence has `HIGH` confidence; automatically scoped security end dates and reviewed generic EOL evidence have `MEDIUM` confidence. Unreviewed or expired generic EOL evidence remains in the report but is excluded from the formal security assessment. The default general EOL rule can independently use a fresh applicable date. A future generic EOL date cannot establish `SUPPORTED`. Conflicting end dates within the highest applicable tier produce a formal support assessment of `UNKNOWN / CONFLICT`, including conflicts involving future dates. Evidence is excluded from conflict detection only when a formal replacement or withdrawal has been verified.
 
 The products, reviews, and version assertions in `examples/support-catalog.example.yaml` are **fictional test data**. Try the offline example:
 
@@ -235,7 +237,7 @@ Go tests cover design acceptance cases UT-01 through UT-45, native registry sele
 
 The expanded suite covers the full two-input three-valued truth tables, mixed seven-ecosystem CycloneDX/SPDX scans, RubyGems listing/detail disagreements, PyPI source discovery, GitHub malformed responses and quota/redirect behavior, inactivity boundaries, and report/CI consistency. Linux CI also runs the built executable against local HTTPS fixtures. See [test scope, platform behavior, and coverage measurement](docs/testing.md).
 
-[Actual package detection validation](docs/real-package-validation.md) uses 39 public versions across all seven ecosystems. On 2026-10-15 JST, the default CLI detected 24 of 30 reviewed retirement/deprecation targets, with no EOL result among eight controls. Adding a 730-day inactivity rule recovered four misses; Struts 2.3 and Spring 4.3 remained undetected. This selected sample exposes coverage gaps and does not estimate general detection recall. Re-run against public APIs with `make validate-real-packages`; the validator exits nonzero while detection goals remain unmet.
+[Actual package detection validation](docs/real-package-validation.md) uses 47 public versions across all seven ecosystems. On 2026-10-17 JST, the default criteria detected **34/36** reviewed retirement/deprecation targets; all ten controls remained without EOL. Adding a 730-day release inactivity rule detected **36/36**. A separate declarations-only profile detected **7/7** explicit retirement examples, including RubyGems. PyCrypto and Commons HttpClient remain default misses. This selected sample does not estimate general recall. Run `make validate-real-packages`; the validator exits nonzero while reviewed goals remain unmet.
 
 JSON schemas are embedded in the binary to validate configuration and reports. Additional documentation and example validation uses Python, which is not a CLI runtime dependency.
 

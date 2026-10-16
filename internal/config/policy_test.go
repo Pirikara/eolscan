@@ -23,6 +23,36 @@ func TestDefaultPolicyMatchesExample(t *testing.T) {
 	}
 }
 
+func TestMaintenanceSettingsAreValidated(t *testing.T) {
+	for _, tc := range []struct {
+		name   string
+		change func(*model.Policy)
+		valid  bool
+	}{
+		{"repository_rule_needs_threshold", func(p *model.Policy) {
+			p.Decision.EOLRules = []model.EOLRule{{ID: "inactive", AnyOf: []string{"STALE_REPOSITORY"}}}
+		}, false},
+		{"repository_ci_needs_threshold", func(p *model.Policy) { p.CI.FailOnSignals = []string{"STALE_REPOSITORY"} }, false},
+		{"repository_threshold", func(p *model.Policy) {
+			p.Decision.EOLRules = []model.EOLRule{{ID: "inactive", AnyOf: []string{"STALE_REPOSITORY"}}}
+			p.Signals.StaleRepositoryDays = model.Ptr(730)
+		}, true},
+		{"invalid_expression", func(p *model.Policy) {
+			patterns := []string{"(?=unsupported-lookahead)"}
+			p.Signals.UnmaintainedPatterns = &patterns
+		}, false},
+		{"empty_patterns_disable_text", func(p *model.Policy) { patterns := []string{}; p.Signals.UnmaintainedPatterns = &patterns }, true},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			p := config.Default()
+			tc.change(&p)
+			if (config.Validate(p) == nil) != tc.valid {
+				t.Fatal("unexpected validation result")
+			}
+		})
+	}
+}
+
 func TestEOLRuleInputRejectsMalformedScopesAndMissingThresholds(t *testing.T) {
 	for _, tc := range []struct {
 		name string

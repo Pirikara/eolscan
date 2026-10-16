@@ -1,6 +1,6 @@
 # Registry sources and request behavior
 
-eolscan 0.5.0 queries npm, PyPI, and RubyGems directly. Remote version verification for Maven, Go, Cargo, and NuGet still uses deps.dev. Registry and repository facts can satisfy your configured EOL rules. They do not invent an upstream security support window or official end date. See [EOL criteria](eol-rules.md). The separate [lifecycle data adapter](catalog.md) retrieves security end dates automatically; reviewed local official catalogs remain optional.
+eolscan 0.6.0 queries npm, PyPI, and RubyGems directly. Remote version verification for Maven, Go, Cargo, and NuGet still uses deps.dev. Registry and repository facts can satisfy your configured EOL rules. They do not invent an upstream security support window or official end date. See [EOL criteria](eol-rules.md). The separate [lifecycle data adapter](catalog.md) retrieves security end dates automatically; reviewed local official catalogs remain optional.
 
 ## Selection and fallback
 
@@ -104,10 +104,23 @@ In-memory memoization is always enabled. Optional persistent caching stores succ
 
 Budgets and cooldowns are process-local. Concurrent CI jobs sharing an egress IP need their own coordination or lower rates. RubyGems documents service quotas, while deps.dev has no formally specified numerical limit; both can return 429. Set `ci.fail_on_incomplete_scan: true` when required unavailable checks should fail the job. Enable optional signals only where desired, or list them in `ci.fail_on_signals` to make evaluation mandatory.
 
+## Publisher declarations and repository activity
+
+`DECLARED_UNMAINTAINED` adds these exact-version description reads when needed:
+
+- npm: `GET /{name}/{version}`, field `description`.
+- PyPI: `GET /pypi/{name}/{version}/json`, fields `info.description` and `info.classifiers`. This response is shared with source discovery.
+- RubyGems: `GET /api/v2/rubygems/{name}/versions/{version}.json`, field `info`. This response is shared with version details and source discovery.
+- GitHub: `GET /repos/{owner}/{repo}/readme` after the repository identity check. Only bounded base64 file content is decoded; the `download_url` is never fetched.
+
+The metadata must identify the exact requested package/version. A positive native declaration satisfies this condition without a README lookup. Default text patterns and overrides are described in [EOL criteria](eol-rules.md).
+
+`STALE_REPOSITORY` reuses the repository metadata response and reads `pushed_at`; no extra activity endpoint is required. It is enabled by a configured `signals.stale_repository_days` threshold and becomes EOL only when selected in a rule. GitHub source discovery remains available to all seven ecosystems, so these repository checks do not depend on endoflife.date having a product entry.
+
 ## Primary references
 
 - [npm registry API](https://github.com/npm/registry/blob/main/docs/REGISTRY-API.md) and [package metadata](https://github.com/npm/registry/blob/main/docs/responses/package-metadata.md).
 - [PyPI Index API](https://docs.pypi.org/api/index-api/), [project JSON API](https://docs.pypi.org/api/json/), and [project status markers](https://packaging.python.org/en/latest/specifications/project-status-markers/).
 - [RubyGems API guide](https://guides.rubygems.org/rubygems-org-api/), [rate limits](https://guides.rubygems.org/rubygems-org-rate-limits/), and [public version selection in source](https://github.com/rubygems/rubygems.org/blob/master/app/models/rubygem.rb).
-- [GitHub repository API](https://docs.github.com/en/rest/repos/repos#get-a-repository) and [API rate limits](https://docs.github.com/en/rest/using-the-rest-api/rate-limits-for-the-rest-api).
+- [GitHub README API](https://docs.github.com/en/rest/repos/contents#get-a-repository-readme), [PyPI Inactive classifier](https://blog.pypi.org/posts/2025-08-14-project-status-markers/), and [GitHub repository API](https://docs.github.com/en/rest/repos/repos#get-a-repository) and [API rate limits](https://docs.github.com/en/rest/using-the-rest-api/rate-limits-for-the-rest-api).
 - [deps.dev API v3](https://docs.deps.dev/api/v3/) and [maintainer explanation of rate limiting](https://github.com/google/deps.dev/issues/33#issuecomment-1744108819).

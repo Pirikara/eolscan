@@ -70,7 +70,7 @@ func TestStaleEOLUsesLatestProjectReleaseRatherThanSBOMVersionAge(t *testing.T) 
 	}
 }
 
-func TestUnsupportedRuleConditionsRemainUnresolved(t *testing.T) {
+func TestUnavailableRuleConditionsRemainUnresolved(t *testing.T) {
 	for _, kind := range []string{"RETRACTED", "STALE_REPOSITORY"} {
 		for _, tc := range []struct {
 			name, group, deprecation, want string
@@ -90,6 +90,9 @@ func TestUnsupportedRuleConditionsRemainUnresolved(t *testing.T) {
 					rule.AnyOf = []string{kind, "DEPRECATED"}
 				}
 				p := rulePolicy(rule)
+				if kind == "STALE_REPOSITORY" {
+					p.Signals.StaleRepositoryDays = model.Ptr(730)
+				}
 				if tc.ciRequiresUnavailable {
 					p.CI.FailOnSignals = []string{kind}
 				}

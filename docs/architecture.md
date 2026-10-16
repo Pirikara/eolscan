@@ -60,19 +60,19 @@ The parser excludes only the metadata subject when configured to do so; nested c
 
 ### Lifecycle retrieval
 
-The endoflife.date adapter loads an exact PURL index, then matched product details. Explicit security phase labels create curated security end claims at MEDIUM confidence. Unknown labels require a separate meaning review. Current online responses or usable cached snapshots supply dates; there is no fixed date catalog. Source labels, timestamps, and hashes remain in evidence. See [automatic lifecycle data](catalog.md).
+The endoflife.date adapter loads an exact PURL index, then matched product details. Explicit security phase labels create curated security end claims at MEDIUM confidence. General end dates also create `RELEASE_SERIES_EOL` facts without a security-scope review. The formal security assessment keeps its stricter meaning-review requirement. Current online responses or usable cached snapshots supply dates; there is no fixed date catalog. Source labels, timestamps, and hashes remain in evidence. See [automatic lifecycle data](catalog.md).
 
 ### Metadata resolution
 
 `provider.MetadataResolver` first uses a valid exact local version assertion. It requests native npm, PyPI, or RubyGems metadata when version verification or a requested native signal needs it, and uses deps.dev for unresolved supported checks. A verified native publication, including `NOT_RELEASED_AS_OF`, is not replaced by fallback data. If an already needed fallback response disagrees with native signal evidence, aggregation returns `UNKNOWN / SIGNAL_CONFLICT`.
 
-The native registry loader shares an immutable parsed package snapshot across all SBOM versions and platforms of that package. It filters RubyGems publication proof by an explicit platform qualifier. Providers produce maintenance facts independently of lifecycle evidence. See [registry sources](registries.md) for the supported negative-evidence rules.
+The native registry loader shares an immutable parsed package snapshot across all SBOM versions and platforms of that package. It filters RubyGems publication proof by an explicit platform qualifier. Providers also collect exact-version publisher descriptions, PyPI Inactive classifiers, validated GitHub README declarations, and optional `pushed_at` inactivity. Text matching uses configurable Go RE2 expressions over bounded plain prose; it does not execute package code. Providers produce maintenance facts independently of lifecycle evidence. See [registry sources](registries.md) for the supported negative-evidence rules.
 
 ### EOL rule evaluation
 
 `lifecycle.EvaluateEOLRules` preserves the formal conclusion in `support_assessment`, evaluates scoped AND/OR rules using three-valued logic, and classifies a matching dependency as EOL. Policy-derived EOL has MEDIUM confidence and no fabricated end date. Completed unmatched evaluations can produce NO_EOL_DETECTED; unresolved required conditions remain UNKNOWN and incomplete. The report validator recomputes rule outcomes from the retained facts. See [EOL criteria](eol-rules.md).
 
-GitHub discovery uses native exact-version source links or deps.dev SOURCE_REPO mappings. The provider verifies the API response identity, including stable-ID redirects for renamed repositories, and retains mapping provenance. Registry archival and source-repository archival are separate scopes whose positive findings both satisfy ARCHIVED.
+GitHub discovery uses native exact-version source links or deps.dev SOURCE_REPO mappings. The provider verifies the API response identity, including stable-ID redirects for renamed repositories, and retains mapping provenance. Registry and source-repository scopes can each satisfy ARCHIVED or DECLARED_UNMAINTAINED. A positive finding in either scope wins; a negative cannot hide an unavailable mapped source check. After another applicable rule has conclusively matched for a verified current version, declaration collection may be skipped as UNKNOWN/NOT_NEEDED_FOR_EOL. Standalone CI-required declarations are always evaluated. Shared series lookups and repository metadata avoid duplicate HTTP requests.
 
 ### Request scheduling
 

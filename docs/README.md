@@ -1,8 +1,8 @@
 # eolscan implementation contract
 
-The [v0.7 design specification](design.md) incorporates the accepted lifecycle decisions, native registries, request pacing, and the scan-correctness revisions. Go CLI 0.5.0 implements this specification.
+The [v0.8 design specification](design.md) incorporates the accepted lifecycle decisions, native registries, request pacing, and the scan-correctness revisions. Go CLI 0.6.0 implements this specification.
 
-The configuration contract is version `2`, and the report contract is version `2.4`. These versions are independent of the document version. Report 2.4 adds configurable EOL rules, their evaluations, NO_EOL_DETECTED, and a separate support assessment. Empty scans still fail with `NO_COMPONENTS`. Partial version 2 policies inherit default deprecation/archive EOL criteria and automatic security-scope detection; optional local catalogs remain disabled by default.
+The configuration contract is version `2`, and the report contract is version `2.5`. These versions are independent of the document version. Report 2.5 adds general release-series EOL and publisher-retirement signal types; 2.4 introduced configurable EOL rules, their evaluations, NO_EOL_DETECTED, and a separate support assessment. Empty scans still fail with `NO_COMPONENTS`. Partial version 2 policies inherit default general release-series EOL, publisher retirement, deprecation, and archival criteria and automatic security-scope detection; optional local catalogs remain disabled by default.
 
 - [EOL criteria](eol-rules.md): Custom AND/OR rules, thresholds, package scopes, source discovery, warnings, and CI.
 - [Architecture](architecture.md): Package responsibilities, dependency direction, embedded assets, and testing.

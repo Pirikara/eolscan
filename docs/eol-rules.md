@@ -4,9 +4,9 @@ eolscan applies your EOL criteria to every dependency in the SBOM. A matching ma
 
 ## Defaults
 
-The default criteria are an eligible support end date that has passed, version deprecation for npm/PyPI/NuGet, and project or source-repository archival. Maintenance-rule matches have `MEDIUM` confidence; official support dates retain `HIGH`, and curated dates retain `MEDIUM`.
+The default criteria are an applicable release-series EOL date that has passed, explicit publisher retirement, version deprecation for npm/PyPI/NuGet, project/source-repository archival, and eligible formal support dates. General support end is sufficient for the default warning; security-support termination is not a prerequisite. Maintenance-rule matches have `MEDIUM` confidence; official support dates retain `HIGH`, and curated dates retain `MEDIUM`.
 
-Release inactivity is collected by default and becomes an EOL criterion only when a rule includes it. Warnings are always emitted for EOL results. The default CI threshold remains `HIGH`; set `ci.min_confidence: MEDIUM` to reject maintenance-rule EOL too.
+Release inactivity is collected by default and becomes an EOL criterion only when a rule includes it. Repository inactivity is opt-in and uses a separate threshold. Warnings are always emitted for EOL results. The default CI threshold remains `HIGH`; set `ci.min_confidence: MEDIUM` to reject maintenance-rule EOL too.
 
 ## Define your criteria
 
@@ -67,13 +67,49 @@ decision:
 | `YANKED` | Native PyPI artifacts and explicit RubyGems metadata, subject to version/artifact limitations. |
 | `QUARANTINED` | PyPI project markers. |
 | `STALE_RELEASE` | Native npm/PyPI/RubyGems release histories and capable deps.dev fallback. |
-| `RETRACTED`, `STALE_REPOSITORY` | Recognized types without an acquisition adapter. A rule requiring them remains UNKNOWN and marks the scan incomplete. |
+| `RELEASE_SERIES_EOL` | Exact endoflife.date PURL mapping and matching release series; elapsed `eolFrom` regardless of general/security phase, or explicit current undated `isEol`. |
+| `DECLARED_UNMAINTAINED` | Exact npm/PyPI/RubyGems publisher descriptions; PyPI's `Development Status :: 7 - Inactive`; a mapped GitHub repository's current README. |
+| `STALE_REPOSITORY` | GitHub repository `pushed_at`, compared with `signals.stale_repository_days`. `updated_at` is not code activity. |
+| `RETRACTED` | Recognized without an acquisition adapter. A rule requiring it remains UNKNOWN and makes the scan incomplete. |
 
 An EOL rule automatically requests its inputs, even when optional signal collection is disabled. Unavailable methods and failed lookups never mean that the condition is absent.
 
 GitHub discovery uses the exact version's npm `repository`, RubyGems `source_code_uri`, or explicitly labelled source URLs in PyPI version metadata. deps.dev `SOURCE_REPO` relationships provide mappings for all seven supported registry ecosystems. Issue trackers and homepages are not guessed to be source repositories. Verified origin/attestation mappings take precedence; conflicting mappings at the same trust level remain unresolved. Positive archival evidence retains mapping provenance and its original metadata URL.
 
 Metadata URLs are parsed into identities and queried through the configured GitHub API. Arbitrary SBOM or metadata URLs are not fetched. Same-host renames and transfers are supported, including stable numeric repository-ID redirects. The response identity and explicit archival flag must be verified. A 404 does not mean unarchived. GitLab, Bitbucket, missing links, and ambiguous mappings cannot currently resolve a GitHub archival check.
+
+## Publisher retirement declarations
+
+Default English patterns recognize explicit statements about this project/package/library or the exact package name, strong retirement headings, and explicit distribution-replacement notices. The PyPI Inactive classifier is an independent structured declaration. Ordinary API/dependency deprecations, unsupported platforms, negated statements, code examples, and a different predecessor's retirement are excluded by the default patterns. This is bounded pattern matching, not a general natural-language interpreter.
+
+Only the mapped source repository's README is read; issue comments, arbitrary websites, and `download_url` links are not fetched. The README is current repository content, not necessarily the file shipped with the exact package version. Descriptions and READMEs are limited to 256 KiB. Unavailable/malformed content remains UNKNOWN; successfully examined content without a configured match is ABSENT for this detector, not proof of ongoing maintenance.
+
+Override the entire pattern list with Go RE2 expressions. `{package}` is replaced with the escaped exact normalized package name. The expressions run after bounded Markdown/RST prose normalization (including line reflow and common notice prefixes):
+
+```yaml
+schema_version: 2
+signals:
+  unmaintained_patterns:
+    - '(?im)^{package} maintenance ended[.!]?$'
+```
+
+An explicit empty list disables text matching but preserves the structured PyPI Inactive classifier. To disable the whole criterion, remove `DECLARED_UNMAINTAINED` from the EOL rules and standalone CI signals. Source field, expression/index or classifier, a short matching excerpt, observation time, and response hash remain in evidence.
+
+## Repository inactivity
+
+```yaml
+schema_version: 2
+signals:
+  stale_repository_days: 730
+decision:
+  eol_rules:
+    - id: explicitly-retired-and-inactive
+      all_of: [DECLARED_UNMAINTAINED, STALE_REPOSITORY]
+ci:
+  min_confidence: MEDIUM
+```
+
+This replaces the default rule list. A push gap equal to the threshold is ABSENT; a greater gap is PRESENT. Missing/invalid/future `pushed_at` is UNKNOWN. Shared repository activity is project-wide and cannot establish that an old release branch is still supported. Repository and release inactivity can be combined or scoped independently.
 
 ## Unknown conditions
 
@@ -87,7 +123,7 @@ Metadata URLs are parsed into identities and queried through the configured GitH
 
 A matching rule or an enabled confirmed support end date establishes EOL even if another rule is unresolved. Otherwise an unresolved applicable rule marks the component incomplete. CI-required standalone signals retain their own completeness requirement. `fail_on_incomplete_scan` changes the CI gate, never the truth value of a condition.
 
-Every EOL result requires verified existence and publication time for the exact SBOM version. Current deprecation, yanking, quarantine, and archival flags cannot establish their status on another historical or future `--as-of` date; those rule inputs become UNKNOWN. Dated release comparisons keep their existing as-of behavior. Historical flag replay requires snapshots beyond the current adapter contract.
+Every EOL result requires verified existence and publication time for the exact SBOM version. Current deprecation, yanking, quarantine, and archival flags cannot establish their status on another historical or future `--as-of` date; those rule inputs become UNKNOWN. Dated release comparisons and release-series end dates use their own as-of comparisons. An undated series status cannot establish a historical/future state. Historical flag replay requires snapshots beyond the current adapter contract.
 
 ## Interpret results
 
@@ -116,4 +152,4 @@ The token is sent only to the configured public GitHub API's repository requests
 
 GitHub documents 60 requests/hour for unauthenticated requests and generally 5,000/hour for authenticated requests, with other token/installation limits. See [GitHub rate limits](https://docs.github.com/en/rest/using-the-rest-api/rate-limits-for-the-rest-api).
 
-Repository requests share transport memoization and optional TTL caching. Restore the cache in CI when appropriate. GitHub rate-limit 403s, 429s, reset times, and shared cooldowns are handled without early retries. An unavailable required condition remains UNKNOWN and incomplete.
+Repository metadata requests share transport memoization and optional TTL caching. Declaration detection can add one README request per mapped repository; native descriptions are shared with exact-version discovery. When a verified current version already matches another independent EOL rule, declaration collection can be skipped as UNKNOWN/NOT_NEEDED_FOR_EOL. A CI-required standalone declaration is always evaluated, and a confirmed native declaration avoids an unnecessary README request. Restore the cache in CI when appropriate. GitHub rate-limit 403s, 429s, reset times, and shared cooldowns are handled without early retries. An unavailable required condition remains UNKNOWN and incomplete.

@@ -1,0 +1,14 @@
+# Isolate publisher-declared retirement from archive and support-date rules.
+schema_version: 2
+sources:
+  endoflife_date:
+    enabled: false
+decision:
+  use_support_dates: false
+  eol_rules:
+    - id: declared-unmaintained
+      any_of: [DECLARED_UNMAINTAINED]
+ci:
+  min_confidence: MEDIUM
+cache:
+  enabled: true

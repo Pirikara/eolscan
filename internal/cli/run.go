@@ -31,13 +31,14 @@ eolscan policy validate --config policy.yaml
 eolscan providers list
 eolscan version
 
-CycloneDX JSON 1.4–1.7 / SPDX 2.3; config 2 / report 2.4.
+CycloneDX JSON 1.4–1.7 / SPDX 2.3; config 2 / report 2.5.
 Online scans send public package identities to configured registries,
 endoflife.date, deps.dev, and GitHub for publisher-declared source repositories.
 --offline makes no HTTP requests. Disk cache is disabled by default.
 Default CI fails on EOL/HIGH; UNKNOWN and incomplete remain visible.
 EOL is determined by support dates and decision.eol_rules (any_of / all_of).
-Default maintenance rules classify DEPRECATED or ARCHIVED as EOL/MEDIUM.
+Default rules include deprecation, archival, ended release series, and
+publisher declarations of unmaintained packages (EOL/MEDIUM).
 Rules require their inputs even when optional signal collection is disabled.
 NO_EOL_DETECTED means completed checks did not match the configured criteria.
 Lifecycle data is fetched automatically; no fixed product catalog is bundled.
