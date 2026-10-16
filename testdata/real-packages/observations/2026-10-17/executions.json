@@ -1,0 +1,70 @@
+{
+  "binary_sha256": "9ecb7c34846e0c6dcd12be75ca4a17e778bf723948ff99467f079de2eed64083",
+  "executions": [
+    {
+      "profile": "default",
+      "command": [
+        "/Users/pirikara/Dev/eolscan/bin/eolscan",
+        "scan",
+        "--input",
+        "/Users/pirikara/Dev/eolscan/testdata/real-packages/sbom.cdx.json",
+        "--config",
+        "/Users/pirikara/Dev/eolscan/testdata/real-packages/policy.default.yaml",
+        "--format",
+        "json",
+        "--output",
+        "/private/tmp/eolscan-expansion/committed-5c0f5e5/default.report.json"
+      ],
+      "cli_exit_code": 0,
+      "stderr": "WARNING: 34 component(s) classified as EOL under the configured policy; see eol_basis and matched rules in the report.\n",
+      "report_sha256": "0ced86cc215875e0452eee97b698d0765be98fa3be38f91b59626b0d5904053b",
+      "input_sha256": "4a01480521d21ea515100059602a3d8c11046a7d4138875d7ac0f7bf9f0fd23f",
+      "effective_policy": "policy.default.yaml"
+    },
+    {
+      "profile": "inactivity",
+      "command": [
+        "/Users/pirikara/Dev/eolscan/bin/eolscan",
+        "scan",
+        "--input",
+        "/Users/pirikara/Dev/eolscan/testdata/real-packages/sbom.cdx.json",
+        "--config",
+        "/Users/pirikara/Dev/eolscan/testdata/real-packages/policy.inactivity.yaml",
+        "--format",
+        "json",
+        "--output",
+        "/private/tmp/eolscan-expansion/committed-5c0f5e5/inactivity.report.json"
+      ],
+      "cli_exit_code": 1,
+      "stderr": "WARNING: 39 component(s) classified as EOL under the configured policy; see eol_basis and matched rules in the report.\n",
+      "report_sha256": "45babf92e6a8911ed0989c3a660601edd1ecc1fbb31e0c904a8f0b6a2795bbe4",
+      "input_sha256": "4a01480521d21ea515100059602a3d8c11046a7d4138875d7ac0f7bf9f0fd23f",
+      "effective_policy": "policy.inactivity.yaml"
+    },
+    {
+      "profile": "declarations",
+      "command": [
+        "/Users/pirikara/Dev/eolscan/bin/eolscan",
+        "scan",
+        "--input",
+        "/Users/pirikara/Dev/eolscan/testdata/real-packages/declarations.cdx.json",
+        "--config",
+        "/Users/pirikara/Dev/eolscan/testdata/real-packages/policy.declarations.yaml",
+        "--format",
+        "json",
+        "--output",
+        "/private/tmp/eolscan-expansion/committed-5c0f5e5/declarations.report.json"
+      ],
+      "cli_exit_code": 1,
+      "stderr": "WARNING: 7 component(s) classified as EOL under the configured policy; see eol_basis and matched rules in the report.\n",
+      "report_sha256": "cc9a6fdcc9e6e8aeb784519b06303526da40a26e3f1fde5467f6fedd412503d7",
+      "input_sha256": "5dc43f105f959ab1a4e2ebadfde27d5886a448447983b458adfaacbf96912895",
+      "effective_policy": "policy.declarations.yaml"
+    }
+  ],
+  "recorded_at_local_date": "2026-10-17",
+  "local_timezone": "Asia/Tokyo",
+  "repository_commit": "5c0f5e5316a1244fa05ba68b4f7455cc4f952a07",
+  "build_info": "build-info.txt",
+  "environment": "environment.json"
+}

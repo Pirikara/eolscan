@@ -1,0 +1,2654 @@
+{
+  "mode": "live",
+  "sample_scope": "Purposefully selected public retirement/deprecation and release-series EOL examples, one inactivity candidate, and ten default-policy controls, including a retired predecessor mentioned by its successor. This is not a representative dependency sample or an estimate of general recall.",
+  "profiles": {
+    "default": {
+      "as_of": "2026-10-16",
+      "generated_at": "2026-10-16T18:55:36.36392Z",
+      "tool_version": "0.6.0",
+      "policy_hash": "02260dadf3db917186d8a5183f564fb78d0cc1c47037f00d27403dbfa1fea31e",
+      "input_sha256": "4a01480521d21ea515100059602a3d8c11046a7d4138875d7ac0f7bf9f0fd23f",
+      "cli_summary": {
+        "in_scope": 47,
+        "excluded": 0,
+        "eol": 34,
+        "supported": 0,
+        "unknown": 3,
+        "no_eol_detected": 10,
+        "assessment_coverage": 0.9361702127659575,
+        "provider_error_count": 1,
+        "ci_failure_count": 0
+      },
+      "ci_gate": {
+        "passed": true,
+        "violation_codes": [],
+        "incomplete": true
+      },
+      "reviewed_retirement_targets": 36,
+      "retirement_targets_detected": 34,
+      "by_reference_kind": {
+        "DEFAULT_POLICY_CONTROL": {
+          "total": 10,
+          "eol": 0,
+          "unknown": 0
+        },
+        "INACTIVITY_CANDIDATE": {
+          "total": 1,
+          "eol": 0,
+          "unknown": 1
+        },
+        "REGISTRY_DEPRECATION": {
+          "total": 11,
+          "eol": 11,
+          "unknown": 0
+        },
+        "REPOSITORY_ARCHIVAL": {
+          "total": 7,
+          "eol": 6,
+          "unknown": 1
+        },
+        "UPSTREAM_RETIREMENT": {
+          "total": 10,
+          "eol": 10,
+          "unknown": 0
+        },
+        "UPSTREAM_SUPPORT_END": {
+          "total": 8,
+          "eol": 7,
+          "unknown": 1
+        }
+      },
+      "goal_misses": [
+        "pypi-pycrypto",
+        "maven-httpclient"
+      ],
+      "results": [
+        {
+          "case_id": "npm-request",
+          "purl": "pkg:npm/request@2.88.2",
+          "group": "retired",
+          "reference_kind": "REGISTRY_DEPRECATION",
+          "goal": "EOL",
+          "goal_met": true,
+          "lifecycle": "EOL",
+          "confidence": "MEDIUM",
+          "eol_basis": "POLICY_RULE",
+          "version_verification": "VERIFIED",
+          "signals": {
+            "ARCHIVED": "ABSENT",
+            "DECLARED_UNMAINTAINED": "UNKNOWN",
+            "DEPRECATED": "PRESENT",
+            "RELEASE_SERIES_EOL": "ABSENT",
+            "STALE_RELEASE": "PRESENT"
+          },
+          "unknown_reasons": [],
+          "incomplete": false,
+          "source_urls": [
+            "https://github.com/request/request",
+            "https://registry.npmjs.org/request/2.88.2"
+          ]
+        },
+        {
+          "case_id": "npm-node-sass",
+          "purl": "pkg:npm/node-sass@9.0.0",
+          "group": "retired",
+          "reference_kind": "UPSTREAM_SUPPORT_END",
+          "goal": "EOL",
+          "goal_met": true,
+          "lifecycle": "EOL",
+          "confidence": "MEDIUM",
+          "eol_basis": "POLICY_RULE",
+          "version_verification": "VERIFIED",
+          "signals": {
+            "ARCHIVED": "PRESENT",
+            "DECLARED_UNMAINTAINED": "UNKNOWN",
+            "DEPRECATED": "PRESENT",
+            "RELEASE_SERIES_EOL": "ABSENT",
+            "STALE_RELEASE": "PRESENT"
+          },
+          "unknown_reasons": [],
+          "incomplete": false,
+          "source_urls": [
+            "https://sass-lang.com/blog/node-sass-is-end-of-life/",
+            "https://registry.npmjs.org/node-sass/9.0.0"
+          ]
+        },
+        {
+          "case_id": "npm-har-validator",
+          "purl": "pkg:npm/har-validator@5.1.5",
+          "group": "retired",
+          "reference_kind": "REGISTRY_DEPRECATION",
+          "goal": "EOL",
+          "goal_met": true,
+          "lifecycle": "EOL",
+          "confidence": "MEDIUM",
+          "eol_basis": "POLICY_RULE",
+          "version_verification": "VERIFIED",
+          "signals": {
+            "ARCHIVED": "ABSENT",
+            "DECLARED_UNMAINTAINED": "UNKNOWN",
+            "DEPRECATED": "PRESENT",
+            "RELEASE_SERIES_EOL": "ABSENT",
+            "STALE_RELEASE": "PRESENT"
+          },
+          "unknown_reasons": [],
+          "incomplete": false,
+          "source_urls": [
+            "https://registry.npmjs.org/har-validator/5.1.5"
+          ]
+        },
+        {
+          "case_id": "npm-istanbul",
+          "purl": "pkg:npm/istanbul@0.4.5",
+          "group": "retired",
+          "reference_kind": "REGISTRY_DEPRECATION",
+          "goal": "EOL",
+          "goal_met": true,
+          "lifecycle": "EOL",
+          "confidence": "MEDIUM",
+          "eol_basis": "POLICY_RULE",
+          "version_verification": "VERIFIED",
+          "signals": {
+            "ARCHIVED": "PRESENT",
+            "DECLARED_UNMAINTAINED": "UNKNOWN",
+            "DEPRECATED": "PRESENT",
+            "RELEASE_SERIES_EOL": "ABSENT",
+            "STALE_RELEASE": "PRESENT"
+          },
+          "unknown_reasons": [],
+          "incomplete": false,
+          "source_urls": [
+            "https://registry.npmjs.org/istanbul/0.4.5"
+          ]
+        },
+        {
+          "case_id": "npm-glob",
+          "purl": "pkg:npm/glob@7.2.3",
+          "group": "retired",
+          "reference_kind": "REGISTRY_DEPRECATION",
+          "goal": "EOL",
+          "goal_met": true,
+          "lifecycle": "EOL",
+          "confidence": "MEDIUM",
+          "eol_basis": "POLICY_RULE",
+          "version_verification": "VERIFIED",
+          "signals": {
+            "ARCHIVED": "ABSENT",
+            "DECLARED_UNMAINTAINED": "UNKNOWN",
+            "DEPRECATED": "PRESENT",
+            "RELEASE_SERIES_EOL": "ABSENT",
+            "STALE_RELEASE": "ABSENT"
+          },
+          "unknown_reasons": [],
+          "incomplete": false,
+          "source_urls": [
+            "https://registry.npmjs.org/glob/7.2.3"
+          ]
+        },
+        {
+          "case_id": "npm-rimraf",
+          "purl": "pkg:npm/rimraf@3.0.2",
+          "group": "retired",
+          "reference_kind": "REGISTRY_DEPRECATION",
+          "goal": "EOL",
+          "goal_met": true,
+          "lifecycle": "EOL",
+          "confidence": "MEDIUM",
+          "eol_basis": "POLICY_RULE",
+          "version_verification": "VERIFIED",
+          "signals": {
+            "ARCHIVED": "ABSENT",
+            "DECLARED_UNMAINTAINED": "UNKNOWN",
+            "DEPRECATED": "PRESENT",
+            "RELEASE_SERIES_EOL": "ABSENT",
+            "STALE_RELEASE": "ABSENT"
+          },
+          "unknown_reasons": [],
+          "incomplete": false,
+          "source_urls": [
+            "https://registry.npmjs.org/rimraf/3.0.2"
+          ]
+        },
+        {
+          "case_id": "npm-left-pad",
+          "purl": "pkg:npm/left-pad@1.3.0",
+          "group": "retired",
+          "reference_kind": "REGISTRY_DEPRECATION",
+          "goal": "EOL",
+          "goal_met": true,
+          "lifecycle": "EOL",
+          "confidence": "MEDIUM",
+          "eol_basis": "POLICY_RULE",
+          "version_verification": "VERIFIED",
+          "signals": {
+            "ARCHIVED": "PRESENT",
+            "DECLARED_UNMAINTAINED": "UNKNOWN",
+            "DEPRECATED": "PRESENT",
+            "RELEASE_SERIES_EOL": "ABSENT",
+            "STALE_RELEASE": "PRESENT"
+          },
+          "unknown_reasons": [],
+          "incomplete": false,
+          "source_urls": [
+            "https://registry.npmjs.org/left-pad/1.3.0"
+          ]
+        },
+        {
+          "case_id": "npm-uuid",
+          "purl": "pkg:npm/uuid@3.4.0",
+          "group": "retired",
+          "reference_kind": "REGISTRY_DEPRECATION",
+          "goal": "EOL",
+          "goal_met": true,
+          "lifecycle": "EOL",
+          "confidence": "MEDIUM",
+          "eol_basis": "POLICY_RULE",
+          "version_verification": "VERIFIED",
+          "signals": {
+            "ARCHIVED": "ABSENT",
+            "DECLARED_UNMAINTAINED": "UNKNOWN",
+            "DEPRECATED": "PRESENT",
+            "RELEASE_SERIES_EOL": "ABSENT",
+            "STALE_RELEASE": "ABSENT"
+          },
+          "unknown_reasons": [],
+          "incomplete": false,
+          "source_urls": [
+            "https://registry.npmjs.org/uuid/3.4.0"
+          ]
+        },
+        {
+          "case_id": "npm-picocolors",
+          "purl": "pkg:npm/picocolors@1.1.1",
+          "group": "control",
+          "reference_kind": "DEFAULT_POLICY_CONTROL",
+          "goal": "NOT_EOL",
+          "goal_met": true,
+          "lifecycle": "NO_EOL_DETECTED",
+          "confidence": null,
+          "eol_basis": null,
+          "version_verification": "VERIFIED",
+          "signals": {
+            "ARCHIVED": "ABSENT",
+            "DECLARED_UNMAINTAINED": "ABSENT",
+            "DEPRECATED": "ABSENT",
+            "RELEASE_SERIES_EOL": "ABSENT",
+            "STALE_RELEASE": "ABSENT"
+          },
+          "unknown_reasons": [],
+          "incomplete": false,
+          "source_urls": [
+            "https://github.com/alexeyraspopov/picocolors",
+            "https://registry.npmjs.org/picocolors/1.1.1"
+          ]
+        },
+        {
+          "case_id": "npm-is-number",
+          "purl": "pkg:npm/is-number@7.0.0",
+          "group": "control",
+          "reference_kind": "DEFAULT_POLICY_CONTROL",
+          "goal": "NOT_EOL",
+          "goal_met": true,
+          "lifecycle": "NO_EOL_DETECTED",
+          "confidence": null,
+          "eol_basis": null,
+          "version_verification": "VERIFIED",
+          "signals": {
+            "ARCHIVED": "ABSENT",
+            "DECLARED_UNMAINTAINED": "ABSENT",
+            "DEPRECATED": "ABSENT",
+            "RELEASE_SERIES_EOL": "ABSENT",
+            "STALE_RELEASE": "PRESENT"
+          },
+          "unknown_reasons": [],
+          "incomplete": false,
+          "source_urls": [
+            "https://github.com/jonschlinkert/is-number",
+            "https://registry.npmjs.org/is-number/7.0.0"
+          ]
+        },
+        {
+          "case_id": "gem-therubyracer",
+          "purl": "pkg:gem/therubyracer@0.12.3",
+          "group": "retired",
+          "reference_kind": "UPSTREAM_RETIREMENT",
+          "goal": "EOL",
+          "goal_met": true,
+          "lifecycle": "EOL",
+          "confidence": "MEDIUM",
+          "eol_basis": "POLICY_RULE",
+          "version_verification": "VERIFIED",
+          "signals": {
+            "ARCHIVED": "PRESENT",
+            "DECLARED_UNMAINTAINED": "UNKNOWN",
+            "DEPRECATED": "UNKNOWN",
+            "RELEASE_SERIES_EOL": "ABSENT",
+            "STALE_RELEASE": "PRESENT"
+          },
+          "unknown_reasons": [],
+          "incomplete": false,
+          "source_urls": [
+            "https://github.com/rubyjs/therubyracer"
+          ]
+        },
+        {
+          "case_id": "gem-sass",
+          "purl": "pkg:gem/sass@3.7.4",
+          "group": "retired",
+          "reference_kind": "UPSTREAM_SUPPORT_END",
+          "goal": "EOL",
+          "goal_met": true,
+          "lifecycle": "EOL",
+          "confidence": "MEDIUM",
+          "eol_basis": "POLICY_RULE",
+          "version_verification": "VERIFIED",
+          "signals": {
+            "ARCHIVED": "PRESENT",
+            "DECLARED_UNMAINTAINED": "UNKNOWN",
+            "DEPRECATED": "UNKNOWN",
+            "RELEASE_SERIES_EOL": "ABSENT",
+            "STALE_RELEASE": "PRESENT"
+          },
+          "unknown_reasons": [],
+          "incomplete": false,
+          "source_urls": [
+            "https://sass-lang.com/blog/ruby-sass-is-unsupported/"
+          ]
+        },
+        {
+          "case_id": "gem-thread-safe",
+          "purl": "pkg:gem/thread_safe@0.3.6",
+          "group": "retired",
+          "reference_kind": "UPSTREAM_RETIREMENT",
+          "goal": "EOL",
+          "goal_met": true,
+          "lifecycle": "EOL",
+          "confidence": "MEDIUM",
+          "eol_basis": "POLICY_RULE",
+          "version_verification": "VERIFIED",
+          "signals": {
+            "ARCHIVED": "PRESENT",
+            "DECLARED_UNMAINTAINED": "UNKNOWN",
+            "DEPRECATED": "UNKNOWN",
+            "RELEASE_SERIES_EOL": "ABSENT",
+            "STALE_RELEASE": "PRESENT"
+          },
+          "unknown_reasons": [],
+          "incomplete": false,
+          "source_urls": [
+            "https://github.com/ruby-concurrency/thread_safe"
+          ]
+        },
+        {
+          "case_id": "gem-rails",
+          "purl": "pkg:gem/rails@6.1.7.10",
+          "group": "retired",
+          "reference_kind": "UPSTREAM_SUPPORT_END",
+          "goal": "EOL",
+          "goal_met": true,
+          "lifecycle": "EOL",
+          "confidence": "MEDIUM",
+          "eol_basis": "SUPPORT_DATE",
+          "version_verification": "VERIFIED",
+          "signals": {
+            "ARCHIVED": "ABSENT",
+            "DECLARED_UNMAINTAINED": "UNKNOWN",
+            "DEPRECATED": "UNKNOWN",
+            "RELEASE_SERIES_EOL": "PRESENT",
+            "STALE_RELEASE": "ABSENT"
+          },
+          "unknown_reasons": [],
+          "incomplete": false,
+          "source_urls": [
+            "https://rubyonrails.org/2024/10/15/new-maintenance-policy-and-eol-annouments"
+          ]
+        },
+        {
+          "case_id": "gem-concurrent-ruby",
+          "purl": "pkg:gem/concurrent-ruby@1.3.5",
+          "group": "control",
+          "reference_kind": "DEFAULT_POLICY_CONTROL",
+          "goal": "NOT_EOL",
+          "goal_met": true,
+          "lifecycle": "NO_EOL_DETECTED",
+          "confidence": null,
+          "eol_basis": null,
+          "version_verification": "VERIFIED",
+          "signals": {
+            "ARCHIVED": "ABSENT",
+            "DECLARED_UNMAINTAINED": "ABSENT",
+            "DEPRECATED": "UNKNOWN",
+            "RELEASE_SERIES_EOL": "ABSENT",
+            "STALE_RELEASE": "ABSENT"
+          },
+          "unknown_reasons": [],
+          "incomplete": false,
+          "source_urls": [
+            "https://github.com/ruby-concurrency/concurrent-ruby"
+          ]
+        },
+        {
+          "case_id": "pypi-pycrypto",
+          "purl": "pkg:pypi/pycrypto@2.6.1",
+          "group": "retired",
+          "reference_kind": "REPOSITORY_ARCHIVAL",
+          "goal": "EOL",
+          "goal_met": false,
+          "lifecycle": "UNKNOWN",
+          "confidence": null,
+          "eol_basis": null,
+          "version_verification": "VERIFIED",
+          "signals": {
+            "ARCHIVED": "UNKNOWN",
+            "DECLARED_UNMAINTAINED": "ABSENT",
+            "DEPRECATED": "ABSENT",
+            "RELEASE_SERIES_EOL": "ABSENT",
+            "STALE_RELEASE": "PRESENT"
+          },
+          "unknown_reasons": [
+            "EOL_RULE_UNRESOLVED",
+            "NO_LIFECYCLE_EVIDENCE"
+          ],
+          "incomplete": true,
+          "source_urls": [
+            "https://github.com/pycrypto/pycrypto"
+          ]
+        },
+        {
+          "case_id": "pypi-nose",
+          "purl": "pkg:pypi/nose@1.3.7",
+          "group": "inactivity_candidate",
+          "reference_kind": "INACTIVITY_CANDIDATE",
+          "goal": null,
+          "goal_met": null,
+          "lifecycle": "UNKNOWN",
+          "confidence": null,
+          "eol_basis": null,
+          "version_verification": "VERIFIED",
+          "signals": {
+            "ARCHIVED": "UNKNOWN",
+            "DECLARED_UNMAINTAINED": "ABSENT",
+            "DEPRECATED": "ABSENT",
+            "RELEASE_SERIES_EOL": "ABSENT",
+            "STALE_RELEASE": "PRESENT"
+          },
+          "unknown_reasons": [
+            "EOL_RULE_UNRESOLVED",
+            "NO_LIFECYCLE_EVIDENCE"
+          ],
+          "incomplete": true,
+          "source_urls": [
+            "https://nose.readthedocs.io/en/latest/"
+          ]
+        },
+        {
+          "case_id": "pypi-django-rest-swagger",
+          "purl": "pkg:pypi/django-rest-swagger@2.2.0",
+          "group": "retired",
+          "reference_kind": "REPOSITORY_ARCHIVAL",
+          "goal": "EOL",
+          "goal_met": true,
+          "lifecycle": "EOL",
+          "confidence": "MEDIUM",
+          "eol_basis": "POLICY_RULE",
+          "version_verification": "VERIFIED",
+          "signals": {
+            "ARCHIVED": "PRESENT",
+            "DECLARED_UNMAINTAINED": "UNKNOWN",
+            "DEPRECATED": "ABSENT",
+            "RELEASE_SERIES_EOL": "ABSENT",
+            "STALE_RELEASE": "PRESENT"
+          },
+          "unknown_reasons": [],
+          "incomplete": false,
+          "source_urls": [
+            "https://github.com/marcgibbons/django-rest-swagger"
+          ]
+        },
+        {
+          "case_id": "pypi-pep8",
+          "purl": "pkg:pypi/pep8@1.7.1",
+          "group": "retired",
+          "reference_kind": "UPSTREAM_RETIREMENT",
+          "goal": "EOL",
+          "goal_met": true,
+          "lifecycle": "EOL",
+          "confidence": "MEDIUM",
+          "eol_basis": "POLICY_RULE",
+          "version_verification": "VERIFIED",
+          "signals": {
+            "ARCHIVED": "UNKNOWN",
+            "DECLARED_UNMAINTAINED": "PRESENT",
+            "DEPRECATED": "ABSENT",
+            "RELEASE_SERIES_EOL": "ABSENT",
+            "STALE_RELEASE": "PRESENT"
+          },
+          "unknown_reasons": [],
+          "incomplete": false,
+          "source_urls": [
+            "https://pypi.org/project/pep8/"
+          ]
+        },
+        {
+          "case_id": "pypi-django",
+          "purl": "pkg:pypi/django@2.2.28",
+          "group": "retired",
+          "reference_kind": "UPSTREAM_SUPPORT_END",
+          "goal": "EOL",
+          "goal_met": true,
+          "lifecycle": "EOL",
+          "confidence": "MEDIUM",
+          "eol_basis": "SUPPORT_DATE",
+          "version_verification": "VERIFIED",
+          "signals": {
+            "ARCHIVED": "ABSENT",
+            "DECLARED_UNMAINTAINED": "UNKNOWN",
+            "DEPRECATED": "ABSENT",
+            "RELEASE_SERIES_EOL": "PRESENT",
+            "STALE_RELEASE": "ABSENT"
+          },
+          "unknown_reasons": [],
+          "incomplete": false,
+          "source_urls": [
+            "https://www.djangoproject.com/weblog/2022/apr/11/security-releases/"
+          ]
+        },
+        {
+          "case_id": "pypi-attrs",
+          "purl": "pkg:pypi/attrs@25.3.0",
+          "group": "control",
+          "reference_kind": "DEFAULT_POLICY_CONTROL",
+          "goal": "NOT_EOL",
+          "goal_met": true,
+          "lifecycle": "NO_EOL_DETECTED",
+          "confidence": null,
+          "eol_basis": null,
+          "version_verification": "VERIFIED",
+          "signals": {
+            "ARCHIVED": "ABSENT",
+            "DECLARED_UNMAINTAINED": "ABSENT",
+            "DEPRECATED": "ABSENT",
+            "RELEASE_SERIES_EOL": "ABSENT",
+            "STALE_RELEASE": "ABSENT"
+          },
+          "unknown_reasons": [],
+          "incomplete": false,
+          "source_urls": [
+            "https://github.com/python-attrs/attrs"
+          ]
+        },
+        {
+          "case_id": "go-jwt",
+          "purl": "pkg:golang/github.com/dgrijalva/jwt-go@v3.2.0%2Bincompatible",
+          "group": "retired",
+          "reference_kind": "REPOSITORY_ARCHIVAL",
+          "goal": "EOL",
+          "goal_met": true,
+          "lifecycle": "EOL",
+          "confidence": "MEDIUM",
+          "eol_basis": "POLICY_RULE",
+          "version_verification": "VERIFIED",
+          "signals": {
+            "ARCHIVED": "PRESENT",
+            "DECLARED_UNMAINTAINED": "UNKNOWN",
+            "DEPRECATED": "UNKNOWN",
+            "RELEASE_SERIES_EOL": "ABSENT",
+            "STALE_RELEASE": "UNKNOWN"
+          },
+          "unknown_reasons": [],
+          "incomplete": false,
+          "source_urls": [
+            "https://github.com/dgrijalva/jwt-go"
+          ]
+        },
+        {
+          "case_id": "go-mapstructure",
+          "purl": "pkg:golang/github.com/mitchellh/mapstructure@v1.5.0",
+          "group": "retired",
+          "reference_kind": "REPOSITORY_ARCHIVAL",
+          "goal": "EOL",
+          "goal_met": true,
+          "lifecycle": "EOL",
+          "confidence": "MEDIUM",
+          "eol_basis": "POLICY_RULE",
+          "version_verification": "VERIFIED",
+          "signals": {
+            "ARCHIVED": "PRESENT",
+            "DECLARED_UNMAINTAINED": "UNKNOWN",
+            "DEPRECATED": "UNKNOWN",
+            "RELEASE_SERIES_EOL": "ABSENT",
+            "STALE_RELEASE": "UNKNOWN"
+          },
+          "unknown_reasons": [],
+          "incomplete": false,
+          "source_urls": [
+            "https://github.com/mitchellh/mapstructure"
+          ]
+        },
+        {
+          "case_id": "go-bolt",
+          "purl": "pkg:golang/github.com/boltdb/bolt@v1.3.1",
+          "group": "retired",
+          "reference_kind": "REPOSITORY_ARCHIVAL",
+          "goal": "EOL",
+          "goal_met": true,
+          "lifecycle": "EOL",
+          "confidence": "MEDIUM",
+          "eol_basis": "POLICY_RULE",
+          "version_verification": "VERIFIED",
+          "signals": {
+            "ARCHIVED": "PRESENT",
+            "DECLARED_UNMAINTAINED": "UNKNOWN",
+            "DEPRECATED": "UNKNOWN",
+            "RELEASE_SERIES_EOL": "ABSENT",
+            "STALE_RELEASE": "UNKNOWN"
+          },
+          "unknown_reasons": [],
+          "incomplete": false,
+          "source_urls": [
+            "https://github.com/boltdb/bolt"
+          ]
+        },
+        {
+          "case_id": "go-testify",
+          "purl": "pkg:golang/github.com/stretchr/testify@v1.10.0",
+          "group": "control",
+          "reference_kind": "DEFAULT_POLICY_CONTROL",
+          "goal": "NOT_EOL",
+          "goal_met": true,
+          "lifecycle": "NO_EOL_DETECTED",
+          "confidence": null,
+          "eol_basis": null,
+          "version_verification": "VERIFIED",
+          "signals": {
+            "ARCHIVED": "ABSENT",
+            "DECLARED_UNMAINTAINED": "ABSENT",
+            "DEPRECATED": "UNKNOWN",
+            "RELEASE_SERIES_EOL": "ABSENT",
+            "STALE_RELEASE": "ABSENT"
+          },
+          "unknown_reasons": [],
+          "incomplete": false,
+          "source_urls": [
+            "https://github.com/stretchr/testify"
+          ]
+        },
+        {
+          "case_id": "cargo-failure",
+          "purl": "pkg:cargo/failure@0.1.8",
+          "group": "retired",
+          "reference_kind": "REPOSITORY_ARCHIVAL",
+          "goal": "EOL",
+          "goal_met": true,
+          "lifecycle": "EOL",
+          "confidence": "MEDIUM",
+          "eol_basis": "POLICY_RULE",
+          "version_verification": "VERIFIED",
+          "signals": {
+            "ARCHIVED": "PRESENT",
+            "DECLARED_UNMAINTAINED": "UNKNOWN",
+            "DEPRECATED": "UNKNOWN",
+            "RELEASE_SERIES_EOL": "ABSENT",
+            "STALE_RELEASE": "PRESENT"
+          },
+          "unknown_reasons": [],
+          "incomplete": false,
+          "source_urls": [
+            "https://github.com/rust-lang-deprecated/failure"
+          ]
+        },
+        {
+          "case_id": "cargo-rustc-serialize",
+          "purl": "pkg:cargo/rustc-serialize@0.3.25",
+          "group": "retired",
+          "reference_kind": "REPOSITORY_ARCHIVAL",
+          "goal": "EOL",
+          "goal_met": true,
+          "lifecycle": "EOL",
+          "confidence": "MEDIUM",
+          "eol_basis": "POLICY_RULE",
+          "version_verification": "VERIFIED",
+          "signals": {
+            "ARCHIVED": "PRESENT",
+            "DECLARED_UNMAINTAINED": "UNKNOWN",
+            "DEPRECATED": "UNKNOWN",
+            "RELEASE_SERIES_EOL": "ABSENT",
+            "STALE_RELEASE": "PRESENT"
+          },
+          "unknown_reasons": [],
+          "incomplete": false,
+          "source_urls": [
+            "https://github.com/rust-lang-deprecated/rustc-serialize",
+            "https://users.rust-lang.org/t/deprecation-of-rustc-serialize/10485"
+          ]
+        },
+        {
+          "case_id": "cargo-serde-yaml",
+          "purl": "pkg:cargo/serde_yaml@0.9.34%2Bdeprecated",
+          "group": "retired",
+          "reference_kind": "UPSTREAM_RETIREMENT",
+          "goal": "EOL",
+          "goal_met": true,
+          "lifecycle": "EOL",
+          "confidence": "MEDIUM",
+          "eol_basis": "POLICY_RULE",
+          "version_verification": "VERIFIED",
+          "signals": {
+            "ARCHIVED": "PRESENT",
+            "DECLARED_UNMAINTAINED": "UNKNOWN",
+            "DEPRECATED": "UNKNOWN",
+            "RELEASE_SERIES_EOL": "ABSENT",
+            "STALE_RELEASE": "PRESENT"
+          },
+          "unknown_reasons": [],
+          "incomplete": false,
+          "source_urls": [
+            "https://github.com/dtolnay/serde-yaml/releases"
+          ]
+        },
+        {
+          "case_id": "cargo-serde",
+          "purl": "pkg:cargo/serde@1.0.228",
+          "group": "control",
+          "reference_kind": "DEFAULT_POLICY_CONTROL",
+          "goal": "NOT_EOL",
+          "goal_met": true,
+          "lifecycle": "NO_EOL_DETECTED",
+          "confidence": null,
+          "eol_basis": null,
+          "version_verification": "VERIFIED",
+          "signals": {
+            "ARCHIVED": "ABSENT",
+            "DECLARED_UNMAINTAINED": "ABSENT",
+            "DEPRECATED": "UNKNOWN",
+            "RELEASE_SERIES_EOL": "ABSENT",
+            "STALE_RELEASE": "ABSENT"
+          },
+          "unknown_reasons": [],
+          "incomplete": false,
+          "source_urls": [
+            "https://github.com/serde-rs/serde"
+          ]
+        },
+        {
+          "case_id": "maven-log4j",
+          "purl": "pkg:maven/log4j/log4j@1.2.17",
+          "group": "retired",
+          "reference_kind": "UPSTREAM_SUPPORT_END",
+          "goal": "EOL",
+          "goal_met": true,
+          "lifecycle": "EOL",
+          "confidence": "MEDIUM",
+          "eol_basis": "POLICY_RULE",
+          "version_verification": "VERIFIED",
+          "signals": {
+            "ARCHIVED": "UNKNOWN",
+            "DECLARED_UNMAINTAINED": "UNKNOWN",
+            "DEPRECATED": "UNKNOWN",
+            "RELEASE_SERIES_EOL": "PRESENT",
+            "STALE_RELEASE": "PRESENT"
+          },
+          "unknown_reasons": [],
+          "incomplete": false,
+          "source_urls": [
+            "https://logging.apache.org/log4j/1.x/"
+          ]
+        },
+        {
+          "case_id": "maven-struts",
+          "purl": "pkg:maven/org.apache.struts/struts2-core@2.3.37",
+          "group": "retired",
+          "reference_kind": "UPSTREAM_SUPPORT_END",
+          "goal": "EOL",
+          "goal_met": true,
+          "lifecycle": "EOL",
+          "confidence": "MEDIUM",
+          "eol_basis": "POLICY_RULE",
+          "version_verification": "VERIFIED",
+          "signals": {
+            "ARCHIVED": "ABSENT",
+            "DECLARED_UNMAINTAINED": "UNKNOWN",
+            "DEPRECATED": "UNKNOWN",
+            "RELEASE_SERIES_EOL": "PRESENT",
+            "STALE_RELEASE": "ABSENT"
+          },
+          "unknown_reasons": [],
+          "incomplete": false,
+          "source_urls": [
+            "https://struts.apache.org/struts23-eol-announcement"
+          ]
+        },
+        {
+          "case_id": "maven-spring",
+          "purl": "pkg:maven/org.springframework/spring-core@4.3.30.RELEASE",
+          "group": "retired",
+          "reference_kind": "UPSTREAM_SUPPORT_END",
+          "goal": "EOL",
+          "goal_met": true,
+          "lifecycle": "EOL",
+          "confidence": "MEDIUM",
+          "eol_basis": "POLICY_RULE",
+          "version_verification": "VERIFIED",
+          "signals": {
+            "ARCHIVED": "ABSENT",
+            "DECLARED_UNMAINTAINED": "UNKNOWN",
+            "DEPRECATED": "UNKNOWN",
+            "RELEASE_SERIES_EOL": "PRESENT",
+            "STALE_RELEASE": "ABSENT"
+          },
+          "unknown_reasons": [],
+          "incomplete": false,
+          "source_urls": [
+            "https://spring.io/blog/2019/12/03/spring-framework-maintenance-roadmap-in-2020-including-4-3-eol/"
+          ]
+        },
+        {
+          "case_id": "maven-httpclient",
+          "purl": "pkg:maven/commons-httpclient/commons-httpclient@3.1",
+          "group": "retired",
+          "reference_kind": "UPSTREAM_SUPPORT_END",
+          "goal": "EOL",
+          "goal_met": false,
+          "lifecycle": "UNKNOWN",
+          "confidence": null,
+          "eol_basis": null,
+          "version_verification": "VERIFIED",
+          "signals": {
+            "ARCHIVED": "UNKNOWN",
+            "DECLARED_UNMAINTAINED": "UNKNOWN",
+            "DEPRECATED": "UNKNOWN",
+            "RELEASE_SERIES_EOL": "ABSENT",
+            "STALE_RELEASE": "PRESENT"
+          },
+          "unknown_reasons": [
+            "EOL_RULE_UNRESOLVED",
+            "NO_LIFECYCLE_EVIDENCE"
+          ],
+          "incomplete": true,
+          "source_urls": [
+            "https://hc.apache.org/httpclient-legacy/"
+          ]
+        },
+        {
+          "case_id": "maven-guava",
+          "purl": "pkg:maven/com.google.guava/guava@33.4.8-jre",
+          "group": "control",
+          "reference_kind": "DEFAULT_POLICY_CONTROL",
+          "goal": "NOT_EOL",
+          "goal_met": true,
+          "lifecycle": "NO_EOL_DETECTED",
+          "confidence": null,
+          "eol_basis": null,
+          "version_verification": "VERIFIED",
+          "signals": {
+            "ARCHIVED": "ABSENT",
+            "DECLARED_UNMAINTAINED": "ABSENT",
+            "DEPRECATED": "UNKNOWN",
+            "RELEASE_SERIES_EOL": "ABSENT",
+            "STALE_RELEASE": "ABSENT"
+          },
+          "unknown_reasons": [],
+          "incomplete": false,
+          "source_urls": [
+            "https://github.com/google/guava"
+          ]
+        },
+        {
+          "case_id": "nuget-keyvault",
+          "purl": "pkg:nuget/microsoft.azure.keyvault@3.0.5",
+          "group": "retired",
+          "reference_kind": "REGISTRY_DEPRECATION",
+          "goal": "EOL",
+          "goal_met": true,
+          "lifecycle": "EOL",
+          "confidence": "MEDIUM",
+          "eol_basis": "POLICY_RULE",
+          "version_verification": "VERIFIED",
+          "signals": {
+            "ARCHIVED": "ABSENT",
+            "DECLARED_UNMAINTAINED": "UNKNOWN",
+            "DEPRECATED": "PRESENT",
+            "RELEASE_SERIES_EOL": "ABSENT",
+            "STALE_RELEASE": "UNKNOWN"
+          },
+          "unknown_reasons": [],
+          "incomplete": false,
+          "source_urls": [
+            "https://www.nuget.org/packages/Microsoft.Azure.KeyVault/3.0.5"
+          ]
+        },
+        {
+          "case_id": "nuget-documentdb",
+          "purl": "pkg:nuget/microsoft.azure.documentdb@2.22.0",
+          "group": "retired",
+          "reference_kind": "REGISTRY_DEPRECATION",
+          "goal": "EOL",
+          "goal_met": true,
+          "lifecycle": "EOL",
+          "confidence": "MEDIUM",
+          "eol_basis": "POLICY_RULE",
+          "version_verification": "VERIFIED",
+          "signals": {
+            "ARCHIVED": "UNKNOWN",
+            "DECLARED_UNMAINTAINED": "UNKNOWN",
+            "DEPRECATED": "PRESENT",
+            "RELEASE_SERIES_EOL": "ABSENT",
+            "STALE_RELEASE": "UNKNOWN"
+          },
+          "unknown_reasons": [],
+          "incomplete": false,
+          "source_urls": [
+            "https://www.nuget.org/packages/Microsoft.Azure.DocumentDB/2.22.0"
+          ]
+        },
+        {
+          "case_id": "nuget-storage",
+          "purl": "pkg:nuget/windowsazure.storage@9.3.3",
+          "group": "retired",
+          "reference_kind": "REGISTRY_DEPRECATION",
+          "goal": "EOL",
+          "goal_met": true,
+          "lifecycle": "EOL",
+          "confidence": "MEDIUM",
+          "eol_basis": "POLICY_RULE",
+          "version_verification": "VERIFIED",
+          "signals": {
+            "ARCHIVED": "PRESENT",
+            "DECLARED_UNMAINTAINED": "UNKNOWN",
+            "DEPRECATED": "PRESENT",
+            "RELEASE_SERIES_EOL": "ABSENT",
+            "STALE_RELEASE": "UNKNOWN"
+          },
+          "unknown_reasons": [],
+          "incomplete": false,
+          "source_urls": [
+            "https://www.nuget.org/packages/WindowsAzure.Storage/9.3.3"
+          ]
+        },
+        {
+          "case_id": "nuget-fluent",
+          "purl": "pkg:nuget/microsoft.azure.management.fluent@1.38.1",
+          "group": "retired",
+          "reference_kind": "REGISTRY_DEPRECATION",
+          "goal": "EOL",
+          "goal_met": true,
+          "lifecycle": "EOL",
+          "confidence": "MEDIUM",
+          "eol_basis": "POLICY_RULE",
+          "version_verification": "VERIFIED",
+          "signals": {
+            "ARCHIVED": "PRESENT",
+            "DECLARED_UNMAINTAINED": "UNKNOWN",
+            "DEPRECATED": "PRESENT",
+            "RELEASE_SERIES_EOL": "ABSENT",
+            "STALE_RELEASE": "UNKNOWN"
+          },
+          "unknown_reasons": [],
+          "incomplete": false,
+          "source_urls": [
+            "https://www.nuget.org/packages/Microsoft.Azure.Management.Fluent/1.38.1"
+          ]
+        },
+        {
+          "case_id": "nuget-newtonsoft",
+          "purl": "pkg:nuget/newtonsoft.json@13.0.3",
+          "group": "control",
+          "reference_kind": "DEFAULT_POLICY_CONTROL",
+          "goal": "NOT_EOL",
+          "goal_met": true,
+          "lifecycle": "NO_EOL_DETECTED",
+          "confidence": null,
+          "eol_basis": null,
+          "version_verification": "VERIFIED",
+          "signals": {
+            "ARCHIVED": "ABSENT",
+            "DECLARED_UNMAINTAINED": "ABSENT",
+            "DEPRECATED": "ABSENT",
+            "RELEASE_SERIES_EOL": "ABSENT",
+            "STALE_RELEASE": "ABSENT"
+          },
+          "unknown_reasons": [],
+          "incomplete": false,
+          "source_urls": [
+            "https://github.com/JamesNK/Newtonsoft.Json"
+          ]
+        },
+        {
+          "case_id": "pypi-sklearn",
+          "purl": "pkg:pypi/sklearn@0.0.post12",
+          "group": "retired",
+          "reference_kind": "UPSTREAM_RETIREMENT",
+          "goal": "EOL",
+          "goal_met": true,
+          "lifecycle": "EOL",
+          "confidence": "MEDIUM",
+          "eol_basis": "POLICY_RULE",
+          "version_verification": "VERIFIED",
+          "signals": {
+            "ARCHIVED": "UNKNOWN",
+            "DECLARED_UNMAINTAINED": "PRESENT",
+            "DEPRECATED": "ABSENT",
+            "RELEASE_SERIES_EOL": "ABSENT",
+            "STALE_RELEASE": "PRESENT"
+          },
+          "unknown_reasons": [],
+          "incomplete": false,
+          "source_urls": [
+            "https://pypi.org/project/sklearn/0.0.post12/"
+          ]
+        },
+        {
+          "case_id": "pypi-pathlib",
+          "purl": "pkg:pypi/pathlib@1.0.1",
+          "group": "retired",
+          "reference_kind": "UPSTREAM_RETIREMENT",
+          "goal": "EOL",
+          "goal_met": true,
+          "lifecycle": "EOL",
+          "confidence": "MEDIUM",
+          "eol_basis": "POLICY_RULE",
+          "version_verification": "VERIFIED",
+          "signals": {
+            "ARCHIVED": "PRESENT",
+            "DECLARED_UNMAINTAINED": "UNKNOWN",
+            "DEPRECATED": "ABSENT",
+            "RELEASE_SERIES_EOL": "ABSENT",
+            "STALE_RELEASE": "PRESENT"
+          },
+          "unknown_reasons": [],
+          "incomplete": false,
+          "source_urls": [
+            "https://pypi.org/project/pathlib/1.0.1/"
+          ]
+        },
+        {
+          "case_id": "cargo-cbor",
+          "purl": "pkg:cargo/cbor@0.4.1",
+          "group": "retired",
+          "reference_kind": "UPSTREAM_RETIREMENT",
+          "goal": "EOL",
+          "goal_met": true,
+          "lifecycle": "EOL",
+          "confidence": "MEDIUM",
+          "eol_basis": "POLICY_RULE",
+          "version_verification": "VERIFIED",
+          "signals": {
+            "ARCHIVED": "PRESENT",
+            "DECLARED_UNMAINTAINED": "UNKNOWN",
+            "DEPRECATED": "UNKNOWN",
+            "RELEASE_SERIES_EOL": "ABSENT",
+            "STALE_RELEASE": "ABSENT"
+          },
+          "unknown_reasons": [],
+          "incomplete": false,
+          "source_urls": [
+            "https://github.com/BurntSushi/rust-cbor"
+          ]
+        },
+        {
+          "case_id": "gem-jasmine-rails",
+          "purl": "pkg:gem/jasmine-rails@0.15.0",
+          "group": "retired",
+          "reference_kind": "UPSTREAM_RETIREMENT",
+          "goal": "EOL",
+          "goal_met": true,
+          "lifecycle": "EOL",
+          "confidence": "MEDIUM",
+          "eol_basis": "POLICY_RULE",
+          "version_verification": "VERIFIED",
+          "signals": {
+            "ARCHIVED": "PRESENT",
+            "DECLARED_UNMAINTAINED": "UNKNOWN",
+            "DEPRECATED": "UNKNOWN",
+            "RELEASE_SERIES_EOL": "ABSENT",
+            "STALE_RELEASE": "PRESENT"
+          },
+          "unknown_reasons": [],
+          "incomplete": false,
+          "source_urls": [
+            "https://github.com/testdouble/jasmine-rails"
+          ]
+        },
+        {
+          "case_id": "gem-better-html",
+          "purl": "pkg:gem/better_html@2.1.1",
+          "group": "retired",
+          "reference_kind": "UPSTREAM_RETIREMENT",
+          "goal": "EOL",
+          "goal_met": true,
+          "lifecycle": "EOL",
+          "confidence": "MEDIUM",
+          "eol_basis": "POLICY_RULE",
+          "version_verification": "VERIFIED",
+          "signals": {
+            "ARCHIVED": "ABSENT",
+            "DECLARED_UNMAINTAINED": "PRESENT",
+            "DEPRECATED": "UNKNOWN",
+            "RELEASE_SERIES_EOL": "ABSENT",
+            "STALE_RELEASE": "ABSENT"
+          },
+          "unknown_reasons": [],
+          "incomplete": false,
+          "source_urls": [
+            "https://github.com/Shopify/better-html"
+          ]
+        },
+        {
+          "case_id": "gem-liquid-c",
+          "purl": "pkg:gem/liquid-c@4.2.0",
+          "group": "retired",
+          "reference_kind": "UPSTREAM_RETIREMENT",
+          "goal": "EOL",
+          "goal_met": true,
+          "lifecycle": "EOL",
+          "confidence": "MEDIUM",
+          "eol_basis": "POLICY_RULE",
+          "version_verification": "VERIFIED",
+          "signals": {
+            "ARCHIVED": "PRESENT",
+            "DECLARED_UNMAINTAINED": "UNKNOWN",
+            "DEPRECATED": "UNKNOWN",
+            "RELEASE_SERIES_EOL": "ABSENT",
+            "STALE_RELEASE": "PRESENT"
+          },
+          "unknown_reasons": [],
+          "incomplete": false,
+          "source_urls": [
+            "https://github.com/Shopify/liquid-c"
+          ]
+        },
+        {
+          "case_id": "pypi-pathlib2",
+          "purl": "pkg:pypi/pathlib2@2.3.7.post1",
+          "group": "control",
+          "reference_kind": "DEFAULT_POLICY_CONTROL",
+          "goal": "NOT_EOL",
+          "goal_met": true,
+          "lifecycle": "NO_EOL_DETECTED",
+          "confidence": null,
+          "eol_basis": null,
+          "version_verification": "VERIFIED",
+          "signals": {
+            "ARCHIVED": "ABSENT",
+            "DECLARED_UNMAINTAINED": "ABSENT",
+            "DEPRECATED": "ABSENT",
+            "RELEASE_SERIES_EOL": "ABSENT",
+            "STALE_RELEASE": "PRESENT"
+          },
+          "unknown_reasons": [],
+          "incomplete": false,
+          "source_urls": [
+            "https://pypi.org/project/pathlib2/2.3.7.post1/"
+          ]
+        },
+        {
+          "case_id": "pypi-orjson",
+          "purl": "pkg:pypi/orjson@3.11.3",
+          "group": "control",
+          "reference_kind": "DEFAULT_POLICY_CONTROL",
+          "goal": "NOT_EOL",
+          "goal_met": true,
+          "lifecycle": "NO_EOL_DETECTED",
+          "confidence": null,
+          "eol_basis": null,
+          "version_verification": "VERIFIED",
+          "signals": {
+            "ARCHIVED": "ABSENT",
+            "DECLARED_UNMAINTAINED": "ABSENT",
+            "DEPRECATED": "ABSENT",
+            "RELEASE_SERIES_EOL": "ABSENT",
+            "STALE_RELEASE": "ABSENT"
+          },
+          "unknown_reasons": [],
+          "incomplete": false,
+          "source_urls": [
+            "https://github.com/ijl/orjson",
+            "https://pypi.org/project/orjson/3.11.3/"
+          ]
+        }
+      ],
+      "cli_exit_code": 0
+    },
+    "inactivity": {
+      "as_of": "2026-10-16",
+      "generated_at": "2026-10-16T18:55:36.558395Z",
+      "tool_version": "0.6.0",
+      "policy_hash": "c3ee6ed4fd4e8bb833958a7f494d6a2b0c508579917131ec4afa51139e47fde5",
+      "input_sha256": "4a01480521d21ea515100059602a3d8c11046a7d4138875d7ac0f7bf9f0fd23f",
+      "cli_summary": {
+        "in_scope": 47,
+        "excluded": 0,
+        "eol": 39,
+        "supported": 0,
+        "unknown": 0,
+        "no_eol_detected": 8,
+        "assessment_coverage": 1,
+        "provider_error_count": 1,
+        "ci_failure_count": 39
+      },
+      "ci_gate": {
+        "passed": false,
+        "violation_codes": [
+          "COMPONENT_POLICY_VIOLATION"
+        ],
+        "incomplete": false
+      },
+      "reviewed_retirement_targets": 36,
+      "retirement_targets_detected": 36,
+      "by_reference_kind": {
+        "DEFAULT_POLICY_CONTROL": {
+          "total": 10,
+          "eol": 2,
+          "unknown": 0
+        },
+        "INACTIVITY_CANDIDATE": {
+          "total": 1,
+          "eol": 1,
+          "unknown": 0
+        },
+        "REGISTRY_DEPRECATION": {
+          "total": 11,
+          "eol": 11,
+          "unknown": 0
+        },
+        "REPOSITORY_ARCHIVAL": {
+          "total": 7,
+          "eol": 7,
+          "unknown": 0
+        },
+        "UPSTREAM_RETIREMENT": {
+          "total": 10,
+          "eol": 10,
+          "unknown": 0
+        },
+        "UPSTREAM_SUPPORT_END": {
+          "total": 8,
+          "eol": 8,
+          "unknown": 0
+        }
+      },
+      "goal_misses": [],
+      "results": [
+        {
+          "case_id": "npm-request",
+          "purl": "pkg:npm/request@2.88.2",
+          "group": "retired",
+          "reference_kind": "REGISTRY_DEPRECATION",
+          "goal": "EOL",
+          "goal_met": true,
+          "lifecycle": "EOL",
+          "confidence": "MEDIUM",
+          "eol_basis": "POLICY_RULE",
+          "version_verification": "VERIFIED",
+          "signals": {
+            "ARCHIVED": "ABSENT",
+            "DECLARED_UNMAINTAINED": "UNKNOWN",
+            "DEPRECATED": "PRESENT",
+            "RELEASE_SERIES_EOL": "ABSENT",
+            "STALE_RELEASE": "PRESENT"
+          },
+          "unknown_reasons": [],
+          "incomplete": false,
+          "source_urls": [
+            "https://github.com/request/request",
+            "https://registry.npmjs.org/request/2.88.2"
+          ]
+        },
+        {
+          "case_id": "npm-node-sass",
+          "purl": "pkg:npm/node-sass@9.0.0",
+          "group": "retired",
+          "reference_kind": "UPSTREAM_SUPPORT_END",
+          "goal": "EOL",
+          "goal_met": true,
+          "lifecycle": "EOL",
+          "confidence": "MEDIUM",
+          "eol_basis": "POLICY_RULE",
+          "version_verification": "VERIFIED",
+          "signals": {
+            "ARCHIVED": "PRESENT",
+            "DECLARED_UNMAINTAINED": "UNKNOWN",
+            "DEPRECATED": "PRESENT",
+            "RELEASE_SERIES_EOL": "ABSENT",
+            "STALE_RELEASE": "PRESENT"
+          },
+          "unknown_reasons": [],
+          "incomplete": false,
+          "source_urls": [
+            "https://sass-lang.com/blog/node-sass-is-end-of-life/",
+            "https://registry.npmjs.org/node-sass/9.0.0"
+          ]
+        },
+        {
+          "case_id": "npm-har-validator",
+          "purl": "pkg:npm/har-validator@5.1.5",
+          "group": "retired",
+          "reference_kind": "REGISTRY_DEPRECATION",
+          "goal": "EOL",
+          "goal_met": true,
+          "lifecycle": "EOL",
+          "confidence": "MEDIUM",
+          "eol_basis": "POLICY_RULE",
+          "version_verification": "VERIFIED",
+          "signals": {
+            "ARCHIVED": "ABSENT",
+            "DECLARED_UNMAINTAINED": "UNKNOWN",
+            "DEPRECATED": "PRESENT",
+            "RELEASE_SERIES_EOL": "ABSENT",
+            "STALE_RELEASE": "PRESENT"
+          },
+          "unknown_reasons": [],
+          "incomplete": false,
+          "source_urls": [
+            "https://registry.npmjs.org/har-validator/5.1.5"
+          ]
+        },
+        {
+          "case_id": "npm-istanbul",
+          "purl": "pkg:npm/istanbul@0.4.5",
+          "group": "retired",
+          "reference_kind": "REGISTRY_DEPRECATION",
+          "goal": "EOL",
+          "goal_met": true,
+          "lifecycle": "EOL",
+          "confidence": "MEDIUM",
+          "eol_basis": "POLICY_RULE",
+          "version_verification": "VERIFIED",
+          "signals": {
+            "ARCHIVED": "PRESENT",
+            "DECLARED_UNMAINTAINED": "UNKNOWN",
+            "DEPRECATED": "PRESENT",
+            "RELEASE_SERIES_EOL": "ABSENT",
+            "STALE_RELEASE": "PRESENT"
+          },
+          "unknown_reasons": [],
+          "incomplete": false,
+          "source_urls": [
+            "https://registry.npmjs.org/istanbul/0.4.5"
+          ]
+        },
+        {
+          "case_id": "npm-glob",
+          "purl": "pkg:npm/glob@7.2.3",
+          "group": "retired",
+          "reference_kind": "REGISTRY_DEPRECATION",
+          "goal": "EOL",
+          "goal_met": true,
+          "lifecycle": "EOL",
+          "confidence": "MEDIUM",
+          "eol_basis": "POLICY_RULE",
+          "version_verification": "VERIFIED",
+          "signals": {
+            "ARCHIVED": "ABSENT",
+            "DECLARED_UNMAINTAINED": "UNKNOWN",
+            "DEPRECATED": "PRESENT",
+            "RELEASE_SERIES_EOL": "ABSENT",
+            "STALE_RELEASE": "ABSENT"
+          },
+          "unknown_reasons": [],
+          "incomplete": false,
+          "source_urls": [
+            "https://registry.npmjs.org/glob/7.2.3"
+          ]
+        },
+        {
+          "case_id": "npm-rimraf",
+          "purl": "pkg:npm/rimraf@3.0.2",
+          "group": "retired",
+          "reference_kind": "REGISTRY_DEPRECATION",
+          "goal": "EOL",
+          "goal_met": true,
+          "lifecycle": "EOL",
+          "confidence": "MEDIUM",
+          "eol_basis": "POLICY_RULE",
+          "version_verification": "VERIFIED",
+          "signals": {
+            "ARCHIVED": "ABSENT",
+            "DECLARED_UNMAINTAINED": "UNKNOWN",
+            "DEPRECATED": "PRESENT",
+            "RELEASE_SERIES_EOL": "ABSENT",
+            "STALE_RELEASE": "ABSENT"
+          },
+          "unknown_reasons": [],
+          "incomplete": false,
+          "source_urls": [
+            "https://registry.npmjs.org/rimraf/3.0.2"
+          ]
+        },
+        {
+          "case_id": "npm-left-pad",
+          "purl": "pkg:npm/left-pad@1.3.0",
+          "group": "retired",
+          "reference_kind": "REGISTRY_DEPRECATION",
+          "goal": "EOL",
+          "goal_met": true,
+          "lifecycle": "EOL",
+          "confidence": "MEDIUM",
+          "eol_basis": "POLICY_RULE",
+          "version_verification": "VERIFIED",
+          "signals": {
+            "ARCHIVED": "PRESENT",
+            "DECLARED_UNMAINTAINED": "UNKNOWN",
+            "DEPRECATED": "PRESENT",
+            "RELEASE_SERIES_EOL": "ABSENT",
+            "STALE_RELEASE": "PRESENT"
+          },
+          "unknown_reasons": [],
+          "incomplete": false,
+          "source_urls": [
+            "https://registry.npmjs.org/left-pad/1.3.0"
+          ]
+        },
+        {
+          "case_id": "npm-uuid",
+          "purl": "pkg:npm/uuid@3.4.0",
+          "group": "retired",
+          "reference_kind": "REGISTRY_DEPRECATION",
+          "goal": "EOL",
+          "goal_met": true,
+          "lifecycle": "EOL",
+          "confidence": "MEDIUM",
+          "eol_basis": "POLICY_RULE",
+          "version_verification": "VERIFIED",
+          "signals": {
+            "ARCHIVED": "ABSENT",
+            "DECLARED_UNMAINTAINED": "UNKNOWN",
+            "DEPRECATED": "PRESENT",
+            "RELEASE_SERIES_EOL": "ABSENT",
+            "STALE_RELEASE": "ABSENT"
+          },
+          "unknown_reasons": [],
+          "incomplete": false,
+          "source_urls": [
+            "https://registry.npmjs.org/uuid/3.4.0"
+          ]
+        },
+        {
+          "case_id": "npm-picocolors",
+          "purl": "pkg:npm/picocolors@1.1.1",
+          "group": "control",
+          "reference_kind": "DEFAULT_POLICY_CONTROL",
+          "goal": "NOT_EOL",
+          "goal_met": true,
+          "lifecycle": "NO_EOL_DETECTED",
+          "confidence": null,
+          "eol_basis": null,
+          "version_verification": "VERIFIED",
+          "signals": {
+            "ARCHIVED": "ABSENT",
+            "DECLARED_UNMAINTAINED": "ABSENT",
+            "DEPRECATED": "ABSENT",
+            "RELEASE_SERIES_EOL": "ABSENT",
+            "STALE_RELEASE": "ABSENT"
+          },
+          "unknown_reasons": [],
+          "incomplete": false,
+          "source_urls": [
+            "https://github.com/alexeyraspopov/picocolors",
+            "https://registry.npmjs.org/picocolors/1.1.1"
+          ]
+        },
+        {
+          "case_id": "npm-is-number",
+          "purl": "pkg:npm/is-number@7.0.0",
+          "group": "control",
+          "reference_kind": "DEFAULT_POLICY_CONTROL",
+          "goal": "EOL",
+          "goal_met": true,
+          "lifecycle": "EOL",
+          "confidence": "MEDIUM",
+          "eol_basis": "POLICY_RULE",
+          "version_verification": "VERIFIED",
+          "signals": {
+            "ARCHIVED": "ABSENT",
+            "DECLARED_UNMAINTAINED": "ABSENT",
+            "DEPRECATED": "ABSENT",
+            "RELEASE_SERIES_EOL": "ABSENT",
+            "STALE_RELEASE": "PRESENT"
+          },
+          "unknown_reasons": [],
+          "incomplete": false,
+          "source_urls": [
+            "https://github.com/jonschlinkert/is-number",
+            "https://registry.npmjs.org/is-number/7.0.0"
+          ]
+        },
+        {
+          "case_id": "gem-therubyracer",
+          "purl": "pkg:gem/therubyracer@0.12.3",
+          "group": "retired",
+          "reference_kind": "UPSTREAM_RETIREMENT",
+          "goal": "EOL",
+          "goal_met": true,
+          "lifecycle": "EOL",
+          "confidence": "MEDIUM",
+          "eol_basis": "POLICY_RULE",
+          "version_verification": "VERIFIED",
+          "signals": {
+            "ARCHIVED": "PRESENT",
+            "DECLARED_UNMAINTAINED": "UNKNOWN",
+            "DEPRECATED": "UNKNOWN",
+            "RELEASE_SERIES_EOL": "ABSENT",
+            "STALE_RELEASE": "PRESENT"
+          },
+          "unknown_reasons": [],
+          "incomplete": false,
+          "source_urls": [
+            "https://github.com/rubyjs/therubyracer"
+          ]
+        },
+        {
+          "case_id": "gem-sass",
+          "purl": "pkg:gem/sass@3.7.4",
+          "group": "retired",
+          "reference_kind": "UPSTREAM_SUPPORT_END",
+          "goal": "EOL",
+          "goal_met": true,
+          "lifecycle": "EOL",
+          "confidence": "MEDIUM",
+          "eol_basis": "POLICY_RULE",
+          "version_verification": "VERIFIED",
+          "signals": {
+            "ARCHIVED": "PRESENT",
+            "DECLARED_UNMAINTAINED": "UNKNOWN",
+            "DEPRECATED": "UNKNOWN",
+            "RELEASE_SERIES_EOL": "ABSENT",
+            "STALE_RELEASE": "PRESENT"
+          },
+          "unknown_reasons": [],
+          "incomplete": false,
+          "source_urls": [
+            "https://sass-lang.com/blog/ruby-sass-is-unsupported/"
+          ]
+        },
+        {
+          "case_id": "gem-thread-safe",
+          "purl": "pkg:gem/thread_safe@0.3.6",
+          "group": "retired",
+          "reference_kind": "UPSTREAM_RETIREMENT",
+          "goal": "EOL",
+          "goal_met": true,
+          "lifecycle": "EOL",
+          "confidence": "MEDIUM",
+          "eol_basis": "POLICY_RULE",
+          "version_verification": "VERIFIED",
+          "signals": {
+            "ARCHIVED": "PRESENT",
+            "DECLARED_UNMAINTAINED": "UNKNOWN",
+            "DEPRECATED": "UNKNOWN",
+            "RELEASE_SERIES_EOL": "ABSENT",
+            "STALE_RELEASE": "PRESENT"
+          },
+          "unknown_reasons": [],
+          "incomplete": false,
+          "source_urls": [
+            "https://github.com/ruby-concurrency/thread_safe"
+          ]
+        },
+        {
+          "case_id": "gem-rails",
+          "purl": "pkg:gem/rails@6.1.7.10",
+          "group": "retired",
+          "reference_kind": "UPSTREAM_SUPPORT_END",
+          "goal": "EOL",
+          "goal_met": true,
+          "lifecycle": "EOL",
+          "confidence": "MEDIUM",
+          "eol_basis": "SUPPORT_DATE",
+          "version_verification": "VERIFIED",
+          "signals": {
+            "ARCHIVED": "ABSENT",
+            "DECLARED_UNMAINTAINED": "UNKNOWN",
+            "DEPRECATED": "UNKNOWN",
+            "RELEASE_SERIES_EOL": "PRESENT",
+            "STALE_RELEASE": "ABSENT"
+          },
+          "unknown_reasons": [],
+          "incomplete": false,
+          "source_urls": [
+            "https://rubyonrails.org/2024/10/15/new-maintenance-policy-and-eol-annouments"
+          ]
+        },
+        {
+          "case_id": "gem-concurrent-ruby",
+          "purl": "pkg:gem/concurrent-ruby@1.3.5",
+          "group": "control",
+          "reference_kind": "DEFAULT_POLICY_CONTROL",
+          "goal": "NOT_EOL",
+          "goal_met": true,
+          "lifecycle": "NO_EOL_DETECTED",
+          "confidence": null,
+          "eol_basis": null,
+          "version_verification": "VERIFIED",
+          "signals": {
+            "ARCHIVED": "ABSENT",
+            "DECLARED_UNMAINTAINED": "ABSENT",
+            "DEPRECATED": "UNKNOWN",
+            "RELEASE_SERIES_EOL": "ABSENT",
+            "STALE_RELEASE": "ABSENT"
+          },
+          "unknown_reasons": [],
+          "incomplete": false,
+          "source_urls": [
+            "https://github.com/ruby-concurrency/concurrent-ruby"
+          ]
+        },
+        {
+          "case_id": "pypi-pycrypto",
+          "purl": "pkg:pypi/pycrypto@2.6.1",
+          "group": "retired",
+          "reference_kind": "REPOSITORY_ARCHIVAL",
+          "goal": "EOL",
+          "goal_met": true,
+          "lifecycle": "EOL",
+          "confidence": "MEDIUM",
+          "eol_basis": "POLICY_RULE",
+          "version_verification": "VERIFIED",
+          "signals": {
+            "ARCHIVED": "UNKNOWN",
+            "DECLARED_UNMAINTAINED": "ABSENT",
+            "DEPRECATED": "ABSENT",
+            "RELEASE_SERIES_EOL": "ABSENT",
+            "STALE_RELEASE": "PRESENT"
+          },
+          "unknown_reasons": [],
+          "incomplete": false,
+          "source_urls": [
+            "https://github.com/pycrypto/pycrypto"
+          ]
+        },
+        {
+          "case_id": "pypi-nose",
+          "purl": "pkg:pypi/nose@1.3.7",
+          "group": "inactivity_candidate",
+          "reference_kind": "INACTIVITY_CANDIDATE",
+          "goal": "EOL",
+          "goal_met": true,
+          "lifecycle": "EOL",
+          "confidence": "MEDIUM",
+          "eol_basis": "POLICY_RULE",
+          "version_verification": "VERIFIED",
+          "signals": {
+            "ARCHIVED": "UNKNOWN",
+            "DECLARED_UNMAINTAINED": "ABSENT",
+            "DEPRECATED": "ABSENT",
+            "RELEASE_SERIES_EOL": "ABSENT",
+            "STALE_RELEASE": "PRESENT"
+          },
+          "unknown_reasons": [],
+          "incomplete": false,
+          "source_urls": [
+            "https://nose.readthedocs.io/en/latest/"
+          ]
+        },
+        {
+          "case_id": "pypi-django-rest-swagger",
+          "purl": "pkg:pypi/django-rest-swagger@2.2.0",
+          "group": "retired",
+          "reference_kind": "REPOSITORY_ARCHIVAL",
+          "goal": "EOL",
+          "goal_met": true,
+          "lifecycle": "EOL",
+          "confidence": "MEDIUM",
+          "eol_basis": "POLICY_RULE",
+          "version_verification": "VERIFIED",
+          "signals": {
+            "ARCHIVED": "PRESENT",
+            "DECLARED_UNMAINTAINED": "UNKNOWN",
+            "DEPRECATED": "ABSENT",
+            "RELEASE_SERIES_EOL": "ABSENT",
+            "STALE_RELEASE": "PRESENT"
+          },
+          "unknown_reasons": [],
+          "incomplete": false,
+          "source_urls": [
+            "https://github.com/marcgibbons/django-rest-swagger"
+          ]
+        },
+        {
+          "case_id": "pypi-pep8",
+          "purl": "pkg:pypi/pep8@1.7.1",
+          "group": "retired",
+          "reference_kind": "UPSTREAM_RETIREMENT",
+          "goal": "EOL",
+          "goal_met": true,
+          "lifecycle": "EOL",
+          "confidence": "MEDIUM",
+          "eol_basis": "POLICY_RULE",
+          "version_verification": "VERIFIED",
+          "signals": {
+            "ARCHIVED": "UNKNOWN",
+            "DECLARED_UNMAINTAINED": "PRESENT",
+            "DEPRECATED": "ABSENT",
+            "RELEASE_SERIES_EOL": "ABSENT",
+            "STALE_RELEASE": "PRESENT"
+          },
+          "unknown_reasons": [],
+          "incomplete": false,
+          "source_urls": [
+            "https://pypi.org/project/pep8/"
+          ]
+        },
+        {
+          "case_id": "pypi-django",
+          "purl": "pkg:pypi/django@2.2.28",
+          "group": "retired",
+          "reference_kind": "UPSTREAM_SUPPORT_END",
+          "goal": "EOL",
+          "goal_met": true,
+          "lifecycle": "EOL",
+          "confidence": "MEDIUM",
+          "eol_basis": "SUPPORT_DATE",
+          "version_verification": "VERIFIED",
+          "signals": {
+            "ARCHIVED": "ABSENT",
+            "DECLARED_UNMAINTAINED": "UNKNOWN",
+            "DEPRECATED": "ABSENT",
+            "RELEASE_SERIES_EOL": "PRESENT",
+            "STALE_RELEASE": "ABSENT"
+          },
+          "unknown_reasons": [],
+          "incomplete": false,
+          "source_urls": [
+            "https://www.djangoproject.com/weblog/2022/apr/11/security-releases/"
+          ]
+        },
+        {
+          "case_id": "pypi-attrs",
+          "purl": "pkg:pypi/attrs@25.3.0",
+          "group": "control",
+          "reference_kind": "DEFAULT_POLICY_CONTROL",
+          "goal": "NOT_EOL",
+          "goal_met": true,
+          "lifecycle": "NO_EOL_DETECTED",
+          "confidence": null,
+          "eol_basis": null,
+          "version_verification": "VERIFIED",
+          "signals": {
+            "ARCHIVED": "ABSENT",
+            "DECLARED_UNMAINTAINED": "ABSENT",
+            "DEPRECATED": "ABSENT",
+            "RELEASE_SERIES_EOL": "ABSENT",
+            "STALE_RELEASE": "ABSENT"
+          },
+          "unknown_reasons": [],
+          "incomplete": false,
+          "source_urls": [
+            "https://github.com/python-attrs/attrs"
+          ]
+        },
+        {
+          "case_id": "go-jwt",
+          "purl": "pkg:golang/github.com/dgrijalva/jwt-go@v3.2.0%2Bincompatible",
+          "group": "retired",
+          "reference_kind": "REPOSITORY_ARCHIVAL",
+          "goal": "EOL",
+          "goal_met": true,
+          "lifecycle": "EOL",
+          "confidence": "MEDIUM",
+          "eol_basis": "POLICY_RULE",
+          "version_verification": "VERIFIED",
+          "signals": {
+            "ARCHIVED": "PRESENT",
+            "DECLARED_UNMAINTAINED": "UNKNOWN",
+            "DEPRECATED": "UNKNOWN",
+            "RELEASE_SERIES_EOL": "ABSENT",
+            "STALE_RELEASE": "UNKNOWN"
+          },
+          "unknown_reasons": [],
+          "incomplete": false,
+          "source_urls": [
+            "https://github.com/dgrijalva/jwt-go"
+          ]
+        },
+        {
+          "case_id": "go-mapstructure",
+          "purl": "pkg:golang/github.com/mitchellh/mapstructure@v1.5.0",
+          "group": "retired",
+          "reference_kind": "REPOSITORY_ARCHIVAL",
+          "goal": "EOL",
+          "goal_met": true,
+          "lifecycle": "EOL",
+          "confidence": "MEDIUM",
+          "eol_basis": "POLICY_RULE",
+          "version_verification": "VERIFIED",
+          "signals": {
+            "ARCHIVED": "PRESENT",
+            "DECLARED_UNMAINTAINED": "UNKNOWN",
+            "DEPRECATED": "UNKNOWN",
+            "RELEASE_SERIES_EOL": "ABSENT",
+            "STALE_RELEASE": "UNKNOWN"
+          },
+          "unknown_reasons": [],
+          "incomplete": false,
+          "source_urls": [
+            "https://github.com/mitchellh/mapstructure"
+          ]
+        },
+        {
+          "case_id": "go-bolt",
+          "purl": "pkg:golang/github.com/boltdb/bolt@v1.3.1",
+          "group": "retired",
+          "reference_kind": "REPOSITORY_ARCHIVAL",
+          "goal": "EOL",
+          "goal_met": true,
+          "lifecycle": "EOL",
+          "confidence": "MEDIUM",
+          "eol_basis": "POLICY_RULE",
+          "version_verification": "VERIFIED",
+          "signals": {
+            "ARCHIVED": "PRESENT",
+            "DECLARED_UNMAINTAINED": "UNKNOWN",
+            "DEPRECATED": "UNKNOWN",
+            "RELEASE_SERIES_EOL": "ABSENT",
+            "STALE_RELEASE": "UNKNOWN"
+          },
+          "unknown_reasons": [],
+          "incomplete": false,
+          "source_urls": [
+            "https://github.com/boltdb/bolt"
+          ]
+        },
+        {
+          "case_id": "go-testify",
+          "purl": "pkg:golang/github.com/stretchr/testify@v1.10.0",
+          "group": "control",
+          "reference_kind": "DEFAULT_POLICY_CONTROL",
+          "goal": "NOT_EOL",
+          "goal_met": true,
+          "lifecycle": "NO_EOL_DETECTED",
+          "confidence": null,
+          "eol_basis": null,
+          "version_verification": "VERIFIED",
+          "signals": {
+            "ARCHIVED": "ABSENT",
+            "DECLARED_UNMAINTAINED": "ABSENT",
+            "DEPRECATED": "UNKNOWN",
+            "RELEASE_SERIES_EOL": "ABSENT",
+            "STALE_RELEASE": "ABSENT"
+          },
+          "unknown_reasons": [],
+          "incomplete": false,
+          "source_urls": [
+            "https://github.com/stretchr/testify"
+          ]
+        },
+        {
+          "case_id": "cargo-failure",
+          "purl": "pkg:cargo/failure@0.1.8",
+          "group": "retired",
+          "reference_kind": "REPOSITORY_ARCHIVAL",
+          "goal": "EOL",
+          "goal_met": true,
+          "lifecycle": "EOL",
+          "confidence": "MEDIUM",
+          "eol_basis": "POLICY_RULE",
+          "version_verification": "VERIFIED",
+          "signals": {
+            "ARCHIVED": "PRESENT",
+            "DECLARED_UNMAINTAINED": "UNKNOWN",
+            "DEPRECATED": "UNKNOWN",
+            "RELEASE_SERIES_EOL": "ABSENT",
+            "STALE_RELEASE": "PRESENT"
+          },
+          "unknown_reasons": [],
+          "incomplete": false,
+          "source_urls": [
+            "https://github.com/rust-lang-deprecated/failure"
+          ]
+        },
+        {
+          "case_id": "cargo-rustc-serialize",
+          "purl": "pkg:cargo/rustc-serialize@0.3.25",
+          "group": "retired",
+          "reference_kind": "REPOSITORY_ARCHIVAL",
+          "goal": "EOL",
+          "goal_met": true,
+          "lifecycle": "EOL",
+          "confidence": "MEDIUM",
+          "eol_basis": "POLICY_RULE",
+          "version_verification": "VERIFIED",
+          "signals": {
+            "ARCHIVED": "PRESENT",
+            "DECLARED_UNMAINTAINED": "UNKNOWN",
+            "DEPRECATED": "UNKNOWN",
+            "RELEASE_SERIES_EOL": "ABSENT",
+            "STALE_RELEASE": "PRESENT"
+          },
+          "unknown_reasons": [],
+          "incomplete": false,
+          "source_urls": [
+            "https://github.com/rust-lang-deprecated/rustc-serialize",
+            "https://users.rust-lang.org/t/deprecation-of-rustc-serialize/10485"
+          ]
+        },
+        {
+          "case_id": "cargo-serde-yaml",
+          "purl": "pkg:cargo/serde_yaml@0.9.34%2Bdeprecated",
+          "group": "retired",
+          "reference_kind": "UPSTREAM_RETIREMENT",
+          "goal": "EOL",
+          "goal_met": true,
+          "lifecycle": "EOL",
+          "confidence": "MEDIUM",
+          "eol_basis": "POLICY_RULE",
+          "version_verification": "VERIFIED",
+          "signals": {
+            "ARCHIVED": "PRESENT",
+            "DECLARED_UNMAINTAINED": "UNKNOWN",
+            "DEPRECATED": "UNKNOWN",
+            "RELEASE_SERIES_EOL": "ABSENT",
+            "STALE_RELEASE": "PRESENT"
+          },
+          "unknown_reasons": [],
+          "incomplete": false,
+          "source_urls": [
+            "https://github.com/dtolnay/serde-yaml/releases"
+          ]
+        },
+        {
+          "case_id": "cargo-serde",
+          "purl": "pkg:cargo/serde@1.0.228",
+          "group": "control",
+          "reference_kind": "DEFAULT_POLICY_CONTROL",
+          "goal": "NOT_EOL",
+          "goal_met": true,
+          "lifecycle": "NO_EOL_DETECTED",
+          "confidence": null,
+          "eol_basis": null,
+          "version_verification": "VERIFIED",
+          "signals": {
+            "ARCHIVED": "ABSENT",
+            "DECLARED_UNMAINTAINED": "ABSENT",
+            "DEPRECATED": "UNKNOWN",
+            "RELEASE_SERIES_EOL": "ABSENT",
+            "STALE_RELEASE": "ABSENT"
+          },
+          "unknown_reasons": [],
+          "incomplete": false,
+          "source_urls": [
+            "https://github.com/serde-rs/serde"
+          ]
+        },
+        {
+          "case_id": "maven-log4j",
+          "purl": "pkg:maven/log4j/log4j@1.2.17",
+          "group": "retired",
+          "reference_kind": "UPSTREAM_SUPPORT_END",
+          "goal": "EOL",
+          "goal_met": true,
+          "lifecycle": "EOL",
+          "confidence": "MEDIUM",
+          "eol_basis": "POLICY_RULE",
+          "version_verification": "VERIFIED",
+          "signals": {
+            "ARCHIVED": "UNKNOWN",
+            "DECLARED_UNMAINTAINED": "UNKNOWN",
+            "DEPRECATED": "UNKNOWN",
+            "RELEASE_SERIES_EOL": "PRESENT",
+            "STALE_RELEASE": "PRESENT"
+          },
+          "unknown_reasons": [],
+          "incomplete": false,
+          "source_urls": [
+            "https://logging.apache.org/log4j/1.x/"
+          ]
+        },
+        {
+          "case_id": "maven-struts",
+          "purl": "pkg:maven/org.apache.struts/struts2-core@2.3.37",
+          "group": "retired",
+          "reference_kind": "UPSTREAM_SUPPORT_END",
+          "goal": "EOL",
+          "goal_met": true,
+          "lifecycle": "EOL",
+          "confidence": "MEDIUM",
+          "eol_basis": "POLICY_RULE",
+          "version_verification": "VERIFIED",
+          "signals": {
+            "ARCHIVED": "ABSENT",
+            "DECLARED_UNMAINTAINED": "UNKNOWN",
+            "DEPRECATED": "UNKNOWN",
+            "RELEASE_SERIES_EOL": "PRESENT",
+            "STALE_RELEASE": "ABSENT"
+          },
+          "unknown_reasons": [],
+          "incomplete": false,
+          "source_urls": [
+            "https://struts.apache.org/struts23-eol-announcement"
+          ]
+        },
+        {
+          "case_id": "maven-spring",
+          "purl": "pkg:maven/org.springframework/spring-core@4.3.30.RELEASE",
+          "group": "retired",
+          "reference_kind": "UPSTREAM_SUPPORT_END",
+          "goal": "EOL",
+          "goal_met": true,
+          "lifecycle": "EOL",
+          "confidence": "MEDIUM",
+          "eol_basis": "POLICY_RULE",
+          "version_verification": "VERIFIED",
+          "signals": {
+            "ARCHIVED": "ABSENT",
+            "DECLARED_UNMAINTAINED": "UNKNOWN",
+            "DEPRECATED": "UNKNOWN",
+            "RELEASE_SERIES_EOL": "PRESENT",
+            "STALE_RELEASE": "ABSENT"
+          },
+          "unknown_reasons": [],
+          "incomplete": false,
+          "source_urls": [
+            "https://spring.io/blog/2019/12/03/spring-framework-maintenance-roadmap-in-2020-including-4-3-eol/"
+          ]
+        },
+        {
+          "case_id": "maven-httpclient",
+          "purl": "pkg:maven/commons-httpclient/commons-httpclient@3.1",
+          "group": "retired",
+          "reference_kind": "UPSTREAM_SUPPORT_END",
+          "goal": "EOL",
+          "goal_met": true,
+          "lifecycle": "EOL",
+          "confidence": "MEDIUM",
+          "eol_basis": "POLICY_RULE",
+          "version_verification": "VERIFIED",
+          "signals": {
+            "ARCHIVED": "UNKNOWN",
+            "DECLARED_UNMAINTAINED": "UNKNOWN",
+            "DEPRECATED": "UNKNOWN",
+            "RELEASE_SERIES_EOL": "ABSENT",
+            "STALE_RELEASE": "PRESENT"
+          },
+          "unknown_reasons": [],
+          "incomplete": false,
+          "source_urls": [
+            "https://hc.apache.org/httpclient-legacy/"
+          ]
+        },
+        {
+          "case_id": "maven-guava",
+          "purl": "pkg:maven/com.google.guava/guava@33.4.8-jre",
+          "group": "control",
+          "reference_kind": "DEFAULT_POLICY_CONTROL",
+          "goal": "NOT_EOL",
+          "goal_met": true,
+          "lifecycle": "NO_EOL_DETECTED",
+          "confidence": null,
+          "eol_basis": null,
+          "version_verification": "VERIFIED",
+          "signals": {
+            "ARCHIVED": "ABSENT",
+            "DECLARED_UNMAINTAINED": "ABSENT",
+            "DEPRECATED": "UNKNOWN",
+            "RELEASE_SERIES_EOL": "ABSENT",
+            "STALE_RELEASE": "ABSENT"
+          },
+          "unknown_reasons": [],
+          "incomplete": false,
+          "source_urls": [
+            "https://github.com/google/guava"
+          ]
+        },
+        {
+          "case_id": "nuget-keyvault",
+          "purl": "pkg:nuget/microsoft.azure.keyvault@3.0.5",
+          "group": "retired",
+          "reference_kind": "REGISTRY_DEPRECATION",
+          "goal": "EOL",
+          "goal_met": true,
+          "lifecycle": "EOL",
+          "confidence": "MEDIUM",
+          "eol_basis": "POLICY_RULE",
+          "version_verification": "VERIFIED",
+          "signals": {
+            "ARCHIVED": "ABSENT",
+            "DECLARED_UNMAINTAINED": "UNKNOWN",
+            "DEPRECATED": "PRESENT",
+            "RELEASE_SERIES_EOL": "ABSENT",
+            "STALE_RELEASE": "UNKNOWN"
+          },
+          "unknown_reasons": [],
+          "incomplete": false,
+          "source_urls": [
+            "https://www.nuget.org/packages/Microsoft.Azure.KeyVault/3.0.5"
+          ]
+        },
+        {
+          "case_id": "nuget-documentdb",
+          "purl": "pkg:nuget/microsoft.azure.documentdb@2.22.0",
+          "group": "retired",
+          "reference_kind": "REGISTRY_DEPRECATION",
+          "goal": "EOL",
+          "goal_met": true,
+          "lifecycle": "EOL",
+          "confidence": "MEDIUM",
+          "eol_basis": "POLICY_RULE",
+          "version_verification": "VERIFIED",
+          "signals": {
+            "ARCHIVED": "UNKNOWN",
+            "DECLARED_UNMAINTAINED": "UNKNOWN",
+            "DEPRECATED": "PRESENT",
+            "RELEASE_SERIES_EOL": "ABSENT",
+            "STALE_RELEASE": "UNKNOWN"
+          },
+          "unknown_reasons": [],
+          "incomplete": false,
+          "source_urls": [
+            "https://www.nuget.org/packages/Microsoft.Azure.DocumentDB/2.22.0"
+          ]
+        },
+        {
+          "case_id": "nuget-storage",
+          "purl": "pkg:nuget/windowsazure.storage@9.3.3",
+          "group": "retired",
+          "reference_kind": "REGISTRY_DEPRECATION",
+          "goal": "EOL",
+          "goal_met": true,
+          "lifecycle": "EOL",
+          "confidence": "MEDIUM",
+          "eol_basis": "POLICY_RULE",
+          "version_verification": "VERIFIED",
+          "signals": {
+            "ARCHIVED": "PRESENT",
+            "DECLARED_UNMAINTAINED": "UNKNOWN",
+            "DEPRECATED": "PRESENT",
+            "RELEASE_SERIES_EOL": "ABSENT",
+            "STALE_RELEASE": "UNKNOWN"
+          },
+          "unknown_reasons": [],
+          "incomplete": false,
+          "source_urls": [
+            "https://www.nuget.org/packages/WindowsAzure.Storage/9.3.3"
+          ]
+        },
+        {
+          "case_id": "nuget-fluent",
+          "purl": "pkg:nuget/microsoft.azure.management.fluent@1.38.1",
+          "group": "retired",
+          "reference_kind": "REGISTRY_DEPRECATION",
+          "goal": "EOL",
+          "goal_met": true,
+          "lifecycle": "EOL",
+          "confidence": "MEDIUM",
+          "eol_basis": "POLICY_RULE",
+          "version_verification": "VERIFIED",
+          "signals": {
+            "ARCHIVED": "PRESENT",
+            "DECLARED_UNMAINTAINED": "UNKNOWN",
+            "DEPRECATED": "PRESENT",
+            "RELEASE_SERIES_EOL": "ABSENT",
+            "STALE_RELEASE": "UNKNOWN"
+          },
+          "unknown_reasons": [],
+          "incomplete": false,
+          "source_urls": [
+            "https://www.nuget.org/packages/Microsoft.Azure.Management.Fluent/1.38.1"
+          ]
+        },
+        {
+          "case_id": "nuget-newtonsoft",
+          "purl": "pkg:nuget/newtonsoft.json@13.0.3",
+          "group": "control",
+          "reference_kind": "DEFAULT_POLICY_CONTROL",
+          "goal": "NOT_EOL",
+          "goal_met": true,
+          "lifecycle": "NO_EOL_DETECTED",
+          "confidence": null,
+          "eol_basis": null,
+          "version_verification": "VERIFIED",
+          "signals": {
+            "ARCHIVED": "ABSENT",
+            "DECLARED_UNMAINTAINED": "ABSENT",
+            "DEPRECATED": "ABSENT",
+            "RELEASE_SERIES_EOL": "ABSENT",
+            "STALE_RELEASE": "ABSENT"
+          },
+          "unknown_reasons": [],
+          "incomplete": false,
+          "source_urls": [
+            "https://github.com/JamesNK/Newtonsoft.Json"
+          ]
+        },
+        {
+          "case_id": "pypi-sklearn",
+          "purl": "pkg:pypi/sklearn@0.0.post12",
+          "group": "retired",
+          "reference_kind": "UPSTREAM_RETIREMENT",
+          "goal": "EOL",
+          "goal_met": true,
+          "lifecycle": "EOL",
+          "confidence": "MEDIUM",
+          "eol_basis": "POLICY_RULE",
+          "version_verification": "VERIFIED",
+          "signals": {
+            "ARCHIVED": "UNKNOWN",
+            "DECLARED_UNMAINTAINED": "PRESENT",
+            "DEPRECATED": "ABSENT",
+            "RELEASE_SERIES_EOL": "ABSENT",
+            "STALE_RELEASE": "PRESENT"
+          },
+          "unknown_reasons": [],
+          "incomplete": false,
+          "source_urls": [
+            "https://pypi.org/project/sklearn/0.0.post12/"
+          ]
+        },
+        {
+          "case_id": "pypi-pathlib",
+          "purl": "pkg:pypi/pathlib@1.0.1",
+          "group": "retired",
+          "reference_kind": "UPSTREAM_RETIREMENT",
+          "goal": "EOL",
+          "goal_met": true,
+          "lifecycle": "EOL",
+          "confidence": "MEDIUM",
+          "eol_basis": "POLICY_RULE",
+          "version_verification": "VERIFIED",
+          "signals": {
+            "ARCHIVED": "PRESENT",
+            "DECLARED_UNMAINTAINED": "UNKNOWN",
+            "DEPRECATED": "ABSENT",
+            "RELEASE_SERIES_EOL": "ABSENT",
+            "STALE_RELEASE": "PRESENT"
+          },
+          "unknown_reasons": [],
+          "incomplete": false,
+          "source_urls": [
+            "https://pypi.org/project/pathlib/1.0.1/"
+          ]
+        },
+        {
+          "case_id": "cargo-cbor",
+          "purl": "pkg:cargo/cbor@0.4.1",
+          "group": "retired",
+          "reference_kind": "UPSTREAM_RETIREMENT",
+          "goal": "EOL",
+          "goal_met": true,
+          "lifecycle": "EOL",
+          "confidence": "MEDIUM",
+          "eol_basis": "POLICY_RULE",
+          "version_verification": "VERIFIED",
+          "signals": {
+            "ARCHIVED": "PRESENT",
+            "DECLARED_UNMAINTAINED": "UNKNOWN",
+            "DEPRECATED": "UNKNOWN",
+            "RELEASE_SERIES_EOL": "ABSENT",
+            "STALE_RELEASE": "ABSENT"
+          },
+          "unknown_reasons": [],
+          "incomplete": false,
+          "source_urls": [
+            "https://github.com/BurntSushi/rust-cbor"
+          ]
+        },
+        {
+          "case_id": "gem-jasmine-rails",
+          "purl": "pkg:gem/jasmine-rails@0.15.0",
+          "group": "retired",
+          "reference_kind": "UPSTREAM_RETIREMENT",
+          "goal": "EOL",
+          "goal_met": true,
+          "lifecycle": "EOL",
+          "confidence": "MEDIUM",
+          "eol_basis": "POLICY_RULE",
+          "version_verification": "VERIFIED",
+          "signals": {
+            "ARCHIVED": "PRESENT",
+            "DECLARED_UNMAINTAINED": "UNKNOWN",
+            "DEPRECATED": "UNKNOWN",
+            "RELEASE_SERIES_EOL": "ABSENT",
+            "STALE_RELEASE": "PRESENT"
+          },
+          "unknown_reasons": [],
+          "incomplete": false,
+          "source_urls": [
+            "https://github.com/testdouble/jasmine-rails"
+          ]
+        },
+        {
+          "case_id": "gem-better-html",
+          "purl": "pkg:gem/better_html@2.1.1",
+          "group": "retired",
+          "reference_kind": "UPSTREAM_RETIREMENT",
+          "goal": "EOL",
+          "goal_met": true,
+          "lifecycle": "EOL",
+          "confidence": "MEDIUM",
+          "eol_basis": "POLICY_RULE",
+          "version_verification": "VERIFIED",
+          "signals": {
+            "ARCHIVED": "ABSENT",
+            "DECLARED_UNMAINTAINED": "PRESENT",
+            "DEPRECATED": "UNKNOWN",
+            "RELEASE_SERIES_EOL": "ABSENT",
+            "STALE_RELEASE": "ABSENT"
+          },
+          "unknown_reasons": [],
+          "incomplete": false,
+          "source_urls": [
+            "https://github.com/Shopify/better-html"
+          ]
+        },
+        {
+          "case_id": "gem-liquid-c",
+          "purl": "pkg:gem/liquid-c@4.2.0",
+          "group": "retired",
+          "reference_kind": "UPSTREAM_RETIREMENT",
+          "goal": "EOL",
+          "goal_met": true,
+          "lifecycle": "EOL",
+          "confidence": "MEDIUM",
+          "eol_basis": "POLICY_RULE",
+          "version_verification": "VERIFIED",
+          "signals": {
+            "ARCHIVED": "PRESENT",
+            "DECLARED_UNMAINTAINED": "UNKNOWN",
+            "DEPRECATED": "UNKNOWN",
+            "RELEASE_SERIES_EOL": "ABSENT",
+            "STALE_RELEASE": "PRESENT"
+          },
+          "unknown_reasons": [],
+          "incomplete": false,
+          "source_urls": [
+            "https://github.com/Shopify/liquid-c"
+          ]
+        },
+        {
+          "case_id": "pypi-pathlib2",
+          "purl": "pkg:pypi/pathlib2@2.3.7.post1",
+          "group": "control",
+          "reference_kind": "DEFAULT_POLICY_CONTROL",
+          "goal": "EOL",
+          "goal_met": true,
+          "lifecycle": "EOL",
+          "confidence": "MEDIUM",
+          "eol_basis": "POLICY_RULE",
+          "version_verification": "VERIFIED",
+          "signals": {
+            "ARCHIVED": "ABSENT",
+            "DECLARED_UNMAINTAINED": "ABSENT",
+            "DEPRECATED": "ABSENT",
+            "RELEASE_SERIES_EOL": "ABSENT",
+            "STALE_RELEASE": "PRESENT"
+          },
+          "unknown_reasons": [],
+          "incomplete": false,
+          "source_urls": [
+            "https://pypi.org/project/pathlib2/2.3.7.post1/"
+          ]
+        },
+        {
+          "case_id": "pypi-orjson",
+          "purl": "pkg:pypi/orjson@3.11.3",
+          "group": "control",
+          "reference_kind": "DEFAULT_POLICY_CONTROL",
+          "goal": "NOT_EOL",
+          "goal_met": true,
+          "lifecycle": "NO_EOL_DETECTED",
+          "confidence": null,
+          "eol_basis": null,
+          "version_verification": "VERIFIED",
+          "signals": {
+            "ARCHIVED": "ABSENT",
+            "DECLARED_UNMAINTAINED": "ABSENT",
+            "DEPRECATED": "ABSENT",
+            "RELEASE_SERIES_EOL": "ABSENT",
+            "STALE_RELEASE": "ABSENT"
+          },
+          "unknown_reasons": [],
+          "incomplete": false,
+          "source_urls": [
+            "https://github.com/ijl/orjson",
+            "https://pypi.org/project/orjson/3.11.3/"
+          ]
+        }
+      ],
+      "cli_exit_code": 1
+    },
+    "declarations": {
+      "as_of": "2026-10-16",
+      "generated_at": "2026-10-16T18:55:36.944285Z",
+      "tool_version": "0.6.0",
+      "policy_hash": "0261129825edbcd2381387975f52bc81a09436491a5ddd8b6920af90c6cec3d6",
+      "input_sha256": "5dc43f105f959ab1a4e2ebadfde27d5886a448447983b458adfaacbf96912895",
+      "cli_summary": {
+        "in_scope": 9,
+        "excluded": 0,
+        "eol": 7,
+        "supported": 0,
+        "unknown": 0,
+        "no_eol_detected": 2,
+        "assessment_coverage": 1,
+        "provider_error_count": 1,
+        "ci_failure_count": 7
+      },
+      "ci_gate": {
+        "passed": false,
+        "violation_codes": [
+          "COMPONENT_POLICY_VIOLATION"
+        ],
+        "incomplete": false
+      },
+      "reviewed_retirement_targets": 7,
+      "retirement_targets_detected": 7,
+      "by_reference_kind": {
+        "DEFAULT_POLICY_CONTROL": {
+          "total": 2,
+          "eol": 0,
+          "unknown": 0
+        },
+        "UPSTREAM_RETIREMENT": {
+          "total": 7,
+          "eol": 7,
+          "unknown": 0
+        }
+      },
+      "goal_misses": [],
+      "results": [
+        {
+          "case_id": "pypi-pep8",
+          "purl": "pkg:pypi/pep8@1.7.1",
+          "group": "retired",
+          "reference_kind": "UPSTREAM_RETIREMENT",
+          "goal": "EOL",
+          "goal_met": true,
+          "lifecycle": "EOL",
+          "confidence": "MEDIUM",
+          "eol_basis": "POLICY_RULE",
+          "version_verification": "VERIFIED",
+          "signals": {
+            "DECLARED_UNMAINTAINED": "PRESENT",
+            "DEPRECATED": "ABSENT",
+            "STALE_RELEASE": "PRESENT"
+          },
+          "unknown_reasons": [],
+          "incomplete": false,
+          "source_urls": [
+            "https://pypi.org/project/pep8/"
+          ]
+        },
+        {
+          "case_id": "pypi-sklearn",
+          "purl": "pkg:pypi/sklearn@0.0.post12",
+          "group": "retired",
+          "reference_kind": "UPSTREAM_RETIREMENT",
+          "goal": "EOL",
+          "goal_met": true,
+          "lifecycle": "EOL",
+          "confidence": "MEDIUM",
+          "eol_basis": "POLICY_RULE",
+          "version_verification": "VERIFIED",
+          "signals": {
+            "DECLARED_UNMAINTAINED": "PRESENT",
+            "DEPRECATED": "ABSENT",
+            "STALE_RELEASE": "PRESENT"
+          },
+          "unknown_reasons": [],
+          "incomplete": false,
+          "source_urls": [
+            "https://pypi.org/project/sklearn/0.0.post12/"
+          ]
+        },
+        {
+          "case_id": "pypi-pathlib",
+          "purl": "pkg:pypi/pathlib@1.0.1",
+          "group": "retired",
+          "reference_kind": "UPSTREAM_RETIREMENT",
+          "goal": "EOL",
+          "goal_met": true,
+          "lifecycle": "EOL",
+          "confidence": "MEDIUM",
+          "eol_basis": "POLICY_RULE",
+          "version_verification": "VERIFIED",
+          "signals": {
+            "DECLARED_UNMAINTAINED": "PRESENT",
+            "DEPRECATED": "ABSENT",
+            "STALE_RELEASE": "PRESENT"
+          },
+          "unknown_reasons": [],
+          "incomplete": false,
+          "source_urls": [
+            "https://pypi.org/project/pathlib/1.0.1/"
+          ]
+        },
+        {
+          "case_id": "cargo-cbor",
+          "purl": "pkg:cargo/cbor@0.4.1",
+          "group": "retired",
+          "reference_kind": "UPSTREAM_RETIREMENT",
+          "goal": "EOL",
+          "goal_met": true,
+          "lifecycle": "EOL",
+          "confidence": "MEDIUM",
+          "eol_basis": "POLICY_RULE",
+          "version_verification": "VERIFIED",
+          "signals": {
+            "DECLARED_UNMAINTAINED": "PRESENT",
+            "DEPRECATED": "UNKNOWN",
+            "STALE_RELEASE": "ABSENT"
+          },
+          "unknown_reasons": [],
+          "incomplete": false,
+          "source_urls": [
+            "https://github.com/BurntSushi/rust-cbor"
+          ]
+        },
+        {
+          "case_id": "gem-jasmine-rails",
+          "purl": "pkg:gem/jasmine-rails@0.15.0",
+          "group": "retired",
+          "reference_kind": "UPSTREAM_RETIREMENT",
+          "goal": "EOL",
+          "goal_met": true,
+          "lifecycle": "EOL",
+          "confidence": "MEDIUM",
+          "eol_basis": "POLICY_RULE",
+          "version_verification": "VERIFIED",
+          "signals": {
+            "DECLARED_UNMAINTAINED": "PRESENT",
+            "DEPRECATED": "UNKNOWN",
+            "STALE_RELEASE": "PRESENT"
+          },
+          "unknown_reasons": [],
+          "incomplete": false,
+          "source_urls": [
+            "https://github.com/testdouble/jasmine-rails"
+          ]
+        },
+        {
+          "case_id": "gem-better-html",
+          "purl": "pkg:gem/better_html@2.1.1",
+          "group": "retired",
+          "reference_kind": "UPSTREAM_RETIREMENT",
+          "goal": "EOL",
+          "goal_met": true,
+          "lifecycle": "EOL",
+          "confidence": "MEDIUM",
+          "eol_basis": "POLICY_RULE",
+          "version_verification": "VERIFIED",
+          "signals": {
+            "DECLARED_UNMAINTAINED": "PRESENT",
+            "DEPRECATED": "UNKNOWN",
+            "STALE_RELEASE": "ABSENT"
+          },
+          "unknown_reasons": [],
+          "incomplete": false,
+          "source_urls": [
+            "https://github.com/Shopify/better-html"
+          ]
+        },
+        {
+          "case_id": "gem-liquid-c",
+          "purl": "pkg:gem/liquid-c@4.2.0",
+          "group": "retired",
+          "reference_kind": "UPSTREAM_RETIREMENT",
+          "goal": "EOL",
+          "goal_met": true,
+          "lifecycle": "EOL",
+          "confidence": "MEDIUM",
+          "eol_basis": "POLICY_RULE",
+          "version_verification": "VERIFIED",
+          "signals": {
+            "DECLARED_UNMAINTAINED": "PRESENT",
+            "DEPRECATED": "UNKNOWN",
+            "STALE_RELEASE": "PRESENT"
+          },
+          "unknown_reasons": [],
+          "incomplete": false,
+          "source_urls": [
+            "https://github.com/Shopify/liquid-c"
+          ]
+        },
+        {
+          "case_id": "pypi-pathlib2",
+          "purl": "pkg:pypi/pathlib2@2.3.7.post1",
+          "group": "control",
+          "reference_kind": "DEFAULT_POLICY_CONTROL",
+          "goal": "NOT_EOL",
+          "goal_met": true,
+          "lifecycle": "NO_EOL_DETECTED",
+          "confidence": null,
+          "eol_basis": null,
+          "version_verification": "VERIFIED",
+          "signals": {
+            "DECLARED_UNMAINTAINED": "ABSENT",
+            "DEPRECATED": "ABSENT",
+            "STALE_RELEASE": "PRESENT"
+          },
+          "unknown_reasons": [],
+          "incomplete": false,
+          "source_urls": [
+            "https://pypi.org/project/pathlib2/2.3.7.post1/"
+          ]
+        },
+        {
+          "case_id": "pypi-orjson",
+          "purl": "pkg:pypi/orjson@3.11.3",
+          "group": "control",
+          "reference_kind": "DEFAULT_POLICY_CONTROL",
+          "goal": "NOT_EOL",
+          "goal_met": true,
+          "lifecycle": "NO_EOL_DETECTED",
+          "confidence": null,
+          "eol_basis": null,
+          "version_verification": "VERIFIED",
+          "signals": {
+            "DECLARED_UNMAINTAINED": "ABSENT",
+            "DEPRECATED": "ABSENT",
+            "STALE_RELEASE": "ABSENT"
+          },
+          "unknown_reasons": [],
+          "incomplete": false,
+          "source_urls": [
+            "https://github.com/ijl/orjson",
+            "https://pypi.org/project/orjson/3.11.3/"
+          ]
+        }
+      ],
+      "cli_exit_code": 1
+    }
+  },
+  "combined_retirement_targets": 36,
+  "combined_retirement_targets_detected": 36
+}

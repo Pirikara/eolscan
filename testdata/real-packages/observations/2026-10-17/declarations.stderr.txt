@@ -1,0 +1,1 @@
+WARNING: 7 component(s) classified as EOL under the configured policy; see eol_basis and matched rules in the report.

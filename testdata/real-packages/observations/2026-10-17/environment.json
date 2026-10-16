@@ -1,0 +1,7 @@
+{
+  "github_authentication": "existing gh authentication passed through EOLSCAN_GITHUB_TOKEN without logging or persistence",
+  "persistent_cache": true,
+  "local_catalog": false,
+  "as_of_argument": null,
+  "response_collection": "Online CLI scans reuse same-day API responses fetched on 2026-10-17 JST; parser corrections were re-scanned against those cached responses."
+}

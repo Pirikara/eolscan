@@ -1,0 +1,102 @@
+schema_version: 2
+input:
+  include_component_types:
+  - library
+  - framework
+  - application
+  - operating-system
+  include_metadata_component: false
+  max_input_bytes: 52428800
+  max_components: 100000
+  max_json_depth: 128
+sources:
+  npm:
+    enabled: true
+    base_url: https://registry.npmjs.org
+  pypi:
+    enabled: true
+    base_url: https://pypi.org
+  rubygems:
+    enabled: true
+    base_url: https://rubygems.org
+  github:
+    enabled: true
+    base_url: https://api.github.com
+    token_env: EOLSCAN_GITHUB_TOKEN
+  official_catalog:
+    enabled: false
+    path: null
+  endoflife_date:
+    enabled: true
+    base_url: https://endoflife.date/api/v1
+    match_purl_exactly: true
+    use_security_support_label: true
+  deps_dev:
+    enabled: true
+    base_url: https://api.deps.dev/v3
+version_verification:
+  mode: required
+  sources:
+  - official_catalog
+  - registries
+  - deps_dev
+signals:
+  deprecated: true
+  yanked: false
+  archived: false
+  quarantined: false
+  stale_release_days: 730
+notices:
+  eol_soon_days: 90
+decision:
+  support_scope: upstream_security
+  max_evidence_age_days: 30
+  use_support_dates: true
+  eol_rules:
+  - id: deprecated
+    any_of:
+    - DEPRECATED
+    ecosystems:
+    - npm
+    - pypi
+    - nuget
+  - id: archived
+    any_of:
+    - ARCHIVED
+  - id: ended-release-series
+    any_of:
+    - RELEASE_SERIES_EOL
+  - id: declared-unmaintained
+    any_of:
+    - DECLARED_UNMAINTAINED
+network:
+  allowed_hosts:
+  - endoflife.date
+  - api.deps.dev
+  - registry.npmjs.org
+  - pypi.org
+  - rubygems.org
+  - api.github.com
+  timeout_seconds: 8
+  retries: 2
+  max_concurrency: 6
+  requests_per_second: 2
+  burst: 1
+  max_wait_seconds: 30
+  host_limits: {}
+cache:
+  enabled: true
+  positive_ttl_hours: 24
+  negative_ttl_hours: 6
+ci:
+  fail_on_statuses:
+  - EOL
+  min_confidence: HIGH
+  fail_on_signals: []
+  fail_on_incomplete_scan: false
+  max_unknown_ratio: null
+exceptions:
+  path: null
+output:
+  include_unknown: true
+  include_evidence: true

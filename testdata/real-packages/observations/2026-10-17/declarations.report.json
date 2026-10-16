@@ -1,0 +1,926 @@
+{
+  "schema_version": "2.5",
+  "tool_version": "0.6.0",
+  "as_of": "2026-10-16",
+  "projection": false,
+  "generated_at": "2026-10-16T18:55:36.944285Z",
+  "input_sha256": "5dc43f105f959ab1a4e2ebadfde27d5886a448447983b458adfaacbf96912895",
+  "policy_hash": "0261129825edbcd2381387975f52bc81a09436491a5ddd8b6920af90c6cec3d6",
+  "summary": {
+    "in_scope": 9,
+    "excluded": 0,
+    "eol": 7,
+    "supported": 0,
+    "unknown": 0,
+    "no_eol_detected": 2,
+    "assessment_coverage": 1,
+    "provider_error_count": 1,
+    "ci_failure_count": 7
+  },
+  "ci_gate": {
+    "passed": false,
+    "violation_codes": [
+      "COMPONENT_POLICY_VIOLATION"
+    ],
+    "incomplete": false
+  },
+  "results": [
+    {
+      "source_ref": "cargo-cbor",
+      "purl": "pkg:cargo/cbor@0.4.1",
+      "name": "cbor",
+      "version": "0.4.1",
+      "version_verification": {
+        "status": "VERIFIED",
+        "provider_id": "deps_dev",
+        "source_url": "https://api.deps.dev/v3/systems/cargo/packages/cbor/versions/0.4.1",
+        "checked_at": "2026-10-16T18:46:31.047256Z",
+        "published_at": "2018-07-24T15:17:49Z",
+        "reason_code": null
+      },
+      "lifecycle": "EOL",
+      "support_assessment": {
+        "lifecycle": "UNKNOWN",
+        "confidence": null,
+        "eol_effective_date": null,
+        "matched_cycle": null,
+        "selected_evidence_ids": [],
+        "unknown_reasons": [
+          "NO_LIFECYCLE_EVIDENCE"
+        ]
+      },
+      "eol_basis": "POLICY_RULE",
+      "eol_rule_evaluations": [
+        {
+          "rule_id": "declared-unmaintained",
+          "status": "PRESENT",
+          "matched_signals": [
+            "DECLARED_UNMAINTAINED"
+          ],
+          "unknown_signals": [],
+          "reason_code": null
+        }
+      ],
+      "confidence": "MEDIUM",
+      "eol_effective_date": null,
+      "matched_cycle": null,
+      "signals": [
+        {
+          "type": "DECLARED_UNMAINTAINED",
+          "provider_id": "github",
+          "source_url": "https://api.github.com/repos/burntsushi/rust-cbor/readme",
+          "observed_at": "2026-10-16T18:50:51.975723Z",
+          "details": {
+            "matched_text": "THIS PROJECT IS UNMAINTAINED.",
+            "pattern": "(?im)^(?:(?:this|the) (?:project|package|library|module|gem|tool|repository|crate)|(?:the )?[\"'\\x60]*{package}[\"'\\x60]*(?: (?:pypi )?package)?) (?:is |has been |is now |has now been )?(?:no longer (?:being )?(?:actively )?(?:maintained|supported)|unmaintained|deprecated|not maintained)(?:\\s*[.!,:;]|\\s*$| in (?:favor|favour) of\\b| (?:please )?use\\b)",
+            "pattern_index": 1,
+            "raw_payload_hash": "16182b50c7bb161d2d740d519e2cb573c074bc7fcdf2cf3c32beb98b9d84b8e1",
+            "repository": "https://github.com/BurntSushi/rust-cbor",
+            "scope": "source_repository_declaration",
+            "source_field": "readme.content"
+          }
+        }
+      ],
+      "signal_evaluations": [
+        {
+          "type": "DECLARED_UNMAINTAINED",
+          "status": "PRESENT",
+          "provider_id": "github",
+          "source_url": "https://api.github.com/repos/burntsushi/rust-cbor/readme",
+          "checked_at": "2026-10-16T18:50:51.975723Z",
+          "reason_code": null
+        },
+        {
+          "type": "DEPRECATED",
+          "status": "UNKNOWN",
+          "provider_id": null,
+          "source_url": null,
+          "checked_at": null,
+          "reason_code": "NO_CAPABILITY"
+        },
+        {
+          "type": "STALE_RELEASE",
+          "status": "ABSENT",
+          "provider_id": "deps_dev",
+          "source_url": "https://api.deps.dev/v3/systems/cargo/packages/cbor",
+          "checked_at": "2026-10-16T18:46:31.047256Z",
+          "reason_code": null
+        }
+      ],
+      "selected_evidence_ids": [],
+      "notices": [],
+      "unknown_reasons": [],
+      "rule_ids": [
+        "R-005",
+        "R-006",
+        "R-013"
+      ],
+      "evidence": [],
+      "diagnostics": [],
+      "incomplete": false,
+      "ci_failure": true,
+      "exception_applied": false
+    },
+    {
+      "source_ref": "gem-better-html",
+      "purl": "pkg:gem/better_html@2.1.1",
+      "name": "better_html",
+      "version": "2.1.1",
+      "version_verification": {
+        "status": "VERIFIED",
+        "provider_id": "rubygems",
+        "source_url": "https://rubygems.org/api/v1/versions/better_html.json",
+        "checked_at": "2026-10-16T18:46:31.047256Z",
+        "published_at": "2024-03-19T14:19:55.857Z",
+        "reason_code": null
+      },
+      "lifecycle": "EOL",
+      "support_assessment": {
+        "lifecycle": "UNKNOWN",
+        "confidence": null,
+        "eol_effective_date": null,
+        "matched_cycle": null,
+        "selected_evidence_ids": [],
+        "unknown_reasons": [
+          "NO_LIFECYCLE_EVIDENCE"
+        ]
+      },
+      "eol_basis": "POLICY_RULE",
+      "eol_rule_evaluations": [
+        {
+          "rule_id": "declared-unmaintained",
+          "status": "PRESENT",
+          "matched_signals": [
+            "DECLARED_UNMAINTAINED"
+          ],
+          "unknown_signals": [],
+          "reason_code": null
+        }
+      ],
+      "confidence": "MEDIUM",
+      "eol_effective_date": null,
+      "matched_cycle": null,
+      "signals": [
+        {
+          "type": "DECLARED_UNMAINTAINED",
+          "provider_id": "github",
+          "source_url": "https://api.github.com/repos/shopify/better-html/readme",
+          "observed_at": "2026-10-16T18:46:31.047256Z",
+          "details": {
+            "matched_text": "better_html (DEPRECATED)",
+            "pattern": "(?im)^{package}\\s*[\\[(]\\s*(?:deprecated|unmaintained|retired)\\s*[\\])]\\s*$",
+            "pattern_index": 5,
+            "raw_payload_hash": "df26f820267377f0212897d540b8f3a394b647bee1bc1157e6820b3908e6a599",
+            "repository": "https://github.com/Shopify/better-html",
+            "scope": "source_repository_declaration",
+            "source_field": "readme.content"
+          }
+        }
+      ],
+      "signal_evaluations": [
+        {
+          "type": "DECLARED_UNMAINTAINED",
+          "status": "PRESENT",
+          "provider_id": "github",
+          "source_url": "https://api.github.com/repos/shopify/better-html/readme",
+          "checked_at": "2026-10-16T18:46:31.047256Z",
+          "reason_code": null
+        },
+        {
+          "type": "DEPRECATED",
+          "status": "UNKNOWN",
+          "provider_id": null,
+          "source_url": null,
+          "checked_at": null,
+          "reason_code": "NO_CAPABILITY"
+        },
+        {
+          "type": "STALE_RELEASE",
+          "status": "ABSENT",
+          "provider_id": "rubygems",
+          "source_url": "https://rubygems.org/api/v1/versions/better_html.json",
+          "checked_at": "2026-10-16T18:46:31.047256Z",
+          "reason_code": null
+        }
+      ],
+      "selected_evidence_ids": [],
+      "notices": [],
+      "unknown_reasons": [],
+      "rule_ids": [
+        "R-005",
+        "R-006",
+        "R-013"
+      ],
+      "evidence": [],
+      "diagnostics": [],
+      "incomplete": false,
+      "ci_failure": true,
+      "exception_applied": false
+    },
+    {
+      "source_ref": "gem-jasmine-rails",
+      "purl": "pkg:gem/jasmine-rails@0.15.0",
+      "name": "jasmine-rails",
+      "version": "0.15.0",
+      "version_verification": {
+        "status": "VERIFIED",
+        "provider_id": "rubygems",
+        "source_url": "https://rubygems.org/api/v1/versions/jasmine-rails.json",
+        "checked_at": "2026-10-16T18:46:31.047256Z",
+        "published_at": "2019-04-17T05:03:26.223Z",
+        "reason_code": null
+      },
+      "lifecycle": "EOL",
+      "support_assessment": {
+        "lifecycle": "UNKNOWN",
+        "confidence": null,
+        "eol_effective_date": null,
+        "matched_cycle": null,
+        "selected_evidence_ids": [],
+        "unknown_reasons": [
+          "NO_LIFECYCLE_EVIDENCE"
+        ]
+      },
+      "eol_basis": "POLICY_RULE",
+      "eol_rule_evaluations": [
+        {
+          "rule_id": "declared-unmaintained",
+          "status": "PRESENT",
+          "matched_signals": [
+            "DECLARED_UNMAINTAINED"
+          ],
+          "unknown_signals": [],
+          "reason_code": null
+        }
+      ],
+      "confidence": "MEDIUM",
+      "eol_effective_date": null,
+      "matched_cycle": null,
+      "signals": [
+        {
+          "type": "DECLARED_UNMAINTAINED",
+          "provider_id": "github",
+          "source_url": "https://api.github.com/repos/testdouble/jasmine-rails/readme",
+          "observed_at": "2026-10-16T18:50:51.975723Z",
+          "details": {
+            "matched_text": "This project is no longer actively maintained!",
+            "pattern": "(?im)^(?:(?:this|the) (?:project|package|library|module|gem|tool|repository|crate)|(?:the )?[\"'\\x60]*{package}[\"'\\x60]*(?: (?:pypi )?package)?) (?:is |has been |is now |has now been )?(?:no longer (?:being )?(?:actively )?(?:maintained|supported)|unmaintained|deprecated|not maintained)(?:\\s*[.!,:;]|\\s*$| in (?:favor|favour) of\\b| (?:please )?use\\b)",
+            "pattern_index": 1,
+            "raw_payload_hash": "294c6599a8bf1a46216ea2ddd05003232dfcd0cdbaa0e93f80e4c8b999e17845",
+            "repository": "https://github.com/testdouble/jasmine-rails",
+            "scope": "source_repository_declaration",
+            "source_field": "readme.content"
+          }
+        },
+        {
+          "type": "STALE_RELEASE",
+          "provider_id": "rubygems",
+          "source_url": "https://rubygems.org/api/v1/versions/jasmine-rails.json",
+          "observed_at": "2026-10-16T18:46:31.047256Z",
+          "details": {
+            "days_since_latest_release": 2739,
+            "latest_published_at": "2019-04-17T05:03:26.223Z",
+            "threshold_days": 730
+          }
+        }
+      ],
+      "signal_evaluations": [
+        {
+          "type": "DECLARED_UNMAINTAINED",
+          "status": "PRESENT",
+          "provider_id": "github",
+          "source_url": "https://api.github.com/repos/testdouble/jasmine-rails/readme",
+          "checked_at": "2026-10-16T18:50:51.975723Z",
+          "reason_code": null
+        },
+        {
+          "type": "DEPRECATED",
+          "status": "UNKNOWN",
+          "provider_id": null,
+          "source_url": null,
+          "checked_at": null,
+          "reason_code": "NO_CAPABILITY"
+        },
+        {
+          "type": "STALE_RELEASE",
+          "status": "PRESENT",
+          "provider_id": "rubygems",
+          "source_url": "https://rubygems.org/api/v1/versions/jasmine-rails.json",
+          "checked_at": "2026-10-16T18:46:31.047256Z",
+          "reason_code": null
+        }
+      ],
+      "selected_evidence_ids": [],
+      "notices": [],
+      "unknown_reasons": [],
+      "rule_ids": [
+        "R-005",
+        "R-006",
+        "R-013"
+      ],
+      "evidence": [],
+      "diagnostics": [],
+      "incomplete": false,
+      "ci_failure": true,
+      "exception_applied": false
+    },
+    {
+      "source_ref": "gem-liquid-c",
+      "purl": "pkg:gem/liquid-c@4.2.0",
+      "name": "liquid-c",
+      "version": "4.2.0",
+      "version_verification": {
+        "status": "VERIFIED",
+        "provider_id": "rubygems",
+        "source_url": "https://rubygems.org/api/v1/versions/liquid-c.json",
+        "checked_at": "2026-10-16T18:46:31.047256Z",
+        "published_at": "2024-01-24T12:28:53.402Z",
+        "reason_code": null
+      },
+      "lifecycle": "EOL",
+      "support_assessment": {
+        "lifecycle": "UNKNOWN",
+        "confidence": null,
+        "eol_effective_date": null,
+        "matched_cycle": null,
+        "selected_evidence_ids": [],
+        "unknown_reasons": [
+          "NO_LIFECYCLE_EVIDENCE"
+        ]
+      },
+      "eol_basis": "POLICY_RULE",
+      "eol_rule_evaluations": [
+        {
+          "rule_id": "declared-unmaintained",
+          "status": "PRESENT",
+          "matched_signals": [
+            "DECLARED_UNMAINTAINED"
+          ],
+          "unknown_signals": [],
+          "reason_code": null
+        }
+      ],
+      "confidence": "MEDIUM",
+      "eol_effective_date": null,
+      "matched_cycle": null,
+      "signals": [
+        {
+          "type": "DECLARED_UNMAINTAINED",
+          "provider_id": "github",
+          "source_url": "https://api.github.com/repos/shopify/liquid-c/readme",
+          "observed_at": "2026-10-16T18:50:51.975723Z",
+          "details": {
+            "matched_text": "This project is no longer maintained.",
+            "pattern": "(?im)^(?:(?:this|the) (?:project|package|library|module|gem|tool|repository|crate)|(?:the )?[\"'\\x60]*{package}[\"'\\x60]*(?: (?:pypi )?package)?) (?:is |has been |is now |has now been )?(?:no longer (?:being )?(?:actively )?(?:maintained|supported)|unmaintained|deprecated|not maintained)(?:\\s*[.!,:;]|\\s*$| in (?:favor|favour) of\\b| (?:please )?use\\b)",
+            "pattern_index": 1,
+            "raw_payload_hash": "a2b54126791c58b71352aa2f7079290ea78c056d2aae0fc62643763004beea2a",
+            "repository": "https://github.com/Shopify/liquid-c",
+            "scope": "source_repository_declaration",
+            "source_field": "readme.content"
+          }
+        },
+        {
+          "type": "STALE_RELEASE",
+          "provider_id": "rubygems",
+          "source_url": "https://rubygems.org/api/v1/versions/liquid-c.json",
+          "observed_at": "2026-10-16T18:46:31.047256Z",
+          "details": {
+            "days_since_latest_release": 996,
+            "latest_published_at": "2024-01-24T12:28:53.402Z",
+            "threshold_days": 730
+          }
+        }
+      ],
+      "signal_evaluations": [
+        {
+          "type": "DECLARED_UNMAINTAINED",
+          "status": "PRESENT",
+          "provider_id": "github",
+          "source_url": "https://api.github.com/repos/shopify/liquid-c/readme",
+          "checked_at": "2026-10-16T18:50:51.975723Z",
+          "reason_code": null
+        },
+        {
+          "type": "DEPRECATED",
+          "status": "UNKNOWN",
+          "provider_id": null,
+          "source_url": null,
+          "checked_at": null,
+          "reason_code": "NO_CAPABILITY"
+        },
+        {
+          "type": "STALE_RELEASE",
+          "status": "PRESENT",
+          "provider_id": "rubygems",
+          "source_url": "https://rubygems.org/api/v1/versions/liquid-c.json",
+          "checked_at": "2026-10-16T18:46:31.047256Z",
+          "reason_code": null
+        }
+      ],
+      "selected_evidence_ids": [],
+      "notices": [],
+      "unknown_reasons": [],
+      "rule_ids": [
+        "R-005",
+        "R-006",
+        "R-013"
+      ],
+      "evidence": [],
+      "diagnostics": [],
+      "incomplete": false,
+      "ci_failure": true,
+      "exception_applied": false
+    },
+    {
+      "source_ref": "pypi-orjson",
+      "purl": "pkg:pypi/orjson@3.11.3",
+      "name": "orjson",
+      "version": "3.11.3",
+      "version_verification": {
+        "status": "VERIFIED",
+        "provider_id": "pypi",
+        "source_url": "https://pypi.org/simple/orjson/",
+        "checked_at": "2026-10-16T18:46:31.047256Z",
+        "published_at": "2025-08-26T17:44:36.87572Z",
+        "reason_code": null
+      },
+      "lifecycle": "NO_EOL_DETECTED",
+      "support_assessment": {
+        "lifecycle": "UNKNOWN",
+        "confidence": null,
+        "eol_effective_date": null,
+        "matched_cycle": null,
+        "selected_evidence_ids": [],
+        "unknown_reasons": [
+          "NO_LIFECYCLE_EVIDENCE"
+        ]
+      },
+      "eol_basis": null,
+      "eol_rule_evaluations": [
+        {
+          "rule_id": "declared-unmaintained",
+          "status": "ABSENT",
+          "matched_signals": [],
+          "unknown_signals": [],
+          "reason_code": null
+        }
+      ],
+      "confidence": null,
+      "eol_effective_date": null,
+      "matched_cycle": null,
+      "signals": [],
+      "signal_evaluations": [
+        {
+          "type": "DECLARED_UNMAINTAINED",
+          "status": "ABSENT",
+          "provider_id": "github",
+          "source_url": "https://api.github.com/repos/ijl/orjson/readme",
+          "checked_at": "2026-10-16T18:46:31.047256Z",
+          "reason_code": null
+        },
+        {
+          "type": "DEPRECATED",
+          "status": "ABSENT",
+          "provider_id": "pypi",
+          "source_url": "https://pypi.org/simple/orjson/",
+          "checked_at": "2026-10-16T18:46:31.047256Z",
+          "reason_code": null
+        },
+        {
+          "type": "STALE_RELEASE",
+          "status": "ABSENT",
+          "provider_id": "pypi",
+          "source_url": "https://pypi.org/simple/orjson/",
+          "checked_at": "2026-10-16T18:46:31.047256Z",
+          "reason_code": null
+        }
+      ],
+      "selected_evidence_ids": [],
+      "notices": [],
+      "unknown_reasons": [],
+      "rule_ids": [
+        "R-006"
+      ],
+      "evidence": [],
+      "diagnostics": [],
+      "incomplete": false,
+      "ci_failure": false,
+      "exception_applied": false
+    },
+    {
+      "source_ref": "pypi-pathlib2",
+      "purl": "pkg:pypi/pathlib2@2.3.7.post1",
+      "name": "pathlib2",
+      "version": "2.3.7.post1",
+      "version_verification": {
+        "status": "VERIFIED",
+        "provider_id": "pypi",
+        "source_url": "https://pypi.org/simple/pathlib2/",
+        "checked_at": "2026-10-16T18:46:31.047256Z",
+        "published_at": "2022-02-10T18:01:07.751558Z",
+        "reason_code": null
+      },
+      "lifecycle": "NO_EOL_DETECTED",
+      "support_assessment": {
+        "lifecycle": "UNKNOWN",
+        "confidence": null,
+        "eol_effective_date": null,
+        "matched_cycle": null,
+        "selected_evidence_ids": [],
+        "unknown_reasons": [
+          "NO_LIFECYCLE_EVIDENCE"
+        ]
+      },
+      "eol_basis": null,
+      "eol_rule_evaluations": [
+        {
+          "rule_id": "declared-unmaintained",
+          "status": "ABSENT",
+          "matched_signals": [],
+          "unknown_signals": [],
+          "reason_code": null
+        }
+      ],
+      "confidence": null,
+      "eol_effective_date": null,
+      "matched_cycle": null,
+      "signals": [
+        {
+          "type": "STALE_RELEASE",
+          "provider_id": "pypi",
+          "source_url": "https://pypi.org/simple/pathlib2/",
+          "observed_at": "2026-10-16T18:46:31.047256Z",
+          "details": {
+            "days_since_latest_release": 1709,
+            "latest_published_at": "2022-02-10T18:01:07.751558Z",
+            "threshold_days": 730
+          }
+        }
+      ],
+      "signal_evaluations": [
+        {
+          "type": "DECLARED_UNMAINTAINED",
+          "status": "ABSENT",
+          "provider_id": "github",
+          "source_url": "https://api.github.com/repos/jazzband/pathlib2/readme",
+          "checked_at": "2026-10-16T18:46:31.047256Z",
+          "reason_code": null
+        },
+        {
+          "type": "DEPRECATED",
+          "status": "ABSENT",
+          "provider_id": "pypi",
+          "source_url": "https://pypi.org/simple/pathlib2/",
+          "checked_at": "2026-10-16T18:46:31.047256Z",
+          "reason_code": null
+        },
+        {
+          "type": "STALE_RELEASE",
+          "status": "PRESENT",
+          "provider_id": "pypi",
+          "source_url": "https://pypi.org/simple/pathlib2/",
+          "checked_at": "2026-10-16T18:46:31.047256Z",
+          "reason_code": null
+        }
+      ],
+      "selected_evidence_ids": [],
+      "notices": [],
+      "unknown_reasons": [],
+      "rule_ids": [
+        "R-005",
+        "R-006"
+      ],
+      "evidence": [],
+      "diagnostics": [],
+      "incomplete": false,
+      "ci_failure": false,
+      "exception_applied": false
+    },
+    {
+      "source_ref": "pypi-pathlib",
+      "purl": "pkg:pypi/pathlib@1.0.1",
+      "name": "pathlib",
+      "version": "1.0.1",
+      "version_verification": {
+        "status": "VERIFIED",
+        "provider_id": "pypi",
+        "source_url": "https://pypi.org/simple/pathlib/",
+        "checked_at": "2026-10-16T18:46:31.047256Z",
+        "published_at": "2014-09-03T15:41:57.18022Z",
+        "reason_code": null
+      },
+      "lifecycle": "EOL",
+      "support_assessment": {
+        "lifecycle": "UNKNOWN",
+        "confidence": null,
+        "eol_effective_date": null,
+        "matched_cycle": null,
+        "selected_evidence_ids": [],
+        "unknown_reasons": [
+          "NO_LIFECYCLE_EVIDENCE"
+        ]
+      },
+      "eol_basis": "POLICY_RULE",
+      "eol_rule_evaluations": [
+        {
+          "rule_id": "declared-unmaintained",
+          "status": "PRESENT",
+          "matched_signals": [
+            "DECLARED_UNMAINTAINED"
+          ],
+          "unknown_signals": [],
+          "reason_code": null
+        }
+      ],
+      "confidence": "MEDIUM",
+      "eol_effective_date": null,
+      "matched_cycle": null,
+      "signals": [
+        {
+          "type": "DECLARED_UNMAINTAINED",
+          "provider_id": "pypi",
+          "source_url": "https://pypi.org/pypi/pathlib/1.0.1/json",
+          "observed_at": "2026-10-16T18:46:31.047256Z",
+          "details": {
+            "matched_text": "this backport module isn't maintained anymore.",
+            "pattern": "(?im)^(?:this (?:backport )?(?:project|package|library|module|gem|tool|repository|crate)|{package}) (?:isn't|is not) maintained (?:anymore|any longer)(?:\\s*[.!,:;]|\\s*$)",
+            "pattern_index": 0,
+            "raw_payload_hash": "95020a4efce8c48af03c8bd86c44eb2dbc6df3c4c870964c77e4262316fd9e1c",
+            "scope": "publisher_declaration",
+            "source_field": "info.description"
+          }
+        },
+        {
+          "type": "STALE_RELEASE",
+          "provider_id": "pypi",
+          "source_url": "https://pypi.org/simple/pathlib/",
+          "observed_at": "2026-10-16T18:46:31.047256Z",
+          "details": {
+            "days_since_latest_release": 4426,
+            "latest_published_at": "2014-09-03T15:41:57.18022Z",
+            "threshold_days": 730
+          }
+        }
+      ],
+      "signal_evaluations": [
+        {
+          "type": "DECLARED_UNMAINTAINED",
+          "status": "PRESENT",
+          "provider_id": "pypi",
+          "source_url": "https://pypi.org/pypi/pathlib/1.0.1/json",
+          "checked_at": "2026-10-16T18:46:31.047256Z",
+          "reason_code": null
+        },
+        {
+          "type": "DEPRECATED",
+          "status": "ABSENT",
+          "provider_id": "pypi",
+          "source_url": "https://pypi.org/simple/pathlib/",
+          "checked_at": "2026-10-16T18:46:31.047256Z",
+          "reason_code": null
+        },
+        {
+          "type": "STALE_RELEASE",
+          "status": "PRESENT",
+          "provider_id": "pypi",
+          "source_url": "https://pypi.org/simple/pathlib/",
+          "checked_at": "2026-10-16T18:46:31.047256Z",
+          "reason_code": null
+        }
+      ],
+      "selected_evidence_ids": [],
+      "notices": [],
+      "unknown_reasons": [],
+      "rule_ids": [
+        "R-005",
+        "R-006",
+        "R-013"
+      ],
+      "evidence": [],
+      "diagnostics": [],
+      "incomplete": false,
+      "ci_failure": true,
+      "exception_applied": false
+    },
+    {
+      "source_ref": "pypi-pep8",
+      "purl": "pkg:pypi/pep8@1.7.1",
+      "name": "pep8",
+      "version": "1.7.1",
+      "version_verification": {
+        "status": "VERIFIED",
+        "provider_id": "pypi",
+        "source_url": "https://pypi.org/simple/pep8/",
+        "checked_at": "2026-10-16T18:46:31.047256Z",
+        "published_at": "2017-10-24T14:39:11.465365Z",
+        "reason_code": null
+      },
+      "lifecycle": "EOL",
+      "support_assessment": {
+        "lifecycle": "UNKNOWN",
+        "confidence": null,
+        "eol_effective_date": null,
+        "matched_cycle": null,
+        "selected_evidence_ids": [],
+        "unknown_reasons": [
+          "NO_LIFECYCLE_EVIDENCE"
+        ]
+      },
+      "eol_basis": "POLICY_RULE",
+      "eol_rule_evaluations": [
+        {
+          "rule_id": "declared-unmaintained",
+          "status": "PRESENT",
+          "matched_signals": [
+            "DECLARED_UNMAINTAINED"
+          ],
+          "unknown_signals": [],
+          "reason_code": null
+        }
+      ],
+      "confidence": "MEDIUM",
+      "eol_effective_date": null,
+      "matched_cycle": null,
+      "signals": [
+        {
+          "type": "DECLARED_UNMAINTAINED",
+          "provider_id": "pypi",
+          "source_url": "https://pypi.org/pypi/pep8/1.7.1/json",
+          "observed_at": "2026-10-16T18:46:31.047256Z",
+          "details": {
+            "matched_text": "the tool is no longer released as pep8 and will only be fixed in the pycodestyle package",
+            "pattern": "(?i)\\b(?:the tool|this package|{package}) is no longer released as [\"'\\x60]*{package}[\"'\\x60]* and will only be fixed in the [a-z0-9_.-]+ package\\b",
+            "pattern_index": 3,
+            "raw_payload_hash": "7b9be032dce577cd03c095dc9992d41ee13075082636b710ab669667815ab8c6",
+            "scope": "publisher_declaration",
+            "source_field": "info.description"
+          }
+        },
+        {
+          "type": "STALE_RELEASE",
+          "provider_id": "pypi",
+          "source_url": "https://pypi.org/simple/pep8/",
+          "observed_at": "2026-10-16T18:46:31.047256Z",
+          "details": {
+            "days_since_latest_release": 3279,
+            "latest_published_at": "2017-10-24T14:39:11.465365Z",
+            "threshold_days": 730
+          }
+        }
+      ],
+      "signal_evaluations": [
+        {
+          "type": "DECLARED_UNMAINTAINED",
+          "status": "PRESENT",
+          "provider_id": "pypi",
+          "source_url": "https://pypi.org/pypi/pep8/1.7.1/json",
+          "checked_at": "2026-10-16T18:46:31.047256Z",
+          "reason_code": null
+        },
+        {
+          "type": "DEPRECATED",
+          "status": "ABSENT",
+          "provider_id": "pypi",
+          "source_url": "https://pypi.org/simple/pep8/",
+          "checked_at": "2026-10-16T18:46:31.047256Z",
+          "reason_code": null
+        },
+        {
+          "type": "STALE_RELEASE",
+          "status": "PRESENT",
+          "provider_id": "pypi",
+          "source_url": "https://pypi.org/simple/pep8/",
+          "checked_at": "2026-10-16T18:46:31.047256Z",
+          "reason_code": null
+        }
+      ],
+      "selected_evidence_ids": [],
+      "notices": [],
+      "unknown_reasons": [],
+      "rule_ids": [
+        "R-005",
+        "R-006",
+        "R-013"
+      ],
+      "evidence": [],
+      "diagnostics": [],
+      "incomplete": false,
+      "ci_failure": true,
+      "exception_applied": false
+    },
+    {
+      "source_ref": "pypi-sklearn",
+      "purl": "pkg:pypi/sklearn@0.0.post12",
+      "name": "sklearn",
+      "version": "0.0.post12",
+      "version_verification": {
+        "status": "VERIFIED",
+        "provider_id": "pypi",
+        "source_url": "https://pypi.org/simple/sklearn/",
+        "checked_at": "2026-10-16T18:46:31.047256Z",
+        "published_at": "2023-12-01T14:30:39.945835Z",
+        "reason_code": null
+      },
+      "lifecycle": "EOL",
+      "support_assessment": {
+        "lifecycle": "UNKNOWN",
+        "confidence": null,
+        "eol_effective_date": null,
+        "matched_cycle": null,
+        "selected_evidence_ids": [],
+        "unknown_reasons": [
+          "NO_LIFECYCLE_EVIDENCE"
+        ]
+      },
+      "eol_basis": "POLICY_RULE",
+      "eol_rule_evaluations": [
+        {
+          "rule_id": "declared-unmaintained",
+          "status": "PRESENT",
+          "matched_signals": [
+            "DECLARED_UNMAINTAINED"
+          ],
+          "unknown_signals": [],
+          "reason_code": null
+        }
+      ],
+      "confidence": "MEDIUM",
+      "eol_effective_date": null,
+      "matched_cycle": null,
+      "signals": [
+        {
+          "type": "DECLARED_UNMAINTAINED",
+          "provider_id": "pypi",
+          "source_url": "https://pypi.org/pypi/sklearn/0.0.post12/json",
+          "observed_at": "2026-10-16T18:46:31.047256Z",
+          "details": {
+            "matched_text": "The sklearn PyPI package is deprecated use",
+            "pattern": "(?im)^(?:(?:this|the) (?:project|package|library|module|gem|tool|repository|crate)|(?:the )?[\"'\\x60]*{package}[\"'\\x60]*(?: (?:pypi )?package)?) (?:is |has been |is now |has now been )?(?:no longer (?:being )?(?:actively )?(?:maintained|supported)|unmaintained|deprecated|not maintained)(?:\\s*[.!,:;]|\\s*$| in (?:favor|favour) of\\b| (?:please )?use\\b)",
+            "pattern_index": 1,
+            "raw_payload_hash": "82d76d75776f15c41c4be1d0402068e657a46253606ac84a2a9ca7932608f157",
+            "scope": "publisher_declaration",
+            "source_field": "info.description"
+          }
+        },
+        {
+          "type": "STALE_RELEASE",
+          "provider_id": "pypi",
+          "source_url": "https://pypi.org/simple/sklearn/",
+          "observed_at": "2026-10-16T18:46:31.047256Z",
+          "details": {
+            "days_since_latest_release": 1050,
+            "latest_published_at": "2023-12-01T14:30:39.945835Z",
+            "threshold_days": 730
+          }
+        }
+      ],
+      "signal_evaluations": [
+        {
+          "type": "DECLARED_UNMAINTAINED",
+          "status": "PRESENT",
+          "provider_id": "pypi",
+          "source_url": "https://pypi.org/pypi/sklearn/0.0.post12/json",
+          "checked_at": "2026-10-16T18:46:31.047256Z",
+          "reason_code": null
+        },
+        {
+          "type": "DEPRECATED",
+          "status": "ABSENT",
+          "provider_id": "pypi",
+          "source_url": "https://pypi.org/simple/sklearn/",
+          "checked_at": "2026-10-16T18:46:31.047256Z",
+          "reason_code": null
+        },
+        {
+          "type": "STALE_RELEASE",
+          "status": "PRESENT",
+          "provider_id": "pypi",
+          "source_url": "https://pypi.org/simple/sklearn/",
+          "checked_at": "2026-10-16T18:46:31.047256Z",
+          "reason_code": null
+        }
+      ],
+      "selected_evidence_ids": [],
+      "notices": [],
+      "unknown_reasons": [],
+      "rule_ids": [
+        "R-005",
+        "R-006",
+        "R-013"
+      ],
+      "evidence": [],
+      "diagnostics": [
+        {
+          "code": "VERSION_CONFLICT",
+          "provider_id": "deps_dev",
+          "http_status": 200,
+          "retryable": false,
+          "message": "Provider lookup could not be completed"
+        }
+      ],
+      "incomplete": false,
+      "ci_failure": true,
+      "exception_applied": false
+    }
+  ]
+}

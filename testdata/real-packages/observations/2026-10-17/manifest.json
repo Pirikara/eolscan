@@ -1,0 +1,884 @@
+{
+  "schema_version": 1,
+  "cases": [
+    {
+      "id": "npm-request",
+      "ecosystem": "npm",
+      "name": "request",
+      "version": "2.88.2",
+      "purl": "pkg:npm/request@2.88.2",
+      "group": "retired",
+      "reviewed_at": "2026-10-15",
+      "upstream_note": "Registry deprecation and upstream retirement announcement.",
+      "source_urls": [
+        "https://github.com/request/request",
+        "https://registry.npmjs.org/request/2.88.2"
+      ],
+      "goals": {
+        "default": "EOL",
+        "inactivity": "EOL"
+      },
+      "reference_kind": "REGISTRY_DEPRECATION"
+    },
+    {
+      "id": "npm-node-sass",
+      "ecosystem": "npm",
+      "name": "node-sass",
+      "version": "9.0.0",
+      "purl": "pkg:npm/node-sass@9.0.0",
+      "group": "retired",
+      "reviewed_at": "2026-10-15",
+      "upstream_note": "Sass announced Node Sass end of life on 2024-07-24.",
+      "source_urls": [
+        "https://sass-lang.com/blog/node-sass-is-end-of-life/",
+        "https://registry.npmjs.org/node-sass/9.0.0"
+      ],
+      "goals": {
+        "default": "EOL",
+        "inactivity": "EOL"
+      },
+      "reference_kind": "UPSTREAM_SUPPORT_END"
+    },
+    {
+      "id": "npm-har-validator",
+      "ecosystem": "npm",
+      "name": "har-validator",
+      "version": "5.1.5",
+      "purl": "pkg:npm/har-validator@5.1.5",
+      "group": "retired",
+      "reviewed_at": "2026-10-15",
+      "upstream_note": "Registry states that this library is no longer supported.",
+      "source_urls": [
+        "https://registry.npmjs.org/har-validator/5.1.5"
+      ],
+      "goals": {
+        "default": "EOL",
+        "inactivity": "EOL"
+      },
+      "reference_kind": "REGISTRY_DEPRECATION"
+    },
+    {
+      "id": "npm-istanbul",
+      "ecosystem": "npm",
+      "name": "istanbul",
+      "version": "0.4.5",
+      "purl": "pkg:npm/istanbul@0.4.5",
+      "group": "retired",
+      "reviewed_at": "2026-10-15",
+      "upstream_note": "Registry deprecates the unmaintained package in favor of nyc.",
+      "source_urls": [
+        "https://registry.npmjs.org/istanbul/0.4.5"
+      ],
+      "goals": {
+        "default": "EOL",
+        "inactivity": "EOL"
+      },
+      "reference_kind": "REGISTRY_DEPRECATION"
+    },
+    {
+      "id": "npm-glob",
+      "ecosystem": "npm",
+      "name": "glob",
+      "version": "7.2.3",
+      "purl": "pkg:npm/glob@7.2.3",
+      "group": "retired",
+      "reviewed_at": "2026-10-15",
+      "upstream_note": "Registry deprecation applies to older versions; the project itself is active.",
+      "source_urls": [
+        "https://registry.npmjs.org/glob/7.2.3"
+      ],
+      "goals": {
+        "default": "EOL",
+        "inactivity": "EOL"
+      },
+      "reference_kind": "REGISTRY_DEPRECATION"
+    },
+    {
+      "id": "npm-rimraf",
+      "ecosystem": "npm",
+      "name": "rimraf",
+      "version": "3.0.2",
+      "purl": "pkg:npm/rimraf@3.0.2",
+      "group": "retired",
+      "reviewed_at": "2026-10-15",
+      "upstream_note": "Registry deprecation applies to older versions; the project itself is active.",
+      "source_urls": [
+        "https://registry.npmjs.org/rimraf/3.0.2"
+      ],
+      "goals": {
+        "default": "EOL",
+        "inactivity": "EOL"
+      },
+      "reference_kind": "REGISTRY_DEPRECATION"
+    },
+    {
+      "id": "npm-left-pad",
+      "ecosystem": "npm",
+      "name": "left-pad",
+      "version": "1.3.0",
+      "purl": "pkg:npm/left-pad@1.3.0",
+      "group": "retired",
+      "reviewed_at": "2026-10-15",
+      "upstream_note": "Registry deprecates the package in favor of String.prototype.padStart.",
+      "source_urls": [
+        "https://registry.npmjs.org/left-pad/1.3.0"
+      ],
+      "goals": {
+        "default": "EOL",
+        "inactivity": "EOL"
+      },
+      "reference_kind": "REGISTRY_DEPRECATION"
+    },
+    {
+      "id": "npm-uuid",
+      "ecosystem": "npm",
+      "name": "uuid",
+      "version": "3.4.0",
+      "purl": "pkg:npm/uuid@3.4.0",
+      "group": "retired",
+      "reviewed_at": "2026-10-15",
+      "upstream_note": "Registry marks this version deprecated and recommends upgrading.",
+      "source_urls": [
+        "https://registry.npmjs.org/uuid/3.4.0"
+      ],
+      "goals": {
+        "default": "EOL",
+        "inactivity": "EOL"
+      },
+      "reference_kind": "REGISTRY_DEPRECATION"
+    },
+    {
+      "id": "npm-picocolors",
+      "ecosystem": "npm",
+      "name": "picocolors",
+      "version": "1.1.1",
+      "purl": "pkg:npm/picocolors@1.1.1",
+      "group": "control",
+      "reviewed_at": "2026-10-15",
+      "upstream_note": "Control for an available package with no retirement flag.",
+      "source_urls": [
+        "https://github.com/alexeyraspopov/picocolors",
+        "https://registry.npmjs.org/picocolors/1.1.1"
+      ],
+      "goals": {
+        "default": "NOT_EOL",
+        "inactivity": "NOT_EOL"
+      },
+      "reference_kind": "DEFAULT_POLICY_CONTROL"
+    },
+    {
+      "id": "npm-is-number",
+      "ecosystem": "npm",
+      "name": "is-number",
+      "version": "7.0.0",
+      "purl": "pkg:npm/is-number@7.0.0",
+      "group": "control",
+      "reviewed_at": "2026-10-15",
+      "upstream_note": "Control for an old latest release without an explicit retirement flag.",
+      "source_urls": [
+        "https://github.com/jonschlinkert/is-number",
+        "https://registry.npmjs.org/is-number/7.0.0"
+      ],
+      "goals": {
+        "default": "NOT_EOL",
+        "inactivity": "EOL"
+      },
+      "reference_kind": "DEFAULT_POLICY_CONTROL"
+    },
+    {
+      "id": "gem-therubyracer",
+      "ecosystem": "gem",
+      "name": "therubyracer",
+      "version": "0.12.3",
+      "purl": "pkg:gem/therubyracer@0.12.3",
+      "group": "retired",
+      "reviewed_at": "2026-10-15",
+      "upstream_note": "Upstream README declares the project unmaintained; repository archived.",
+      "source_urls": [
+        "https://github.com/rubyjs/therubyracer"
+      ],
+      "goals": {
+        "default": "EOL",
+        "inactivity": "EOL"
+      },
+      "reference_kind": "UPSTREAM_RETIREMENT"
+    },
+    {
+      "id": "gem-sass",
+      "ecosystem": "gem",
+      "name": "sass",
+      "version": "3.7.4",
+      "purl": "pkg:gem/sass@3.7.4",
+      "group": "retired",
+      "reviewed_at": "2026-10-15",
+      "upstream_note": "Sass announced Ruby Sass end of life on 2019-04-04.",
+      "source_urls": [
+        "https://sass-lang.com/blog/ruby-sass-is-unsupported/"
+      ],
+      "goals": {
+        "default": "EOL",
+        "inactivity": "EOL"
+      },
+      "reference_kind": "UPSTREAM_SUPPORT_END"
+    },
+    {
+      "id": "gem-thread-safe",
+      "ecosystem": "gem",
+      "name": "thread_safe",
+      "version": "0.3.6",
+      "purl": "pkg:gem/thread_safe@0.3.6",
+      "group": "retired",
+      "reviewed_at": "2026-10-15",
+      "upstream_note": "Repository archived; code moved to concurrent-ruby and is no longer maintained here.",
+      "source_urls": [
+        "https://github.com/ruby-concurrency/thread_safe"
+      ],
+      "goals": {
+        "default": "EOL",
+        "inactivity": "EOL"
+      },
+      "reference_kind": "UPSTREAM_RETIREMENT"
+    },
+    {
+      "id": "gem-rails",
+      "ecosystem": "gem",
+      "name": "rails",
+      "version": "6.1.7.10",
+      "purl": "pkg:gem/rails@6.1.7.10",
+      "group": "retired",
+      "reviewed_at": "2026-10-15",
+      "upstream_note": "Rails 6.1 reached end of maintenance in October 2024; subsequent final patches do not restore maintenance.",
+      "source_urls": [
+        "https://rubyonrails.org/2024/10/15/new-maintenance-policy-and-eol-annouments"
+      ],
+      "goals": {
+        "default": "EOL",
+        "inactivity": "EOL"
+      },
+      "reference_kind": "UPSTREAM_SUPPORT_END"
+    },
+    {
+      "id": "gem-concurrent-ruby",
+      "ecosystem": "gem",
+      "name": "concurrent-ruby",
+      "version": "1.3.5",
+      "purl": "pkg:gem/concurrent-ruby@1.3.5",
+      "group": "control",
+      "reviewed_at": "2026-10-15",
+      "upstream_note": "Control for the maintained successor of thread_safe.",
+      "source_urls": [
+        "https://github.com/ruby-concurrency/concurrent-ruby"
+      ],
+      "goals": {
+        "default": "NOT_EOL",
+        "inactivity": "NOT_EOL"
+      },
+      "reference_kind": "DEFAULT_POLICY_CONTROL"
+    },
+    {
+      "id": "pypi-pycrypto",
+      "ecosystem": "pypi",
+      "name": "pycrypto",
+      "version": "2.6.1",
+      "purl": "pkg:pypi/pycrypto@2.6.1",
+      "group": "retired",
+      "reviewed_at": "2026-10-15",
+      "upstream_note": "Upstream repository archived on 2022-01-27.",
+      "source_urls": [
+        "https://github.com/pycrypto/pycrypto"
+      ],
+      "goals": {
+        "default": "EOL",
+        "inactivity": "EOL"
+      },
+      "reference_kind": "REPOSITORY_ARCHIVAL"
+    },
+    {
+      "id": "pypi-nose",
+      "ecosystem": "pypi",
+      "name": "nose",
+      "version": "1.3.7",
+      "purl": "pkg:pypi/nose@1.3.7",
+      "group": "inactivity_candidate",
+      "reviewed_at": "2026-10-15",
+      "upstream_note": "Upstream warns about maintenance and recommends alternatives; this does not establish a dated security EOL.",
+      "source_urls": [
+        "https://nose.readthedocs.io/en/latest/"
+      ],
+      "goals": {
+        "default": null,
+        "inactivity": "EOL"
+      },
+      "reference_kind": "INACTIVITY_CANDIDATE"
+    },
+    {
+      "id": "pypi-django-rest-swagger",
+      "ecosystem": "pypi",
+      "name": "django-rest-swagger",
+      "version": "2.2.0",
+      "purl": "pkg:pypi/django-rest-swagger@2.2.0",
+      "group": "retired",
+      "reviewed_at": "2026-10-15",
+      "upstream_note": "Upstream repository archived on 2021-01-11.",
+      "source_urls": [
+        "https://github.com/marcgibbons/django-rest-swagger"
+      ],
+      "goals": {
+        "default": "EOL",
+        "inactivity": "EOL"
+      },
+      "reference_kind": "REPOSITORY_ARCHIVAL"
+    },
+    {
+      "id": "pypi-pep8",
+      "ecosystem": "pypi",
+      "name": "pep8",
+      "version": "1.7.1",
+      "purl": "pkg:pypi/pep8@1.7.1",
+      "group": "retired",
+      "reviewed_at": "2026-10-15",
+      "upstream_note": "Publisher states the package will receive fixes only under its new name pycodestyle.",
+      "source_urls": [
+        "https://pypi.org/project/pep8/"
+      ],
+      "goals": {
+        "default": "EOL",
+        "inactivity": "EOL",
+        "declarations": "EOL"
+      },
+      "reference_kind": "UPSTREAM_RETIREMENT"
+    },
+    {
+      "id": "pypi-django",
+      "ecosystem": "pypi",
+      "name": "django",
+      "version": "2.2.28",
+      "purl": "pkg:pypi/django@2.2.28",
+      "group": "retired",
+      "reviewed_at": "2026-10-15",
+      "upstream_note": "Django 2.2 final security release and end of extended support announced on 2022-04-11.",
+      "source_urls": [
+        "https://www.djangoproject.com/weblog/2022/apr/11/security-releases/"
+      ],
+      "goals": {
+        "default": "EOL",
+        "inactivity": "EOL"
+      },
+      "reference_kind": "UPSTREAM_SUPPORT_END"
+    },
+    {
+      "id": "pypi-attrs",
+      "ecosystem": "pypi",
+      "name": "attrs",
+      "version": "25.3.0",
+      "purl": "pkg:pypi/attrs@25.3.0",
+      "group": "control",
+      "reviewed_at": "2026-10-15",
+      "upstream_note": "Control for a project with ongoing releases.",
+      "source_urls": [
+        "https://github.com/python-attrs/attrs"
+      ],
+      "goals": {
+        "default": "NOT_EOL",
+        "inactivity": "NOT_EOL"
+      },
+      "reference_kind": "DEFAULT_POLICY_CONTROL"
+    },
+    {
+      "id": "go-jwt",
+      "ecosystem": "golang",
+      "name": "github.com/dgrijalva/jwt-go",
+      "version": "v3.2.0+incompatible",
+      "purl": "pkg:golang/github.com/dgrijalva/jwt-go@v3.2.0+incompatible",
+      "group": "retired",
+      "reviewed_at": "2026-10-15",
+      "upstream_note": "Original repository archived; maintenance moved to golang-jwt/jwt.",
+      "source_urls": [
+        "https://github.com/dgrijalva/jwt-go"
+      ],
+      "goals": {
+        "default": "EOL",
+        "inactivity": "EOL"
+      },
+      "reference_kind": "REPOSITORY_ARCHIVAL"
+    },
+    {
+      "id": "go-mapstructure",
+      "ecosystem": "golang",
+      "name": "github.com/mitchellh/mapstructure",
+      "version": "v1.5.0",
+      "purl": "pkg:golang/github.com/mitchellh/mapstructure@v1.5.0",
+      "group": "retired",
+      "reviewed_at": "2026-10-15",
+      "upstream_note": "Upstream repository archived on 2024-07-22.",
+      "source_urls": [
+        "https://github.com/mitchellh/mapstructure"
+      ],
+      "goals": {
+        "default": "EOL",
+        "inactivity": "EOL"
+      },
+      "reference_kind": "REPOSITORY_ARCHIVAL"
+    },
+    {
+      "id": "go-bolt",
+      "ecosystem": "golang",
+      "name": "github.com/boltdb/bolt",
+      "version": "v1.3.1",
+      "purl": "pkg:golang/github.com/boltdb/bolt@v1.3.1",
+      "group": "retired",
+      "reviewed_at": "2026-10-15",
+      "upstream_note": "Upstream repository archived on 2019-03-09.",
+      "source_urls": [
+        "https://github.com/boltdb/bolt"
+      ],
+      "goals": {
+        "default": "EOL",
+        "inactivity": "EOL"
+      },
+      "reference_kind": "REPOSITORY_ARCHIVAL"
+    },
+    {
+      "id": "go-testify",
+      "ecosystem": "golang",
+      "name": "github.com/stretchr/testify",
+      "version": "v1.10.0",
+      "purl": "pkg:golang/github.com/stretchr/testify@v1.10.0",
+      "group": "control",
+      "reviewed_at": "2026-10-15",
+      "upstream_note": "Control for an actively maintained Go library.",
+      "source_urls": [
+        "https://github.com/stretchr/testify"
+      ],
+      "goals": {
+        "default": "NOT_EOL",
+        "inactivity": "NOT_EOL"
+      },
+      "reference_kind": "DEFAULT_POLICY_CONTROL"
+    },
+    {
+      "id": "cargo-failure",
+      "ecosystem": "cargo",
+      "name": "failure",
+      "version": "0.1.8",
+      "purl": "pkg:cargo/failure@0.1.8",
+      "group": "retired",
+      "reviewed_at": "2026-10-15",
+      "upstream_note": "Original upstream repository archived on 2021-08-16.",
+      "source_urls": [
+        "https://github.com/rust-lang-deprecated/failure"
+      ],
+      "goals": {
+        "default": "EOL",
+        "inactivity": "EOL"
+      },
+      "reference_kind": "REPOSITORY_ARCHIVAL"
+    },
+    {
+      "id": "cargo-rustc-serialize",
+      "ecosystem": "cargo",
+      "name": "rustc-serialize",
+      "version": "0.3.25",
+      "purl": "pkg:cargo/rustc-serialize@0.3.25",
+      "group": "retired",
+      "reviewed_at": "2026-10-15",
+      "upstream_note": "Rust library team deprecated the crate; upstream repository archived.",
+      "source_urls": [
+        "https://github.com/rust-lang-deprecated/rustc-serialize",
+        "https://users.rust-lang.org/t/deprecation-of-rustc-serialize/10485"
+      ],
+      "goals": {
+        "default": "EOL",
+        "inactivity": "EOL"
+      },
+      "reference_kind": "REPOSITORY_ARCHIVAL"
+    },
+    {
+      "id": "cargo-serde-yaml",
+      "ecosystem": "cargo",
+      "name": "serde_yaml",
+      "version": "0.9.34+deprecated",
+      "purl": "pkg:cargo/serde_yaml@0.9.34+deprecated",
+      "group": "retired",
+      "reviewed_at": "2026-10-15",
+      "upstream_note": "Maintainer announced no further releases and archived the original repository.",
+      "source_urls": [
+        "https://github.com/dtolnay/serde-yaml/releases"
+      ],
+      "goals": {
+        "default": "EOL",
+        "inactivity": "EOL"
+      },
+      "reference_kind": "UPSTREAM_RETIREMENT"
+    },
+    {
+      "id": "cargo-serde",
+      "ecosystem": "cargo",
+      "name": "serde",
+      "version": "1.0.228",
+      "purl": "pkg:cargo/serde@1.0.228",
+      "group": "control",
+      "reviewed_at": "2026-10-15",
+      "upstream_note": "Control for an actively maintained Rust library.",
+      "source_urls": [
+        "https://github.com/serde-rs/serde"
+      ],
+      "goals": {
+        "default": "NOT_EOL",
+        "inactivity": "NOT_EOL"
+      },
+      "reference_kind": "DEFAULT_POLICY_CONTROL"
+    },
+    {
+      "id": "maven-log4j",
+      "ecosystem": "maven",
+      "name": "log4j/log4j",
+      "version": "1.2.17",
+      "purl": "pkg:maven/log4j/log4j@1.2.17",
+      "group": "retired",
+      "reviewed_at": "2026-10-15",
+      "upstream_note": "Apache announced Log4j 1.x end of life on 2015-08-05 and no further security fixes.",
+      "source_urls": [
+        "https://logging.apache.org/log4j/1.x/"
+      ],
+      "goals": {
+        "default": "EOL",
+        "inactivity": "EOL"
+      },
+      "reference_kind": "UPSTREAM_SUPPORT_END"
+    },
+    {
+      "id": "maven-struts",
+      "ecosystem": "maven",
+      "name": "org.apache.struts/struts2-core",
+      "version": "2.3.37",
+      "purl": "pkg:maven/org.apache.struts/struts2-core@2.3.37",
+      "group": "retired",
+      "reviewed_at": "2026-10-15",
+      "upstream_note": "Apache ended Struts 2.3 support six months after its 2018-11-14 announcement.",
+      "source_urls": [
+        "https://struts.apache.org/struts23-eol-announcement"
+      ],
+      "goals": {
+        "default": "EOL",
+        "inactivity": "EOL"
+      },
+      "reference_kind": "UPSTREAM_SUPPORT_END"
+    },
+    {
+      "id": "maven-spring",
+      "ecosystem": "maven",
+      "name": "org.springframework/spring-core",
+      "version": "4.3.30.RELEASE",
+      "purl": "pkg:maven/org.springframework/spring-core@4.3.30.RELEASE",
+      "group": "retired",
+      "reviewed_at": "2026-10-15",
+      "upstream_note": "Spring announced the 4.3 support cutoff as 2020-12-31.",
+      "source_urls": [
+        "https://spring.io/blog/2019/12/03/spring-framework-maintenance-roadmap-in-2020-including-4-3-eol/"
+      ],
+      "goals": {
+        "default": "EOL",
+        "inactivity": "EOL"
+      },
+      "reference_kind": "UPSTREAM_SUPPORT_END"
+    },
+    {
+      "id": "maven-httpclient",
+      "ecosystem": "maven",
+      "name": "commons-httpclient/commons-httpclient",
+      "version": "3.1",
+      "purl": "pkg:maven/commons-httpclient/commons-httpclient@3.1",
+      "group": "retired",
+      "reviewed_at": "2026-10-15",
+      "upstream_note": "Apache declares Commons HttpClient end of life and replaced by HttpComponents.",
+      "source_urls": [
+        "https://hc.apache.org/httpclient-legacy/"
+      ],
+      "goals": {
+        "default": "EOL",
+        "inactivity": "EOL"
+      },
+      "reference_kind": "UPSTREAM_SUPPORT_END"
+    },
+    {
+      "id": "maven-guava",
+      "ecosystem": "maven",
+      "name": "com.google.guava/guava",
+      "version": "33.4.8-jre",
+      "purl": "pkg:maven/com.google.guava/guava@33.4.8-jre",
+      "group": "control",
+      "reviewed_at": "2026-10-15",
+      "upstream_note": "Control for a project with ongoing releases.",
+      "source_urls": [
+        "https://github.com/google/guava"
+      ],
+      "goals": {
+        "default": "NOT_EOL",
+        "inactivity": "NOT_EOL"
+      },
+      "reference_kind": "DEFAULT_POLICY_CONTROL"
+    },
+    {
+      "id": "nuget-keyvault",
+      "ecosystem": "nuget",
+      "name": "Microsoft.Azure.KeyVault",
+      "version": "3.0.5",
+      "purl": "pkg:nuget/Microsoft.Azure.KeyVault@3.0.5",
+      "group": "retired",
+      "reviewed_at": "2026-10-15",
+      "upstream_note": "NuGet marks this exact version deprecated because it is no longer maintained.",
+      "source_urls": [
+        "https://www.nuget.org/packages/Microsoft.Azure.KeyVault/3.0.5"
+      ],
+      "goals": {
+        "default": "EOL",
+        "inactivity": "EOL"
+      },
+      "reference_kind": "REGISTRY_DEPRECATION"
+    },
+    {
+      "id": "nuget-documentdb",
+      "ecosystem": "nuget",
+      "name": "Microsoft.Azure.DocumentDB",
+      "version": "2.22.0",
+      "purl": "pkg:nuget/Microsoft.Azure.DocumentDB@2.22.0",
+      "group": "retired",
+      "reviewed_at": "2026-10-15",
+      "upstream_note": "NuGet marks this exact version deprecated because it is no longer maintained.",
+      "source_urls": [
+        "https://www.nuget.org/packages/Microsoft.Azure.DocumentDB/2.22.0"
+      ],
+      "goals": {
+        "default": "EOL",
+        "inactivity": "EOL"
+      },
+      "reference_kind": "REGISTRY_DEPRECATION"
+    },
+    {
+      "id": "nuget-storage",
+      "ecosystem": "nuget",
+      "name": "WindowsAzure.Storage",
+      "version": "9.3.3",
+      "purl": "pkg:nuget/WindowsAzure.Storage@9.3.3",
+      "group": "retired",
+      "reviewed_at": "2026-10-15",
+      "upstream_note": "NuGet marks the legacy Storage SDK deprecated because it is no longer maintained.",
+      "source_urls": [
+        "https://www.nuget.org/packages/WindowsAzure.Storage/9.3.3"
+      ],
+      "goals": {
+        "default": "EOL",
+        "inactivity": "EOL"
+      },
+      "reference_kind": "REGISTRY_DEPRECATION"
+    },
+    {
+      "id": "nuget-fluent",
+      "ecosystem": "nuget",
+      "name": "Microsoft.Azure.Management.Fluent",
+      "version": "1.38.1",
+      "purl": "pkg:nuget/Microsoft.Azure.Management.Fluent@1.38.1",
+      "group": "retired",
+      "reviewed_at": "2026-10-15",
+      "upstream_note": "NuGet marks this exact version deprecated because it is no longer maintained.",
+      "source_urls": [
+        "https://www.nuget.org/packages/Microsoft.Azure.Management.Fluent/1.38.1"
+      ],
+      "goals": {
+        "default": "EOL",
+        "inactivity": "EOL"
+      },
+      "reference_kind": "REGISTRY_DEPRECATION"
+    },
+    {
+      "id": "nuget-newtonsoft",
+      "ecosystem": "nuget",
+      "name": "Newtonsoft.Json",
+      "version": "13.0.3",
+      "purl": "pkg:nuget/Newtonsoft.Json@13.0.3",
+      "group": "control",
+      "reviewed_at": "2026-10-15",
+      "upstream_note": "Control for an actively maintained .NET library.",
+      "source_urls": [
+        "https://github.com/JamesNK/Newtonsoft.Json"
+      ],
+      "goals": {
+        "default": "NOT_EOL",
+        "inactivity": "NOT_EOL"
+      },
+      "reference_kind": "DEFAULT_POLICY_CONTROL"
+    },
+    {
+      "id": "pypi-sklearn",
+      "ecosystem": "pypi",
+      "name": "sklearn",
+      "version": "0.0.post12",
+      "purl": "pkg:pypi/sklearn@0.0.post12",
+      "group": "retired",
+      "reference_kind": "UPSTREAM_RETIREMENT",
+      "reviewed_at": "2026-10-17",
+      "upstream_note": "Publisher explicitly deprecates the placeholder distribution in favor of scikit-learn.",
+      "source_urls": [
+        "https://pypi.org/project/sklearn/0.0.post12/"
+      ],
+      "goals": {
+        "default": "EOL",
+        "inactivity": "EOL",
+        "declarations": "EOL"
+      }
+    },
+    {
+      "id": "pypi-pathlib",
+      "ecosystem": "pypi",
+      "name": "pathlib",
+      "version": "1.0.1",
+      "purl": "pkg:pypi/pathlib@1.0.1",
+      "group": "retired",
+      "reference_kind": "UPSTREAM_RETIREMENT",
+      "reviewed_at": "2026-10-17",
+      "upstream_note": "Publisher states this backport is no longer maintained and recommends pathlib2.",
+      "source_urls": [
+        "https://pypi.org/project/pathlib/1.0.1/"
+      ],
+      "goals": {
+        "default": "EOL",
+        "inactivity": "EOL",
+        "declarations": "EOL"
+      }
+    },
+    {
+      "id": "cargo-cbor",
+      "ecosystem": "cargo",
+      "name": "cbor",
+      "version": "0.4.1",
+      "purl": "pkg:cargo/cbor@0.4.1",
+      "group": "retired",
+      "reference_kind": "UPSTREAM_RETIREMENT",
+      "reviewed_at": "2026-10-17",
+      "upstream_note": "Original repository README explicitly declares the project unmaintained and recommends serde_cbor.",
+      "source_urls": [
+        "https://github.com/BurntSushi/rust-cbor"
+      ],
+      "goals": {
+        "default": "EOL",
+        "inactivity": "EOL",
+        "declarations": "EOL"
+      }
+    },
+    {
+      "id": "gem-jasmine-rails",
+      "ecosystem": "gem",
+      "name": "jasmine-rails",
+      "version": "0.15.0",
+      "purl": "pkg:gem/jasmine-rails@0.15.0",
+      "group": "retired",
+      "reference_kind": "UPSTREAM_RETIREMENT",
+      "reviewed_at": "2026-10-17",
+      "upstream_note": "Original source repository redirects from searls to testdouble; maintainer declares the project no longer actively maintained.",
+      "source_urls": [
+        "https://github.com/testdouble/jasmine-rails"
+      ],
+      "goals": {
+        "default": "EOL",
+        "inactivity": "EOL",
+        "declarations": "EOL"
+      }
+    },
+    {
+      "id": "gem-better-html",
+      "ecosystem": "gem",
+      "name": "better_html",
+      "version": "2.1.1",
+      "purl": "pkg:gem/better_html@2.1.1",
+      "group": "retired",
+      "reference_kind": "UPSTREAM_RETIREMENT",
+      "reviewed_at": "2026-10-17",
+      "upstream_note": "Publisher declares deprecation and development shutdown. Critical security patches are only best effort, illustrating general retirement without a definitive security end date.",
+      "source_urls": [
+        "https://github.com/Shopify/better-html"
+      ],
+      "goals": {
+        "default": "EOL",
+        "inactivity": "EOL",
+        "declarations": "EOL"
+      }
+    },
+    {
+      "id": "gem-liquid-c",
+      "ecosystem": "gem",
+      "name": "liquid-c",
+      "version": "4.2.0",
+      "purl": "pkg:gem/liquid-c@4.2.0",
+      "group": "retired",
+      "reference_kind": "UPSTREAM_RETIREMENT",
+      "reviewed_at": "2026-10-17",
+      "upstream_note": "Maintainer README warning explicitly states that this project is no longer maintained.",
+      "source_urls": [
+        "https://github.com/Shopify/liquid-c"
+      ],
+      "goals": {
+        "default": "EOL",
+        "inactivity": "EOL",
+        "declarations": "EOL"
+      }
+    },
+    {
+      "id": "pypi-pathlib2",
+      "ecosystem": "pypi",
+      "name": "pathlib2",
+      "version": "2.3.7.post1",
+      "purl": "pkg:pypi/pathlib2@2.3.7.post1",
+      "group": "control",
+      "reference_kind": "DEFAULT_POLICY_CONTROL",
+      "reviewed_at": "2026-10-17",
+      "upstream_note": "Default-policy control: its description discusses the retired predecessor pathlib. That statement must not retire pathlib2 itself. Release inactivity may independently match the opt-in rule.",
+      "source_urls": [
+        "https://pypi.org/project/pathlib2/2.3.7.post1/"
+      ],
+      "goals": {
+        "default": "NOT_EOL",
+        "inactivity": "EOL",
+        "declarations": "NOT_EOL"
+      }
+    },
+    {
+      "id": "pypi-orjson",
+      "ecosystem": "pypi",
+      "name": "orjson",
+      "version": "3.11.3",
+      "purl": "pkg:pypi/orjson@3.11.3",
+      "group": "control",
+      "reference_kind": "DEFAULT_POLICY_CONTROL",
+      "reviewed_at": "2026-10-17",
+      "upstream_note": "Control for an active project whose README discusses unsupported platforms and dependencies.",
+      "source_urls": [
+        "https://github.com/ijl/orjson",
+        "https://pypi.org/project/orjson/3.11.3/"
+      ],
+      "goals": {
+        "default": "NOT_EOL",
+        "inactivity": "NOT_EOL",
+        "declarations": "NOT_EOL"
+      }
+    }
+  ],
+  "review_scope": "Purposefully selected public retirement/deprecation and release-series EOL examples, one inactivity candidate, and ten default-policy controls, including a retired predecessor mentioned by its successor. This is not a representative dependency sample or an estimate of general recall.",
+  "profiles": {
+    "default": {
+      "input": "sbom.cdx.json",
+      "config": "policy.default.yaml",
+      "description": "Built-in default EOL criteria on all 47 real versions; file caching enabled solely to share responses with the inactivity profile."
+    },
+    "inactivity": {
+      "input": "sbom.cdx.json",
+      "config": "policy.inactivity.yaml",
+      "description": "The same 47 versions and default criteria, plus a 730-day release inactivity EOL rule and a MEDIUM CI threshold; file caching enabled."
+    },
+    "declarations": {
+      "input": "declarations.cdx.json",
+      "config": "policy.declarations.yaml",
+      "description": "Seven explicit publisher-retirement targets and two controls; use only DECLARED_UNMAINTAINED as the EOL criterion, with no support-date or archival rule."
+    }
+  }
+}
